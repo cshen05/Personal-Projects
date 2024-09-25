@@ -54,26 +54,37 @@ class VendingMachine:
             '3': Beverage("Cappuccino", 3.15, milk_allowed=False)
         }
 
-def create_table():
+def save_order_to_db(beverage, sugar, milk, price):
     try:
-        conn = psql.connect(user="postgres",
-                            password="",
+        conn = psql.connect(user="name",
+                            password="postgres",
                             host="localhost",
                             port="5432",
                             database="VendingMachine")
-    except Exception as e:
-        print(e)
+        cur = conn.cursor()
 
-    cur = conn.cursor()
-    cur.execute("""CREATE TABLE VendingMachineOrders(
-                order_id SERIAL PRIMARY KEY,
-                beverage VARCHAR NOT NULL,
-                condiments VARCHAR NOT NULL,
-                price VARCHAR NOT NULL);
-                """)
-    conn.commit()
-    cur.close()
-    conn.close()
+        # Insert data into the database
+        cur.execute("""
+                    CREATE TABLE IF NOT EXISTS VendingMachineOrders(
+                    order_id SERIAL PRIMARY KEY,
+                    beverage VARCHAR NOT NULL,
+                    sugar VARCHAR NOT NULL,
+                    milk VARCHAR NOT NULL,
+                    price DECIMAL NOT NULL);
+                    """)
+        cur.execute("""
+                    INSERT INTO VendingMachineOrders (beverage, sugar, milk , price)
+                    VALUES (%s, %s, %s, %s)
+                    """, (beverage, sugar, milk, f"{price:.2f}"))
+
+        conn.commit()
+        cur.close()
+        conn.close()
+        print("Order saved to database successfully.")
+    
+    except Exception as e:
+        print("Failed to save order to database:", e)
+
 def main():
     print("Welcome to the Coffee Machine!")
     print("1. Regular Coffee ($1.10)")
@@ -92,7 +103,10 @@ def main():
         milk_units = int(input("How much milk would you like to add (0-3)? "))
     beverage.add_condiments(sugar_units, milk_units)
 
-    print(f'Your total is: ${beverage.get_price():.2f}')
+    total_price = beverage.get_price()
+    print(f'Your total is: ${total_price:.2f}')
+
+    save_order_to_db(beverage.name, sugar_units, milk_units, total_price)
 
 # Main execution
 if __name__ == "__main__":
