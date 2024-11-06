@@ -1,0 +1,414 @@
+---
+title: "Crime Analysis in Austin: Patterns in Time and Location"
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,  
+                      warning = FALSE, message = FALSE, 
+                      fig.align = "center",
+                      R.options = list(max.print=100))
+```
+
+# Connor Shen, cs65692
+
+### Introduction:
+
+Crime is a complex issue affecting communities worldwide, with patterns that often reflect underlying socio-economic and environmental factors. Understanding these patterns can support more effective public safety strategies. This project uses the **Austin Crime Reports dataset** to explore the time and location-based distribution of crimes in Austin, Texas. By analyzing this data, the project aims to identify patterns that could inform targeted crime prevention and resource allocation in the city.
+
+This dataset provides records of crime incidents reported by the Austin Police Department. Each entry documents a unique crime event, including the offense type, date, time, location type, and council district. Understanding these patterns can be important for active policing, as Case Studies on Transport Policy has shown that time-based and location-based policing can significantly reduce crime rates in urban areas by concentrating resources on high-risk times and places.
+
+-   **Dataset Link**: <https://data.austintexas.gov/Public-Safety/Crime-Reports/fdj4-gpfu/about_data>.
+
+-   **Data Structure**:
+
+    -   **Unique Row**: Each row represents an individual crime report filed in Austin.
+
+    -   **Main Variables**:
+
+        -   `Highest Offense Description`: Details the specific crime (e.g., theft, assault).
+
+        -   `Occurred Date Time`: Timestamp of the crime, used to extract `hour`, `date`, and `month` for analysis.
+
+        -   `Location Type`: Broad category indicating the location (e.g., residential, commercial).
+
+        -   `Council District`: Specifies the city district where the crime occurred.
+
+**Research Questions and Expected Insights**:
+
+The exploratory data analysis aims to answer several questions:
+
+1.  **Time Patterns**: When do crimes occur most frequently? Are there specific hours or seasons with higher crime rates?
+
+2.  **Location Patterns**: Which council districts report the highest crime rates? Are certain crime types concentrated in specific locations?
+
+By conducting this analysis, I expect to uncover **peaks in time** for crime, possibly concentrated in late-night hours or specific months (like summer or holiday seasons). I also anticipate that **location patterns** will reveal hotspots in certain districts or location types, such as higher theft rates in commercial areas. These insights could guide resource allocation in Austin, enabling targeted interventions during high-risk times and in high-risk areas.
+
+```{r}
+# load the packages
+library(tidyverse)
+library(dplyr)
+library(lubridate)
+library(forcats)
+library(readr)
+library(stringr)
+
+# import data
+CrimeReport <- read_csv("~/322E/Project/CrimeReports.csv")
+
+# create a local copy of data
+crime_data <- CrimeReport
+```
+
+### Methods
+
+**Initial Data Structure**: The original dataset contained 86,755 rows and 19 columns. Relevant variables included are the offense description, occurred crime date and time, location type, and council district.
+
+```{r}
+# preview the data
+head(crime_data)
+glimpse(crime_data)
+dim(crime_data)
+```
+
+#### Data Cleaning and Wrangling
+
+**Categorization**:
+
+-   Created `crime` categories (e.g., Theft, Assault) using the `categorize_crime` function.
+
+-   Created `location` categories (e.g., Residential, Commercial) with `categorize_location` to simplify spatial analysis.
+
+```{r}
+# generalize crime types to similar crimes
+categorize_crime <- function(offense) {
+  case_when(
+    offense %in% c("THEFT", "BURGLARY NON RESIDENCE", "THEFT FROM PERSON", 
+                   "THEFT OF METAL", "THEFT BY SHOPLIFTING", "THEFT-NO SUSPECT/FOLLOWUP",
+                   "THEFT OF LICENSE PLATE", "MAIL THEFT", "THEFT FROM BUILDING",
+                   "BURGLARY OF VEHICLE", "BURGLARY OF SHED/DETACHED GARAGE/STORAGE UNIT",
+                   "THEFT FROM AUTO", "BURGLARY OF RESIDENCE", "AUTO THEFT") ~ "Theft",
+    
+    offense %in% c("ASSAULT W/INJURY-FAM/DATE VIOL", "ASSAULT BY CONTACT", 
+                   "ASSAULT BY THREAT", "AGG ASSAULT", "ASSAULT WITH INJURY",
+                   "ASSAULT BY CONTACT FAM/DATING", "ASSAULT BY THREAT FAM/DATING",
+                   "INJURY TO CHILD", "AGG ASLT STRANGLE/SUFFOCATE", "INJ TO ELDERLY FAM/DATE VIOL") ~ "Assault",
+    
+    offense %in% c("POSS CONTROLLED SUB/NARCOTIC", "POSS CONTROLLED SUB/SYN NARC", 
+                   "POSS CONTROLLED SUB/OTHER", "POSS OF DRUG PARAPHERNALIA", 
+                   "POSSESSION OF MARIJUANA") ~ "Drug-Related",
+    
+    offense %in% c("DISTURBANCE - OTHER", "FAMILY DISTURBANCE", 
+                   "FAMILY DISTURBANCE/PARENTAL", "DOC FIGHTING", "DOC DISPLAY GUN/DEADLY PUB PLC",
+                   "TERRORISTIC THREAT-FAM/DAT VIO", "STALKING", "HARASSMENT", 
+                   "DISORDERLY CONDUCT") ~ "Disturbance",
+    
+    offense %in% c("CRIMINAL TRESPASS", "CRIMINAL MISCHIEF", 
+                   "CRIMINAL MISCHIEF-NO SUSPECT", "GRAFFITI", "ARSON", "DAMAGE CITY PROP") ~ "Property Damage",
+    
+    offense %in% c("DWI", "EVADING VEHICLE", "EVADING / VEHICLE PURSUIT", 
+                   "DOC FIGHTING", "VIOL CITY ORDINANCE - OTHER", 
+                   "EXPLOSIVE ORDNANCE DISPOSAL", "TRAFFIC VIOLATION") ~ "Traffic Violation",
+    
+    offense %in% c("FRAUD - OTHER", "FRAUDULENT USE OF ID", 
+                   "FRAUD FILING FINANCE STATEMENT", "DEBIT CARD ABUSE", "IDENTITY THEFT") ~ "Fraud",
+    
+    offense %in% c("UNLAWFUL CARRYING WEAPON", "POSS OF FIREARM BY FELON", 
+                   "AIRPORT PLACES WEAPON PROHIBIT", "WEAPONS VIOLATION") ~ "Weapons",
+    
+    TRUE ~ "Other"
+  )
+}
+
+# generalize location types to similar locations
+categorize_location <- function(location) {
+  case_when(
+    str_detect(location, "RESIDENCE|APARTMENT|SHELTER|FARM") ~ "Residential",
+    str_detect(location, "RESTAURANT|BAR|NIGHTCLUB|COMMERCIAL|OFFICE|DEALERSHIP|MALL|STORE|GROCERY|CONVENIENCE|GAS STATION|SUPERMARKET|SERVICE") ~ "Commercial",
+    str_detect(location, "PARK|CHURCH|COMMUNITY|GOVERNMENT|STADIUM|ARENA|DAYCARE|AMUSEMENT") ~ "Public/Community Space",
+    str_detect(location, "HWY|ROAD|ALLEY|STREET|SIDEWALK|AIR|BUS|TRAIN|PARKING|GARAGE|DOCK|WHARF|TERMINAL|REST AREA") ~ "Transportation/Transit",
+    str_detect(location, "BANK|ATM") ~ "Financial",
+    str_detect(location, "SCHOOL|UNIVERSITY|COLLEGE|EDUCATION") ~ "Educational",
+    str_detect(location, "INDUSTRIAL|CONSTRUCTION|CASINO|RACE TRACK") ~ "Industrial/Work Sites",
+    str_detect(location, "JAIL|PRISON|CORRECTIONS") ~ "Correctional Facility",
+    TRUE ~ "Other"  # Catch-all for uncategorized locations
+  )
+}
+```
+
+**Cleaning Steps**:
+
+-   **Date Parsing**: Converted `Occurred Date Time` to separate `date`, `hour`, and `month` components for temporal analysis.
+
+-   **Data Reduction**: Selected relevant columns, resulting in a tidied dataset with 85,791 rows and 6 columns after removing rows with missing values.
+
+-   **Justification for Tidiness**: Each row now represents a single crime incident with clear categories for analysis, making the dataset tidy and ready for analysis.
+
+```{r}
+crime_data <- crime_data |>
+  rename(
+    location_type = `Location Type`,
+    council_district = `Council District`
+  ) |>
+  mutate(
+    `Occurred Date Time` = mdy_hm(`Occurred Date Time`),
+    hour = hour(`Occurred Date Time`),
+    month = month(`Occurred Date Time`, label = TRUE),
+    date = as.Date(`Occurred Date Time`),
+    crime = categorize_crime(`Highest Offense Description`),
+    location = categorize_location(location_type)
+  ) |>
+  select(crime, hour, month, 
+         date, location, council_district) |>
+  drop_na()
+
+crime_data
+```
+
+### Results
+
+#### **1. Distribution of Crime Types**
+
+**Interpretation**: Theft is the most prevalent crime in Austin, followed by “Other” and “Disturbance.” These findings indicate a need for more resources allocated to preventing theft and disturbances in the city.
+
+```{r}
+# crime type distribution
+ggplot(crime_data, aes(x = crime)) +
+  geom_bar(fill = "skyblue") +
+  labs(title = "Distribution of Crime Types", x = "Crime Type", y = "Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+# summary statistics of the distribution of crime types
+crime_summary <- crime_data |>
+  group_by(crime) |>
+  summarise(count = n()) |>
+  mutate(proportion = count / sum(count) * 100) |>
+  arrange(desc(count))
+
+crime_summary
+```
+
+#### **2. Distribution of Crimes by Hour**
+
+**Interpretation**: Crime rates increase in the evening, peaking around 12 AM. This trend aligns with common nightlife activities and reduced oversight in public areas, indicating potential hotspots for certain crime types at night.
+
+```{r}
+# hourly crime distribution
+ggplot(crime_data, aes(x = hour)) +
+  geom_histogram(binwidth = 1, fill = "steelblue", color = "black") +
+  labs(title = "Hourly Distribution of Crimes", x = "Hour of Day", y = "Count") +
+  theme_minimal()
+```
+
+```{r}
+# hourly summary statistics
+hourly_summary <- crime_data |>
+  group_by(hour) |>
+  summarise(count = n()) |>
+  summarise(
+    mean_count = mean(count),
+    max_count = max(count),
+    min_count = min(count)
+  )
+
+hourly_summary
+```
+
+#### **3. Monthly Distribution of Crimes**
+
+**Interpretation**: Crime rates are higher in summer, particularly in July, but peak during March and October which may be linked to increased outdoor and social activities. February has lower crime rates, potentially due to seasonal weather impacts.
+
+```{r}
+# monthly crime distribution
+ggplot(crime_data, aes(x = month)) +
+  geom_bar(fill = "salmon") +
+  labs(title = "Monthly Distribution of Crimes", x = "Month", y = "Count") +
+  theme_minimal()
+```
+
+```{r}
+# monthly distribution of crimes Summary
+monthly_summary <- crime_data |>
+  group_by(month) |>
+  summarise(count = n()) |>
+  summarise(
+    mean_count = mean(count),
+    max_count = max(count),
+    min_count = min(count)
+  )
+
+monthly_summary
+```
+
+#### **4. Crime Type by Location**
+
+**Interpretation**: Theft is prevalent in commercial, public spaces, and residential, areas while disturbances are almost exlusively in residential locations. This suggests a need for theft prevention measures in commercial, public, and residential spaces as well as community safety programs in residential neighborhoods.
+
+```{r}
+# plot top crime types by location type
+ggplot(crime_data, aes(x = location, fill = crime)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Crime Types by Location Type", 
+       x = "Location Type", y = "Crime Count", fill = "Crime Type") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+# crime types by location type summary
+crime_location_summary <- crime_data |>
+  group_by(location, crime) |>
+  summarise(count = n()) |>
+  arrange(desc(count)) |>
+  group_by(crime) |>
+  slice_max(count, n = 1)
+
+crime_location_summary
+```
+
+#### **5. Crime Incidents by Council District**
+
+**Interpretation**: Crime rates vary significantly by district, with Districts 3 and 9 experiencing the highest counts. Among all the districts, theft is the number one crime occuring. Targeted interventions in these districts may improve public safety and reduce crime.
+
+```{r}
+# aggregate crime counts by council district and crime type
+district_crime_data <- crime_data |>
+  group_by(council_district, crime) |>
+  summarise(count = n(), .groups = 'drop')
+
+# plot crime variation by district
+ggplot(district_crime_data, aes(x = factor(council_district), y = count, fill = crime)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Crime Variation by Council District", x = "Council District", y = "Crime Count", fill = "Crime Type") +
+  theme_minimal()
+```
+
+```{r}
+# crime by council district summary
+district_summary <- crime_data |>
+  group_by(council_district) |>
+  summarise(count = n()) |>
+  summarise(
+    max_district = council_district[which.max(count)],
+    max_count = max(count),
+    min_district = council_district[which.min(count)],
+    min_count = min(count)
+  )
+
+district_summary
+```
+
+#### **6. Top Crime Types by Hour**:
+
+**Interpretation**: All incidents peak in late evening and early morning hours, and again around noon suggesting that special measures during nighttime and at noon may mitigate these crime types.
+
+```{r}
+# crime count by hour and type
+ggplot(crime_data, aes(x = hour, color = crime, group = crime)) +
+  geom_line(stat = "count", linewidth = 1) +
+  labs(title = "Crime Types by Hour of Day", 
+       x = "Hour of Day", y = "Crime Count", color = "Crime Type") +
+  theme_minimal()
+```
+
+```{r}
+#  crime by hour summary
+crime_hourly_summary <- crime_data |>
+  group_by(hour, crime) |>
+  summarise(count = n()) |>
+  group_by(crime) |>
+  summarise(
+    avg_count = mean(count),
+    max_hour = hour[which.max(count)],
+    max_count = max(count)
+  )
+
+crime_hourly_summary
+```
+
+#### **7. Monthly Crime Trends by Crime Type**:
+
+**Interpretation**: Some crime types exhibit seasonality, with higher instances in specific months. This informs us on the optimal resource allocation for different crime types throughout the year.
+
+```{r}
+# aggregate crime counts by month
+monthly_crime_data <- crime_data |>
+  group_by(month, crime) |>
+  summarise(count = n(), .groups = 'drop')
+
+# plot crime trends by month
+ggplot(monthly_crime_data, aes(x = month, y = count, color = crime, group = crime)) +
+  geom_line(size = 1) +
+  labs(title = "Crime Trends by Month", x = "Month", y = "Crime Count", color = "Crime Type") +
+  theme_minimal() +
+  scale_x_discrete(limits = levels(crime_data$month))  # Ensures months are ordered correctly
+```
+
+```{r}
+# monthly crime trends by crime type summary
+monthly_crime_type_summary <- crime_data |>
+  group_by(month, crime) |>
+  summarise(count = n()) |>
+  group_by(crime) |>
+  summarise(
+    avg_count = mean(count),
+    max_month = month[which.max(count)],
+    max_count = max(count)
+  )
+
+monthly_crime_type_summary
+```
+
+### **Discussion**
+
+-   **Answering the Research Question**:
+
+    -   This analysis aimed to uncover the time and location patterns of crime in Austin and examine variations by crime type. The analysis revealed significant insights: **Theft** and **Disturbance** were the most common crime types, and crime rates showed clear peaks in **late evening hours/early mornings** and generally increases in **summer**. These trends are likely influenced by increased public activity and nightlife, which aligns with existing research on the impact of social behaviors on crime. Location-wise, certain districts reported higher crime incidents, particularly **Districts 5 and 9**. This distribution may reflect underlying socio-economic or environmental factors, such as district population density, economic conditions, or the presence of nightlife venues, which often attract specific types of crime.
+
+-   **Unexpected Findings**:
+
+    -   The data analysis revealed some unexpected results. For instance, while **Theft** was anticipated to be high in commercial zones, the distribution of **Disturbance** and **Assault** incidents was higher in residential areas. This suggests that addressing domestic and neighborhood conflicts could have a significant impact on reducing these crime types. Another interesting observation was the seasonal peak in **October** for theft, which could correlate with specific events, holidays, or increased retail activity. Additionally, weekly crime spikes around holidays like the Fourth of July suggest that public events may contribute to increased crime, underscoring the need for event-specific policing strategies.
+
+-   **Key Takeaways for Austin’s Law Enforcement**:
+
+    -   The findings point to clear areas for targeted interventions:
+
+        -   **Time-Based Policing**: Increased police presence in commercial areas during the evenings, especially from **8 PM to midnight**, could help mitigate crime during high-risk times.
+
+        -   **Location-Based Interventions**: Addressing theft in **Districts 3 and 9** through community surveillance or enhanced security measures in high-risk locations, such as shopping centers, could help reduce theft incidents.
+
+        -   **Seasonal Preparedness**: Preparing for peak crime months (March, October, and December) with additional patrols or community initiatives could help manage seasonal crime increases.
+
+-   **Dataset Observations**:
+
+    -   The dataset required extensive cleaning due to inconsistent location coding and missing values in certain fields. For example, similar locations were categorized differently (e.g., "Restaurant" vs. "Bar"), leading to initial inconsistencies in location-based analysis. Addressing these discrepancies in future data collection efforts would enhance analysis accuracy and yield more reliable insights.
+
+### **Reflection, Acknowledgments, and References**
+
+-   **Reflection**:
+
+    -   **Challenges Faced**: The most challenging aspect of the project was consolidating the data into a tidy format due to the varied descriptions in the `Location Type` and `Highest Offense Description` field and the need for custom categorizations in both crime types and locations. This required special consideration to ensure accurate and meaningful groupings.
+
+    -   **Lessons Learned**: Through this project, I developed a deeper understanding of data cleaning and categorization, as well as data visualization techniques. Handling real-world data also highlighted the importance of structured, consistent data entry, as small inconsistencies can significantly affect analyses.
+
+-   **Acknowledgments**:
+
+    I would like to express my appreciation to Professor Guyot and the teaching assistants for their guidance and feedback throughout the project. Their insights helped refine my approach to data analysis and interpretation. Special thanks to the City of Austin’s Open Data Portal for providing public access to crime data, which allowed for this study.
+
+-   **References**:
+
+    -   **Dataset**: Austin Crime Reports, available from the [City of Austin’s Open Data Portal](https://data.austintexas.gov/Public-Safety/Crime-Reports/fdj4-gpfu/about_data).
+
+        -   <https://data.austintexas.gov/Public-Safety/Crime-Reports/fdj4-gpfu/about_data>
+
+    -   **Background Research**:
+
+        -   Author links open overlay panelPei-Fen Kuo a, et al. “A Promising Example of Smart Policing: A Cross-National Study of the Effectiveness of a Data-Driven Approach to Crime and Traffic Safety.” *Case Studies on Transport Policy*, Elsevier, 5 Sept. 2019, www.sciencedirect.com/science/article/pii/S2213624X19301336.
+
+        -   Whitworth, Adam. “Local inequality and crime: Exploring how variation in the scale of inequality measures affects relationships between inequality and crime.” *Urban Studies*, vol. 50, no. 4, 29 Aug. 2012, pp. 725–741, <https://doi.org/10.1177/0042098012455716>.
+
+    -   **External Resources**:
+
+        -   Documentation for R packages `dplyr` and `ggplot2` was essential for data manipulation and visualization, ensuring the data was transformed and presented effectively.
