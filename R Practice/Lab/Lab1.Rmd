@@ -1,0 +1,98 @@
+---
+title: "Lab 1"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,  
+                      warning = FALSE, message = FALSE, 
+                      fig.align = "center",
+                      R.options = list(max.print=100))
+
+# Edit the file starting below
+```
+
+**This assignment is due by the end of the lab. Only one student in the group submits a pdf file on Gradescope.**
+
+*For all questions, include the R commands/functions that you used to find your answer (show R chunk). Answers without supporting code will not receive credit. Write full sentences to describe your findings.*
+
+### Introduction: (4 pts)
+
+Enter the names of the group members here: **Connor Shen, Abrar Alsaadi, Ben Krebs, Nethra Ganesh**
+
+Briefly introduce yourself, discuss and answer the following questions:
+
+-   Icebreaker: Which fictional team is the best team of all time?
+
+-   What will each group member do before coming to lab each week?
+
+-   What are our expectations for participation during lab?
+
+-   How will we address someone not meeting the above expectations?
+
+------------------------------------------------------------------------
+
+### Data exploration:
+
+In this lab, you will explore the dataset `faithful`. It contains information about eruptions of the Old Faithful geyser in Yellowstone National Park. The first few observations are listed below.
+
+```{r}
+head(faithful)
+```
+
+### Question 1: (4 pts)
+
+Use your favorite web browser and look for an image of the Old Faithful. Include that image below. Has anyone in your group been to Yellowstone and seen this geyser erupt?\
+\
+![](https://cdn.britannica.com/38/94438-050-1A943B1D/Old-Faithful-geyser-Yellowstone-National-Park-Wyoming.jpg)
+
+**Connor has been to Old Faithful but has not seen it erupt.**
+
+------------------------------------------------------------------------
+
+### Question 2: (4 pts)
+
+How many rows are there in this dataset? How many columns? In which units are the variables reported? You will need more information about the dataset to answer that last question: run `?faithful` **in the console**. *Note: using `?` in your Markdown document might prevent you from knitting or will open the documentation in a new tab.*
+
+```{r}
+ncol(faithful)
+nrow(faithful)
+```
+
+**Your answer goes here. Write sentences in bold.**
+
+------------------------------------------------------------------------
+
+### Question 3: (5 pts)
+
+Create a scatterplot using the `plot()` function to explore how the waiting time might affect the eruption duration. Make sure to label axes (`xlab=`, `ylab=`) and give a title to the graph (`main=`). Describe the relationship between waiting time and eruption duration based on what you notice in this graph.
+
+```{r}
+# your code goes below (replace this comment with something meaningul)
+plot(faithful$eruptions, faithful$waiting, 
+     main="Comparing waiting time and eruption duration",
+     xlab="Eruption",
+     ylab="Waiting")
+```
+
+**Your answer goes here. Write sentences in bold.**
+
+------------------------------------------------------------------------
+
+### Question 4: (3 pts)
+
+How does the scatterplot that you made in the previous question compare to the one you selected in the intro lab? Does it look similar or different? If the plot looks different from what you selected, how would you explain the difference?
+
+**Your answer goes here. Write sentences in bold.**
+
+------------------------------------------------------------------------
+
+### Formatting: (5 pts)
+
+Make sure the names of all group members are included at the beginning of the document.
+
+Knit your file! You can knit into pdf directly or into html. Once it knits in html, click on `Open in Browser` at the top left of the window pops out. Print your html file into pdf from your browser.
+
+Any issue? Ask other classmates or TA!
+
+Finally, remember to select pages for each question when submitting your pdf to Gradescope.

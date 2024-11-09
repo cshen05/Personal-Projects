@@ -1,0 +1,283 @@
+---
+title: "Worksheet 15: Linear Regression"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r global_options, include=FALSE}
+# The following code is a basic setup of options for your document
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE, 
+                      warning = TRUE,
+                      message = FALSE,
+                      fig.align = "center", 
+                      R.options = list(max.print=50))
+
+# Edit the file starting below
+
+```
+
+In this worksheet, we will discuss our first statistical learning model: linear regression.
+
+## 1. Set up
+
+Let's first load `tidyverse` because we always need functions to manipulate our dataset:
+
+```{r, message=FALSE}
+# Load packages 
+library(tidyverse)
+```
+
+We will continue exploring the `mtcars` dataset:
+
+```{r}
+# Looks familiar?
+head(mtcars)
+```
+
+This dataset contains information about different features of some cars that we will use to predict fuel efficiency (the `mpg` variable).
+
+## 2. Predicting a numeric response with a numeric predictor
+
+First, let's try to predict the `mpg` based on the weight of a car `wt`.
+
+### a. Visualizing the model
+
+Using `geom_smooth()` we can visualize the linear regression model with `method = lm`:
+
+```{r}
+# Represent the relationship with a model
+mtcars |>
+  ggplot(aes(x = wt, y = mpg)) +
+  # Consider a linear regression model
+  geom_smooth(method = "lm", se = FALSE, color = "steelblue", size = 2) +
+  geom_point(size = 4) + 
+  labs(x = "Weight (thousands of lbs)",
+       y = "Miles per gallon",
+       title = "Linear regression model to predict Miles per gallon based on Weight")
+```
+
+How did R choose what line to fit this data?
+
+### b. Fitting a model
+
+If we suspect there is a linear relationship between two variables, we can consider a linear regression model. To find the expression of the linear model represented above, we use the `lm(response ~ predictor, data = ...)` function:
+
+```{r}
+# Fit the model
+fit_lin <- lm(mpg ~ wt, data = mtcars)
+
+# Take a look at the model summary
+summary(fit_lin)
+```
+
+This output tells us a lot of things. In particular, it gives us the estimates of the model. We predict the value of `mpg` if we know the weight `wt` of a car as follows:
+
+$\widehat{mpg} = 37.2851 - 5.3445 * wt$
+
+Note: We use the hat to specify that we get predicted values of mpg (as opposed to `mpg`, the observed values in the dataset).
+
+### c. Predicting values
+
+Let's use the expression of the model to calculate predicted values.
+
+#### **Try it! Use the expression of the model above to create a new variable in `mtcars` called `predicted` that predicts values of `mpg` based on values of `wt`. Then calculate the mean of the predicted values. How does the mean of `predicted` values compare to the mean of the observed `mpg`?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here!**
+
+Much more convenient to calculate predicted values (especially when we will have more predictors with a longer expression for the model), let's use the `predict(model_name)` function:
+
+```{r}
+mtcars |> 
+  # Calculate predicted values
+  mutate(predicted = predict(fit_lin)) |>
+  # Just show the variables of interest
+  select(wt, mpg, predicted)
+```
+
+We can also find predicted values for new data with the option `newdata`. For example, I have a Toyota RAV4 that weighs about 3,500 lbs:
+
+```{r}
+# Find predicted values for new data
+rav4 <- data.frame(wt = 3.5)
+predict(fit_lin, newdata = rav4)
+```
+
+The predicted fuel consumption is about 18.6 mpg... Well... my car is supposed to get a much better fuel consumption. This is an example of what we call **extrapolation**: we use a model that is not applicable to our new data. The cars contained in `mtcars` were listed in the 1974 Motor Trend US magazine and my car is from 2017 so fuel efficiency has changed a lot in between!
+
+#### **Try it! Predict the value of `mpg` for a car that weighs 3,570 lbs. Are there any cars in `mtcars` that had such a weight? Does their observed value of `mpg` match the predicted value? Why or why not?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here!**
+
+### d. Residuals
+
+Our predicted values don't usually match exactly our observed values. The residuals represent the difference between observed values and predicted values:
+
+```{r}
+mtcars |> 
+  # First add predicted values based on model
+  mutate(predicted = predict(fit_lin)) |> 
+  # Calculate residuals = observed - predicted
+  mutate(residuals = mpg - predicted) |>
+  # Only display variables of interest
+  select(wt, mpg, predicted, residuals)
+```
+
+Or more convenient using the `resid(model_name)` function:
+
+```{r}
+mtcars |> 
+  # Calculate residuals
+  mutate(residuals = resid(fit_lin)) |>
+  select(wt, mpg, residuals)
+```
+
+Let's visualize the residuals:
+
+```{r}
+mtcars |> 
+  # Calculate predicted values
+  mutate(predicted = predict(fit_lin)) |> 
+  # Use a ggplot to represent the relationship
+  ggplot(aes(x = wt, y = mpg)) +
+  # Add the linear model
+  geom_smooth(method = "lm", se = FALSE, color = "steelblue", size = 2) + 
+  # Add residuals = vertical segments from observations to predicted
+  geom_segment(aes(xend = wt, yend = predicted), alpha = .5, color = "red") +
+  # Display the observed data
+  geom_point(size = 4) +
+  # Display the predicted (on top of the line)
+  geom_point(aes(y = predicted), size = 4, color = "orange") +
+  labs(x = "Weight (thousands of lbs)",
+       y = "Miles per gallon",
+       title = "Linear regression model with residuals")
+```
+
+A linear regression model is actually built by minimizing the sum of squared residuals.
+
+#### **Try it! Find the mean of the residuals. Why does it make sense to get this value?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here!**
+
+### e. Performance
+
+To quantify performance for linear regression models, we can consider the average distance between the predicted values from the model and the observed values in the dataset. This is called the root mean square error (RMSE) of the model.
+
+```{r}
+# Calculate RMSE of regression model: square root of mean residuals squared
+sqrt(mean(resid(fit_lin)^2))
+```
+
+The lower the RMSE, the better a model fits a dataset and the more reliable our predicted values can be. Note that the RMSE is reported in the same unit as the **outcome** variable. Here it means that the predicted values typically differ from the actual values of `mpg` by 2.95 mpg.
+
+We can also consider the adjusted coefficient of determination $R^2$, which reports the percentage of variation in the response variable that can be explained by the predictor variables.
+
+```{r}
+# Report adjusted R-squared of regression model
+summary(fit_lin)$adj.r.squared
+```
+
+The higher the $R^2$, the better a model fits a dataset. Note that $R^2$ represents a proportion between 0 and 1. Here it means that about 75.5% of the variation in `mgp` can be explained by the weight of a car.
+
+#### **Try it! Predict `mpg` based on another numeric feature of the car (for example, `disp`, `hp`, ...). Is the model with this new predictor performing better or worse than the model based on `mpg`?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here!**
+
+## 3. Using a categorical predictor
+
+What if we chose to predict the fuel consumption based on the transmission of a car (the `am` variable, 0 = automatic vs 1 = manual)? Let's take a look at the relationship with this new predictor:
+
+```{r}
+# Represent the relationship 
+mtcars |>
+  ggplot(aes(x = am, y = mpg)) +
+  # Consider a linear regression model
+  geom_smooth(method = "lm", se = FALSE, color = "steelblue", size = 2) +
+  geom_point(size = 4) + 
+  labs(x = "Transmission (0 = automatic vs 1 = manual)",
+       y = "Miles per gallon",
+       title = "Linear regression model to predict Miles per gallon based on Transmission")
+```
+
+It doesn't really look like a linear relationship but we can still fit a linear regression model with the `am` predictor:
+
+```{r}
+# Fit the model
+fit_lin <- lm(mpg ~ am, data = mtcars)
+
+# Take a look at the model summary
+summary(fit_lin)
+```
+
+#### **Try it! Write the expression of the new model. Predict values of `mpg` based on `am` using `predict()`. Why does it make sense to get what we get? And what are we getting exactly?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here!**
+
+## 4. Using multiple predictors
+
+We can add many predictors to our linear regression model! What if we combine `wt` and `am`?
+
+```{r}
+# Fit the model
+fit_lin <- lm(mpg ~ wt + am, data = mtcars)
+
+# Take a look at the model summary
+summary(fit_lin)
+```
+
+Now the expression of the model is $\widehat{mpg}=37.32155-5.35281*wt-0.02362∗am$
+
+#### **Try it! Predict the value of `mpg` for an automatic Alfa Romeo Alfetta GTV 2.0 which weighs about 2500 lbs.**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here!**
+
+And what if we add all possible predictors?
+
+```{r}
+# Fit the model using all predictors: refer to all variable with `.` (double check it makes sense to add all predictors)
+fit_lin <- lm(mpg ~ ., data = mtcars)
+
+# Take a look at the model summary
+summary(fit_lin)
+```
+
+Now the expression of the model becomes very complex but check out the performance based on adjusted R-squared!
+
+Notes:
+
+-   Adding too many variables can create issues such as **overfitting**: the model is too specific to the cars in the dataset on which we "train" the model and it will be very difficult to generalize to other cars.
+
+-   We can quickly check which features might be more useful for making predicted by looking at the last column in the model output. Any `.` or `*` shows which features are "significant" while taking into account all other variables.

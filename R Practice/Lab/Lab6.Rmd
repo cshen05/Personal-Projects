@@ -1,0 +1,183 @@
+---
+title: "Lab 6"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,  
+                      warning = TRUE, message = FALSE, 
+                      fig.align = "center",
+                      R.options = list(max.print=100))
+
+# Edit the file starting below
+```
+
+### Enter the names of the group members here: Benjamin Zodak, Connor Shen, Nathan Goetten
+
+**This assignment is due by the end of the lab. Only one student in the group submits a pdf file on Gradescope.**
+
+*For all questions, include the R commands/functions that you used to find your answer (show R chunk). Answers without supporting code will not receive credit. Write full sentences to describe your findings.*
+
+In this lab, you will explore a dataset that contains information about the chances of admissions into graduate school for international students. Let's first load the `tidyverse` package:
+
+```{r, warning=FALSE}
+library(tidyverse)
+```
+
+Let's upload the data from Github, do a little bit of cleaning, and take a quick look:
+
+```{r}
+# Upload data from GitHub
+admissions <- read_csv("https://raw.githubusercontent.com/laylaguyot/datasets/main//Admission_Predict.csv") |>
+  # Rename variables for easier manipulation 
+  rename(Serial_No = `Serial No.`,
+         GRE_Score = `GRE Score`, 
+         TOEFL_Score = `TOEFL Score`,
+         University_Rating = `University Rating`, 
+         Admission_Chance = `Chance of Admit`)
+
+# Take a quick look
+head(admissions)
+```
+
+This dataset contains the following variables: GRE Scores (out of 340), TOEFL Scores (out of 120), University Rating (out of 5), the strength of the Statement of Purpose `SOP` and Letter of Recommendation `LOR` (out of 5), Undergraduate GPA (out of 10), Research Experience (either yes = 1 or no = 0), and the Admission chance (ranging from 0 to 1).
+
+The goal of the lab is to make predictions for graduate school admission based on other features of a student's application.
+
+------------------------------------------------------------------------
+
+### Question 1: (1 pt)
+
+Which variable in the `admissions` dataset should be considered as the `outcome` variable?
+
+**Admission_Chance is the outcome variable.**
+
+Which variable in the `admissions` dataset should we NOT use to predict the `Admission_Chance`? Why?
+
+**The serial number should not be used to predict the chance of admission because the order that students apply should not have any effect on their chances.**
+
+------------------------------------------------------------------------
+
+### Question 2: (10 pts)
+
+Pick one variable to predict a student's admission chance into graduate school. What potential relationship between this variable and the outcome variable do you anticipate? Answer that question before exploring the data!
+
+**We believe there should be a positive relationship between GRE Score and the admission chance.**
+
+Visualize the relationship between the predictor you chose and the outcome variable. Does your visualization match the relationship that you had anticipated?
+
+```{r}
+# plotting GRE score against the admissions chance
+ggplot(admissions, aes(x=GRE_Score, y=Admission_Chance)) +
+  geom_point() +
+  geom_smooth(method="lm", se = FALSE, color = "steelblue") +
+  labs(title="Relationship between GRE Score and Admission Chance",
+       x="GRE Score",
+       y="Admission Chance") +
+  theme_minimal()
+```
+
+**There is a positive relationship between GRE scores and admission chances. This matches what we had anticipated.**
+
+Fit a linear regression model to predict the outcome based on the predictor you chose. Write the expression of the linear model.
+
+```{r}
+# created a linear regression model on admissions chance and GRE score
+fit_lin <- lm(Admission_Chance ~ GRE_Score, data = admissions)
+summary(fit_lin)
+```
+
+**Admission_Chance_hat = -2.4360842 + 0.0099759 \* GRE_Score**
+
+Find predicted values for the lowest and the highest possible values of your predictor (for example, CGPA varies from 0 to 10 in theory). Do the predicted values make sense in context? Why/Why not?
+
+```{r}
+# looking at the smallest and biggest GRE scores and comparing predicted admissions chances
+admissions |>
+  mutate(predicted = predict(fit_lin)) |>
+  arrange(GRE_Score) |>
+  slice(1, n())
+```
+
+**The predicted values do make sense in this context because the smallest GRE score also had one of the lowest predicted admissions chance. This tells us that GRE score is a pretty good indicator for admissions chance.**
+
+Evaluate the performance of the model with two appropriate measures. *Note: no need to comment on the values for now.*
+
+```{r}
+# calculating RMSE and adjusted r squared values
+sqrt(mean(resid(fit_lin)^2))
+
+summary(fit_lin)$adj.r.squared
+```
+
+------------------------------------------------------------------------
+
+### Question 3: (10 pts)
+
+Pick another variable to predict a student's admission chance into graduate school. What potential relationship between this variable and the outcome variable do you anticipate? Answer that question before exploring the data!
+
+**We think that a higher TOEFL score would mean a higher admissions chance.**
+
+Visualize the relationship between the predictor you chose and the outcome variable. Does your visualization match the relationship that you had anticipated?
+
+```{r}
+# plotting TOEFL score against admissions chance
+ggplot(admissions, aes(x=TOEFL_Score, y=Admission_Chance)) +
+  geom_point() +
+  geom_smooth(method="lm", se = FALSE, color = "steelblue") +
+  labs(title="Relationship Between TOEFL Score and Admissions Chance",
+       x="TOEFL Score",
+       y="Admission Chance")
+```
+
+**The relationship matched what we had anticipated. The higher the TOEFL score, the higher the admissions chance for the student.**
+
+Fit a linear regression model to predict the outcome based on the predictor you chose. Write the expression of the linear model.
+
+```{r}
+# creating a linear regression model using admissions chance and TOEFL score
+fit_lin2 <- lm(Admission_Chance ~ TOEFL_Score, data = admissions)
+summary(fit_lin2)
+  
+```
+
+**Admission_Chance_hat = -1.2734005 + 0.0185993\*TOEFL_Score**
+
+Evaluate the performance of the model with two appropriate measures. *Note: no need to comment on the values for now.*
+
+```{r}
+# calculating RMSE value and the adjusted R squared value
+sqrt(mean(resid(fit_lin2)^2))
+
+summary(fit_lin2)$adj.r.squared
+```
+
+**The RMSE is 0.08703207 and the adjusted r squared is 0.6256829.**
+
+------------------------------------------------------------------------
+
+### Question 4: (2 pts)
+
+Between the two models you explored, which one appears to be more useful for predicting a student's chance of admission into graduate school? Explain.
+
+**Both models are very similar but the GRE score model is slightly better. The adjusted r squared for the GRE model is higher than the adjusted r squared for the TOEFL model while also having a lower RMSE score.**
+
+------------------------------------------------------------------------
+
+### Question 5: (1 pt)
+
+After investigating what characteristics of an application seem to affect admission into graduate school for some international students, did the data match your expectations or not? If the data differed from your expectation, provide a possible explanation for why the data differed from what you expected.
+
+**The data kind of matched our expectations but was also different. While we did expect that higher GRE and TOEFL scores to have a greater chance in graduate admissions, we also found out that just those values were not the best way to predict admissions chance. In reality, admissions into these graduate programs is dependent on a lot of different factors, not just one.**
+
+------------------------------------------------------------------------
+
+### Formatting: (1 pt)
+
+Make sure the names of all group members are included at the beginning of the document.
+
+Knit your file! You can knit into pdf directly or into html. Once it knits in html, click on `Open in Browser` at the top left of the window pops out. Print your html file into pdf from your browser.
+
+Any issue? Ask other classmates or TA!
+
+Finally, remember to select pages for each question when submitting your pdf to Gradescope and to identify your group members.

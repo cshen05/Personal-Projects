@@ -1,0 +1,259 @@
+---
+title: "Worksheet 1: RMarkdown"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+editor_options: 
+  markdown: 72
+    wrap: 72
+---
+
+```{r global_options, include=FALSE}
+# This grey area is called a code chunk
+# The following code is a basic setup of options for your document
+# You won't have to edit it (unless you want to!)
+knitr::opts_chunk$set(echo = TRUE, # show all code chunks in document
+                      eval = TRUE, # run all code chunks
+                      warning = TRUE, # show warning messages
+                      fig.align = "center", # figures are centered
+                      R.options = list(max.print=100)) # print 100 elements max
+```
+
+Much of the work in this class will be done via **R Markdown documents.** R Markdown documents combine text (with some formatting options), R code, and R outputs including figures. They are a great way to produce self-contained, reproducible, well-documented data analyses.
+
+In this first *.Rmd* worksheet, you will learn how to do some basic markdown editing, continue to explore **base R**, manipulate datasets, and include some **R packages**. After you have made changes to the document, press "Knit" on the top of this pane and see what you get: hopefully an *html* file! It will complain in the console if some part of the code is not working. Remember: **troubleshooting is part of programming life**!
+
+------------------------------------------------------------------------
+
+## 1. Basic Markdown editing
+
+Let's try out basic R Markdown features, as described [here](http://rmarkdown.rstudio.com/authoring_basics.html): try different headers, make a numbered list and a bulleted list, write some text that is bold and some that is in italics, try the block-quote feature.
+
+### a. Headers
+
+# For
+
+## Example
+
+### These
+
+#### Are
+
+##### Different
+
+###### Headers
+
+######Does not knit as a header
+
+Make sure to leave a space after \#'s so that they are interpreted as headers. Similarly, leave a blank line between sections.
+
+### b. Text formatting
+
+You can use some basic formatting to highlight some part of the text:
+
+**bold**, *italic*, or ***bold and italic***
+
+~~strikethrough text~~
+
+> Create a blockquote
+
+To refer to R objects (variables, datasets, functions, ...) within the text, we usually use the slanted quotes. Remember the `mean()` function? We will use it again today.
+
+### c. Lists and bullet points
+
+Create a list:
+
+1.  Here
+2.  Are
+3.  Four
+4.  Things
+
+Or some bullet points:
+
+-   bullet 1
+
+    -   sub-bullet 1
+
+-   bullet 2
+
+    -   sub-bullet 2
+
+-   bullet 3
+
+    -   sub-bullet 3
+
+### d. HTML hyperlinks, images, tables, etc.
+
+We can include external links and images:
+
+[Here is a hyperlink to Canvas](https://canvas.utexas.edu)
+
+Below is an image from a URL (for local images, just specify the file path in place of the URL):
+
+![](https://news.utexas.edu/wp-content/uploads/2021/10/bevo-9841-2100x1398-e2000d2b-a7a1-448c-83d5-281310430e66-1024x682.jpg)
+
+*Note: Modifying text formatting, including links, images, and tables is fairly easy to do with the `Visual` mode: it works more like a standard text editor.*
+
+## 2. Embedded R code
+
+The advantage of a R Markdown document is that it incorporates R code in chunks within the text.
+
+### a. Code chunks
+
+Code chunks will be executed when knitting and the output will be shown in the output file (usually a *html* output in this course).
+
+```{r}
+# Recall our sweet_apples data frame from last lecture
+sweet_apples <- data.frame(
+  varieties = c('Fuji', 'Gala', 'Golden Delicious', 'Granny Smith'),
+  sweetness = c(1, 2, 3, 4),
+  red = c(TRUE,TRUE,FALSE,FALSE)
+)
+```
+
+We can use the objects created in one chunk in the following chunks:
+
+```{r}
+# Find the mean sweetness
+mean(sweet_apples$sweetness)
+```
+
+*Note: Make sure to skip at least 1 line before and after the code chunk to avoid any formatting issue.*
+
+#### **Try it!**
+
+In a group of 4-5 students, there is: - a facilitator: participant with first first name in alphabetical order - a reporter: participant with last first name in alphabetical order
+
+**Part A: Icebreaker questions**
+
+The facilitator answers each question below then asks each participant to answer them:
+
+1.  How has your first week of classes been so far?
+
+2.  What is your spirit animal?
+
+**Part B: Collect and analyze data!**
+
+1.  Create a data frame containing the following information - the first names of the participants in your group (including yourself) - their age - their height
+
+```{r}
+# Write and submit code here!
+group <- data.frame(
+  names = c('Connor', 'Dan', 'Kailee', 'Samay'),
+  age = c(19, 21, 22, 20),
+  height = c(72, 70, 67, 72)
+)
+```
+
+2.  Find the mean age and height of students in your group.
+
+```{r}
+# Write and submit code here!
+mean(group$age)
+mean(group$height)
+```
+
+3.  Reporter, fills in the following spreadsheet: [Link to spreadsheet](https://docs.google.com/spreadsheets/d/1l2zHeZL1wuWTzl7sUF4L-NhfAmVezz4_jbm0ISNj3QM/edit?usp=sharing)
+
+4.  Do you think all groups will get the same mean age? mean height? Why/Why not? Reporter, get ready to share with the rest of the class
+
+**Write sentences here.**
+
+### b. More base R: built-in datasets
+
+R comes with several built-in datasets, which are generally used as demo data for playing with R functions. The dataset used in the following code chunk is `cars`, which lists speed (mph) and corresponding stopping distance (ft) for some cars from the 1920s. You can run all the code in a chunk at once by using the play button on the top right of the chunk or you can submit code line by line like we did in a regular R script.
+
+```{r}
+# Display the first 6 rows of the dataset
+head(cars)
+
+# Focus on one variable
+cars$dist
+```
+
+#### **Try it! Calculate the mean of each variable in the `cars` dataset. Write a sentence in bold below the code chunk to interpret these values in context (including units).**
+
+```{r}
+# Write and submit code here!
+mean(cars$speed)
+mean(cars$dist)
+```
+
+\*\* On average, cars are going 15.4 mph\*\*
+
+You can create some basic table to summarize each of the variables using the means calculated in a previous code chunk:
+
+|      | speed | distance |
+|------|-------|----------|
+| mean | 15.4  | 42.98    |
+
+What if we want to include more statistics about our data? A pretty convenient function that can find basic descriptive statistics for all variables in the dataset is `summary()`:
+
+```{r}
+# Take a look at descriptive statistics for all variables
+summary(cars)
+```
+
+It can help us find any inconsistencies in the data (e.g., min or max values that are out of range of what we expect).
+
+### c. More base R: basic plots
+
+You can easily embed plots in your document:
+
+```{r}
+# Create a basic histogram
+hist(cars$speed)
+```
+
+If you only want to display the plot in the knitted document, and not the code, you can hide the code with the option `echo=FALSE` in the code chunk settings (see below in `{r, }`). For example, you will see a boxplot in the *html* file but you won't see the code needed to create the plot:
+
+```{r, echo=FALSE}
+# Create a basic boxplot
+boxplot(cars$speed)
+```
+
+#### **Try it! Use one of the plots above to visualize the distribution of the stopping distance `dist`. Briefly describe what you see.**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+We could also investigate the relationship between the two numeric variables with a scatterplot:
+
+```{r}
+# Create a basic scatterplot (by default, variable on x-axis first, then variable on y-axis)
+plot(cars$speed, cars$dist)
+```
+
+We will learn fancier visualizations (especially with labels and titles!) in the next part of this unit but basic plots are useful for simple and quick visualizations.
+
+## 3. Packages
+
+Sometimes base R is not enough! R packages are collections of functions and datasets developed by the R community worldwide. You can install a package by typing the function `install.packages(“package_name”)` **in the console** panel OR specifying the option `eval=FALSE` in the code chunk settings (see below in `{r, }`). This option will not evaluate the code chunk when knitting.
+
+For example, you can install the package `tidyverse` (it should already be installed on the server):
+
+```{r, eval=FALSE}
+# Install the package
+install.packages("tidyverse")
+```
+
+*Note: using `install.packages()` in your Markdown document will prevent you from knitting so don't include it in your document since you only need to install a package once! Or use the option `eval=FALSE` in the code chunk settings.*
+
+Once a package is installed, you need to load the package to call specific functions from this package using `library(package_name)`:
+
+```{r}
+# Load the package within the Markdown file
+library(tidyverse)
+```
+
+We will learn great functions from the `tidyverse` package throughout the semester.
+
+*Note: your R Markdown file is independent, meaning that all packages used in your document must be called within the document. If you are using functions not built in R, you'll get an error like: `object 'function_name' not found`.*
+
+**Worksheet keys are posted at the end of the week on Canvas under Programming Tools.**

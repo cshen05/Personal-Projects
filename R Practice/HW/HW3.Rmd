@@ -1,0 +1,372 @@
+---
+title: "HW 3"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,  
+                      warning = TRUE, message = FALSE, 
+                      fig.align = "center",
+                      R.options = list(max.print=100))
+
+# Edit the file starting below
+
+# Upload packages
+library(tidyverse)
+```
+
+### Enter your name and EID here: Connor Shen, cs65692
+
+**You will submit this homework assignment as a pdf file on Gradescope.**
+
+*For all questions, include the R commands/functions that you used to find your answer (show R chunk). Answers without supporting code will not receive credit. Write full sentences to describe your findings.*
+
+------------------------------------------------------------------------
+
+## Part 1
+
+In this first part, you will conduct a data analysis of a dataset about a community of penguins in the Antarctic. Install the package containing this dataset and look up the documentation:
+
+```{r, eval = FALSE}
+# Install the package containing the dataset
+install.packages("palmerpenguins")
+
+# Read the documentation
+?palmerpenguins::penguins
+```
+
+Then save the data in your environment:
+
+```{r, message=FALSE}
+# Save the object as a dataframe
+penguins <- as.data.frame(palmerpenguins::penguins)
+```
+
+### Question 1: (1 pt)
+
+In the documentation, you should have learned that there are 3 different species of penguins. Use your favorite web browser to find an image about the 3 species and include it below:
+
+![Adélie penguin](https://storage.googleapis.com/oceanwide_web/media-dynamic/cache/widen_1100_progressive/media/default/0001/06/4e5f887d56223e61130c7446ff3d8714c8c85925.jpeg)
+
+![Gentoo penguin](https://storage.googleapis.com/oceanwide_web/media-dynamic/cache/widen_1100_progressive/media/default/0001/01/e7e73d7a57365d253adf7ef302ca3d2d1b0d6f32.jpeg)
+
+![Chinstrap penguin](https://storage.googleapis.com/oceanwide_web/media-dynamic/cache/widen_1100_progressive/media/default/0001/01/cf279c95a93b9ac590d5ed76ad8753c84c536135.jpeg)
+
+How was the data obtained? Write a sentence to cite the source of the data. You will cite this source in the caption of each of your visualization in this part of the assignment.
+
+**Information on all 3 species came from the Palmer Station on Antarctica as well as K. Gorman who published a book on the penguins in Antarctica.**
+
+------------------------------------------------------------------------
+
+### Question 2: (1 pt)
+
+In the next questions, you will compare 2 numeric variables for each species. Pick 2 numeric variables in the `penguins` dataset and write a question you would be able to answer with your data analysis:
+
+**Does the bill length correlate with their body mass?**
+
+What do you expect the answer of that question would be? *Note: there is no right or wrong answer here as it does not matter if your data analysis does or does not match your expectations.*
+
+**Yes, I think there is a positive correlation with bill length and body mass.**
+
+------------------------------------------------------------------------
+
+### Question 3: (1 pt)
+
+How many rows and columns are there in this dataset? What does each row represent? Quickly check if there are any weird values for the variables in this dataset.
+
+```{r}
+# count the amount of rows, columns, and missing values in penguins
+nrow(penguins)
+ncol(penguins)
+sum(is.na(penguins))
+```
+
+**There are 344 rows and 8 columns in the data set. Each row represents the species, the island they live on, the bill length, bill depth, and flipper length all in milometers, body mass in grams, their sex and the year of the study. There are 19 missing values in penguins.**
+
+------------------------------------------------------------------------
+
+### Question 4: (2 pts)
+
+Using an appropriate visualization, represent the distribution of `species`. Also find appropriate statistics. Write a sentence to interpret each visualization. *Note: make sure to add labels and a caption.*
+
+```{r}
+# plot the distributions of the penguin species
+ggplot(penguins) +
+  geom_bar(aes(x=species)) +
+  labs(x="Species", 
+       y="Count", 
+       title="Distribution of Penguin Species", 
+       caption = "Data source: Palmer Penguins dataset")
+
+summary(penguins$species)
+```
+
+**The biggest population of penguins are the Adelie species at 152, followed by the Gentoo at 124 and finally the Chinstrap at 68.**
+
+------------------------------------------------------------------------
+
+### Question 5: (2 pts)
+
+Using appropriate visualizations, represent the univariate distributions of each of the two numeric variables you picked. Also find appropriate statistics. Write a sentence to interpret each visualization. *Note: make sure to add labels, a caption, and adjust some options to improve the visualization. For example: if using a histogram, adjust the `binwidth` and `center`; if using a boxplot, get rid of any extra labels. Address any warning message that might appear.*
+
+> First numeric variable
+
+```{r}
+# plot the distribution of bill length amoung all penguins
+penguins |>
+  filter(!is.na(bill_length_mm)) |>
+  ggplot(aes(x = bill_length_mm)) +
+  geom_histogram(binwidth = 2, fill = "skyblue", color = "black", center = 45) +
+  labs(title = "Distribution of Bill Length (mm)",
+       x = "Bill Length (mm)",
+       y = "Frequency",
+       caption = "Data source: Palmer Penguins dataset") +
+  theme_minimal()
+
+summary(penguins$bill_length_mm)
+```
+
+**The data is a normal distribution, with its median and mean close to each other (44.45 and 43.92 respectively). There are also no outliers in the data.**
+
+> Second numeric variable
+
+```{r}
+# plot the distribution of body masses across all penguins
+penguins |>
+  filter(!is.na(body_mass_g)) |>
+  ggplot(aes(x = body_mass_g)) +
+  geom_boxplot(fill = "skyblue", color = "black") +
+  labs(title = "Distribution of Body Mass (g)",
+       x = "Body Mass (g)",
+       y = "Frequency",
+       caption = "Data source: Palmer Penguins dataset") +
+  theme_minimal()
+
+summary(penguins$body_mass_g)
+```
+
+**The distribution of the data is right-skewed with its median below the mean (4050 to 4202 respectively) and the data has no outliers.**
+
+------------------------------------------------------------------------
+
+### Question 6: (2 pts)
+
+Using appropriate visualizations, represent the distributions of each of the two numeric variables you picked across species. Write a sentence to interpret each visualization. *Note: make sure to add labels, a caption, and adjust some options to improve the visualization. Address any warning message that might appear.*
+
+> First numeric variable and species
+
+```{r}
+# graphing bill length split by species
+penguins |>
+  filter(!is.na(bill_length_mm) & !is.na(species)) |>
+  ggplot(aes(x = bill_length_mm, fill = species)) +
+  geom_histogram(binwidth = 2, color = "black", center = 45, alpha = 0.7) +
+  facet_wrap(~ species) +
+  labs(title = "Distribution of Bill Length (mm) by Species",
+       x = "Bill Length (mm)",
+       y = "Frequency",
+       caption = "Data source: Palmer Penguins dataset") +
+  theme_minimal()
+
+summary(penguins$bill_length_mm)
+```
+
+**Adelie penguins have the shortest bills, but chinstrap penguins and gentoo penguins both have similar bill sizes.**
+
+> Second numeric variable and species
+
+```{r}
+# graphing distribution of body mass split by species
+penguins |>
+  filter(!is.na(body_mass_g) & !is.na(species)) |>
+  ggplot(aes(x = body_mass_g, fill = species)) +
+  geom_boxplot(color = "black") +
+  facet_wrap(~ species) +
+  labs(title = "Distribution of Body Mass (g) by Species",
+       x = "Body Mass (g)",
+       y = "Frequency",
+       caption = "Data source: Palmer Penguins dataset") +
+  theme_minimal()
+
+summary(penguins$body_mass_g)
+```
+
+**Adelie and Chinstrap penguins both have similar body masses while Gentoo penguins are on average, heavier.**
+
+------------------------------------------------------------------------
+
+### Question 7: (2 pts)
+
+Using an appropriate visualization, represent the relationship between the three variables (`species` and the two numeric variables you picked). Write a sentence to interpret this visualization. Also discuss if your data analysis met your expectations. *Note: make sure to add labels, a caption, and adjust some options to improve the visualization. Address any warning message that might appear.*
+
+```{r}
+# graphing the body mass vs bill length colored by species
+penguins |>
+  filter(!is.na(body_mass_g) & !is.na(species) & !is.na(bill_length_mm)) |>
+  ggplot(aes(x = bill_length_mm, y = body_mass_g, color = species)) +
+  geom_point(size = 3, alpha = 0.7) +
+  labs(title = "Relationship between Bill Length, Body Mass, and Species",
+       x = "Bill Length (mm)",
+       y = "Body Mass (g)",
+       color = "Species",
+       caption = "Data source: Palmer Penguins dataset") +
+  theme_minimal() +
+  theme(legend.position = "top")
+```
+
+**There is a positive relationship between bill length and body mass, with larger bill lengths associated with heavier body masses. Gentoo penguins tend to have both the longest bill lengths and the highest body mass, while Adelie penguins have shorter bills and lower body mass. Chinstrap penguins fall in between. This relationship meets my expectations as body mass tends to correlate with bill size in many species**
+
+------------------------------------------------------------------------
+
+## Part 2 HAVE TO USE ONLINE SERVER
+
+In this part, you will interact with a database that lives on the **edupod server** so make sure to log into <https://edupod.cns.utexas.edu/>
+
+Databases are commonly used when you want to perform operations on multiple, large datasets without reading them into memory on your local computer. Indeed, datasets can be many gigabytes and often cannot be "physically" imported!
+
+We will interact with a database called `filmrev.db`, consisting of over 10 million user ratings for over 10,000 movies, and some metadata about each film (title, genre, etc.). The package `dbplyr` let us write code that can get translated to a `SQL` query based on `dplyr` commands, which are sent to the database to perform operations. That's why you should only use `dplyr` commands in this part.
+
+*Note: Since we are sending queries to a database, it is normal that running your code might take a little longer than usual. So make sure to run code once you are pretty sure it's going to work!*
+
+```{r, warning=FALSE}
+# Upload package
+library(dbplyr)
+
+# Make a connection with the database
+connection <- DBI::dbConnect(RSQLite::SQLite(),
+                          "/stor/work/SDS322E_LG_Fall2024/filmrev.db")
+```
+
+We can take a look at the tables contained in the database:
+
+```{r}
+# Content of our connection to the database
+src_dbi(connection)
+```
+
+We will work with the `ratings` and `movies` datasets so let's save them as objects in our environment.
+
+```{r}
+# Content of our connection to the database
+ratings <- tbl(connection, "ratings")
+movies <- tbl(connection, "movies")
+tags <- tbl(connection, "tags")
+
+# They do not appear as data frames in our environment but we can still take a look at their content with head():
+head(ratings)
+head(movies)
+head(tags)
+```
+
+### Question 8: (1 pt)
+
+Identify the key variable(s) we would need to join 1) `ratings` and `movies`, 2) `ratings` and `tags`, 3) `movies` and `tags`.
+
+**You would join on ratings and movies.**
+
+------------------------------------------------------------------------
+
+### Question 9: (2 pts)
+
+Let's focus on the `ratings` and `movies` datasets. Using `dplyr` core functions, find how many *distinct* movies there are in each dataset. Do they contain the same number of movies?
+
+```{r}
+# count the number of distinct movies and ratings
+distinct_movies <- movies |>
+  summarise(distinct_movies = n_distinct(movieId))
+
+distinct_ratings <- ratings |>
+  summarise(distinct_movies = n_distinct(movieId))
+
+distinct_movies
+distinct_ratings
+```
+
+**There are 10677 distinct movies and 10681 distinct ratings.**
+
+If we wanted to look if some movies are included in `movies` but not in `ratings`, what joining `dplyr` functions should we use? *You do not need to run this command as it will take a long time to run. Just write which function you would use.*
+
+**We can use anti_join() which gives us a dataset containing the movies that exist in the movies dataset but do not have any corresponding entries in the ratings dataset.**
+
+------------------------------------------------------------------------
+
+### Question 10: (2 pts)
+
+Let's summarize the `ratings` dataset per movie. Using `dplyr` core functions, find the mean rating (call it `mean_rating`) and also the number of ratings (call it `num_ratings`) **for each movie**. Save the resulting dataset in your environment as `ratings_per_movie`.
+
+```{r}
+# summarize the mean rating and the number of ratings per movie
+ratings_per_movie <- ratings |>
+  group_by(movieId) |>
+  summarise(
+    mean_rating = mean(rating, na.rm = TRUE),
+    num_ratings = n()
+  )
+ratings_per_movie
+```
+
+Make a quick scatterplot to investigate the relationship between `num_ratings` and `mean_rating`. Write a sentence to interpret this visualization.
+
+```{r}
+# plotting the mean rating compared to the number of ratings
+ggplot(ratings_per_movie, aes(x = mean_rating, y = num_ratings)) +
+  geom_point(alpha = 0.6) +
+  labs(title = "Scatterplot of Number of Ratings vs. Mean Rating",
+    x = "Mean Rating",
+    y = "Number of Ratings") +
+  theme_minimal()
+```
+
+**There seems to be a positive correlation between mean rating and the number of ratings where the mean rating increases as the number of ratings also increase.**
+
+------------------------------------------------------------------------
+
+### Question 11: (2 pts)
+
+Consider the `ratings_per_movie` dataset created previously. Now, let's find which movie has the highest mean rating *IF* it has also received a decent amount of ratings. Only keep the movies with a decent amount of ratings (pick something you think makes sense!) then keep the top 5 movies with the maximum average rating by using `slice_max(mean_rating, n = 5)`. *Note: slice() and top_n() functions do not translate with SQL queries so we cannot use those to manipulate data from the database.* To find which movie corresponds to the `movieId`, we need to have that information from the `movies` dataset. Pipe `left_join()` to join `movies`. Which movie has the highest average rating for a large number of ratings?
+
+```{r}
+# your code goes below (replace this comment with something meaningful)
+top_movies <- ratings_per_movie |>
+  filter(num_ratings >= 1000) |>
+  slice_max(mean_rating, n=5) |>
+  left_join(movies, by="movieId")
+top_movies
+```
+
+**Shawhank Redemption has the highest average rating with the number of ratings above 1000.**
+
+------------------------------------------------------------------------
+
+### Question 12: (1 pt)
+
+You can convert your `dplyr` code into `SQL` queries (indeed, this is what happens behind the scenes thanks to `dbplyr`)! `SQL` stands for *structured query language* and is commonly used to communicate with databases. Let's translate your `dplyr` query from the previous question into the equivalent `SQL` query. Simply add a pipe to your previous code to `show_query()`. How does the `SQL` query compared to your `dplyr` code?
+
+```{r}
+# your code goes below (replace this comment with something meaningful)
+top_movies <- ratings_per_movie |>
+  filter(num_ratings >= 1000) |>
+  slice_max(mean_rating, n=5) |>
+  left_join(movies, by="movieId") |>
+  show_query()
+top_movies
+```
+
+**The SQL code definitely requires more lines to do the same function. As someone who has done a couple projects in SQL, it definitely requires more learning and is less intuitive than the dplyr function.**
+
+Finally, make sure to disconnect from the database to free up memory on the server. Run the following code when you are finished (you can always reconnect again later by running the code at the beginning).
+
+```{r}
+# Disconnect
+DBI::dbDisconnect(connection)
+```
+
+------------------------------------------------------------------------
+
+## Formatting: (1 pt)
+
+Knit your file! You can knit into html and once it knits in html, click on `Open in Browser` at the top left of the window that pops out. **Print** your html file into pdf from your browser.
+
+Is it working? If not, try to decipher the error message: look up the error message, consult websites such as [stackoverflow](https://stackoverflow.com/) or [crossvalidated](https://stats.stackexchange.com/).
+
+Finally, remember to select pages for each question when submitting your pdf to Gradescope.

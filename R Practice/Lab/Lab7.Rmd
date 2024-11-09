@@ -1,0 +1,188 @@
+---
+title: "Lab 7"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,  
+                      warning = TRUE, message = FALSE, 
+                      fig.align = "center",
+                      R.options = list(max.print=100))
+
+# Edit the file starting below
+```
+
+### Enter the names of the group members here: Connor Shen, Benjamin Zodak, Nathan Goetten
+
+**This assignment is due by the end of the lab. Only one student in the group submits a pdf file on Gradescope.**
+
+*For all questions, include the R commands/functions that you used to find your answer (show R chunk). Answers without supporting code will not receive credit. Write full sentences to describe your findings.*
+
+In this lab, you will explore data that were originally collected by researchers at the Johns Hopkins Bloomberg School of Public Health. Let's first load the appropriate packages for today:
+
+```{r, message=FALSE}
+library(tidyverse)
+```
+
+Let's upload the data from Github and take a quick look:
+
+```{r}
+pollution <- read_csv("https://raw.githubusercontent.com/laylaguyot/datasets/main//pm25.csv")
+
+# Take a quick look!
+head(pollution)
+```
+
+It contains the following variables:
+
+| Variable Name       | Description                                                                    |
+|:--------------------|:-------------------------------------------------------------------------------|
+| state, county, city | Name of the state, county, city where monitor is located                       |
+| value               | Annual level of PM2.5 in $\mu$g/m$^3$                                          |
+| zcta                | ZIP code where monitor is located                                              |
+| lat                 | Latitude coordinate of monitor location                                        |
+| lon                 | Longitude coordinate of monitor location                                       |
+| pov                 | Percentage of ZIP code population (where monitor is located) living in poverty |
+| zcta_pop            | Population of ZIP code where monitor is located (based on 2010 Census)         |
+| CMAQ                | Computer model estimate of PM2.5 levels                                        |
+
+The goal of the lab is to make predictions for the PM2.5 levels with two different approaches.
+
+------------------------------------------------------------------------
+
+### Question 1 (6 pts)
+
+Let's start exploring the dataset! Which state has the largest number of PM2.5 monitors within the state?
+
+```{r}
+# finding the state with the alrgest number of PM2.5 monitors
+pollution |>
+  group_by(state) |>
+  summarise(count = n()) |>
+  arrange(desc(count)) |>
+  slice_head()
+```
+
+**California has the largest number of PM2.5 monitors within its boundaries.**
+
+Find the mean of the PM2.5 values within each state. Which state in the U.S. has the highest mean PM2.5 value? Which state has the lowest mean PM2.5 value?
+
+```{r}
+# finding the state with the highest and lowest mean PM2.5 level
+pollution |>
+  group_by(state) |>
+  summarise(mean_pm25 = mean(value, na.rm = TRUE)) |>
+  arrange(mean_pm25) |>
+  slice(c(1, n()))
+```
+
+**West Virginia has the highest mean PM2.5 while Maine has the least.**
+
+We can represent the values of PM2.5 on a map! Consider the code below that creates a map of the United States divided by states. Remember that `ggplot` works in layers: add a layer to the code below to represent the PM2.5 values from the `pollution` dataset across the states. Make sure to add colors to distinguish between lower vs higher values.
+
+*Note: you might need to install the `maps` package first:*
+
+```{r eval=FALSE}
+install.packages("maps")
+library(maps)
+```
+
+```{r}
+# Create data for a map of the United States divided by states
+state_data <- map_data("state")
+
+# Create a map with `ggplot`
+ggplot() +
+  geom_polygon(data = state_data, aes(x = long, y = lat, group = group), 
+               fill = "white", color = "grey", size = 1) +
+  # Add a layer with data from pollution
+  geom_point(data = pollution, aes(x = lon, y = lat, color = value), size = 2, alpha = 0.8) +
+  scale_color_gradient(low = "blue", high = "red", name = "PM2.5 Value") +
+  labs(title = "PM2.5 Levels Across the United States",
+       x = "Longitude", y = "Latitude") +
+  theme_minimal()
+```
+
+Where are the maximum values of PM2.5 located?
+
+**The maximum values of PM2.5 are located around the New England region of the United States.**
+
+------------------------------------------------------------------------
+
+### Question 2 (3 pts)
+
+Next, we will build a model to predict the PM2.5 levels, using some other variables. What is the outcome variable for this model?
+
+**The outcome variable for the model is the PM2.5 levels.**
+
+To do so, we will split the `pollution` dataset into two parts, a `train_data` set and a `test_data` set:
+
+-   The train set will be all of the locations outside the state of Texas.
+-   The test set will be all of the locations inside the state of Texas.
+
+Create the `train_data` set and the `test_data` set as described above:
+
+```{r}
+# creating a two datasets to train and test on, split by Texas and non Texas states
+train_data <- pollution |>
+  filter(state != "Texas")
+
+test_data <- pollution |>
+  filter(state == "Texas")
+```
+
+------------------------------------------------------------------------
+
+### Question 3 (10 pts)
+
+Build a linear regression model to predict the PM2.5 levels in the `train_data` set. Only use the following predictors: `lat`, `lon`, `pov`, and `zcta_pop`. Which predictors seem to be the most useful in predicting the PM2.5 values?
+
+```{r}
+# creating a linear regression model on train_data
+model <- lm(value ~ lat + lon + pov + zcta_pop, data = train_data)
+summary(model)
+```
+
+**Longitude, poverty rate, and population are the strongest predictors because they are more statistically significant with the smallest p-values . Latitude is also significant but its impact on PM2.5 levels are smaller compared to other predictors.**
+
+Interpret how the latitude/longitude impact the PM2.5 levels according to the model. Does that match what you see on the map?
+
+**The model shows that PM2.5 levels decrease with increasing latitude and increase with increasing longitude. This matches what the map shows where higher pollution levels (red points) in the eastern United States and lower levels (blue points) in the northern parts of the west. While this trend matches the overall pattern, regional variations suggest additional factors influencing PM2.5 levels.**
+
+Use the linear model to make predictions for the violation in the `train_data` set and compute the corresponding RMSE. Then compute the value of RMSE when applying the linear model to the `test_data` set.
+
+```{r}
+# making predictions on the train and test data and then finding the RMSE values for each
+train_prediction <- predict(model, newdata = train_data)
+test_prediction <- predict(model, newdata = test_data)
+
+train_rmse <- sqrt(mean((train_data$value - train_prediction)^2))
+test_rmse <- sqrt(mean((test_data$value - test_prediction)^2))
+
+cat("Train RMSE:", train_rmse, "\n")
+cat("Test RMSE:", test_rmse, "\n")
+```
+
+How well does our model predict the values of PM2.5 for the train set vs for the test set?
+
+**The model predicts the values for the test model better than the train model due to the lower RMSE.**
+
+------------------------------------------------------------------------
+
+### Question 4 (1 pt)
+
+After investigating what features of a location seem to affect the PM2.5 levels, did the data match your expectations or not? If the data differed from your expectation, provide a possible explanation for why the data differed from what you expected.
+
+**The data did match our expectations because as we learned from the model, poverty and population were two of the largest predictors of the PM2.5 levels. We had initially thought that a larger population in a certain zip code would lead to higher PM2.5 levels as well as a higher poverty rate because larger populations mean more cars and more emissions. Higher poverty rates can also correlate with poorer working conditions which typically are from more carbon-intensive industries.**
+
+------------------------------------------------------------------------
+
+### Formatting: (1 pt)
+
+Make sure the names of all group members are included at the beginning of the document.
+
+Knit your file! You can knit into pdf directly or into html. Once it knits in html, click on `Open in Browser` at the top left of the window pops out. Print your html file into pdf from your browser.
+
+Any issue? Ask other classmates or TA!
+
+Finally, remember to select pages for each question when submitting your pdf to Gradescope and to identify your group members.

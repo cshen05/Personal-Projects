@@ -1,0 +1,254 @@
+---
+title: "Worksheet 8: Tidying"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r global_options, include=FALSE}
+# The following code is a basic setup of options for your document
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE, 
+                      warning = TRUE,
+                      message = FALSE,
+                      fig.align = "center", 
+                      R.options = list(max.print=50))
+
+# Edit the file starting below
+
+```
+
+In this worksheet, we'll discuss some functions that can help us tidy our data.
+
+## 1. Datasets
+
+Today we will manipulate datasets that are part of the `tidyr` package, included in `tidyverse`:
+
+```{r}
+# Load a package
+library(tidyverse)
+```
+
+The following tables all display the number of tuberculosis (TB) cases documented by the World Health Organization in Afghanistan, Brazil, and China between 1999 and 2000. They contain values associated with four variables (country, year, cases, and population), but each table organizes the values in a different way:
+
+```{r}
+# Open the different tabular representations of the tuberculosis data
+table1
+table2
+table3
+table4a
+table4b
+table5
+```
+
+Which of these tables are tidy?
+
+**Write sentences here.**
+
+## 2. Pivoting
+
+### a. Wide to long
+
+Let's focus on `table4a`:
+
+```{r}
+# Look at table4a - Tuberculosis cases
+table4a
+```
+
+The function `pivot_longer()` makes a dataset "longer" by increasing the number of rows and decreasing the number of columns.
+
+```{r}
+# Use pivot_longer() to have an observation for each country/year
+newtable4a <-  pivot_longer(table4a,
+                            # Columns in table4a to put as rows
+                            cols = c(`1999`, `2000`), # use `` for unconventional variable names
+                            # Save the columns 1999 and 2000 as values of a variable `year`
+                            names_to = "year", 
+                            # Save the cell values as the values of a variable `cases`
+                            values_to = "cases") 
+newtable4a
+```
+
+Here is how we pivoted `table4` into a longer, tidy form:
+
+![](https://d33wubrfki0l68.cloudfront.net/3aea19108d39606bbe49981acda07696c0c7fcd8/2de65/images/tidy-9.png)
+
+#### **Try it! Do the same for `table4b`. Think about what the numbers represent in that table to name the variable appropriately and name the resulting dataset as `newtable4b`. Then join `newtable4a` and `newtable4b`. Is the joined dataset tidy? If so, calculate the rate of TB cases (`cases` divided by `population`).**
+
+```{r}
+# Write and submit code here!
+newtable4b <-  pivot_longer(table4b,
+                            # Columns in table4a to put as rows
+                            cols = c(`1999`, `2000`), # use `` for unconventional variable names
+                            # Save the columns 1999 and 2000 as values of a variable `year`
+                            names_to = "year", 
+                            # Save the cell values as the values of a variable `cases`
+                            values_to = "population") 
+left_join(newtable4a, newtable4b, by=c("country", "year")) |>
+  mutate(rate = cases/population * 100)
+```
+
+**Write sentences here.**
+
+What if we had joined `table4a` and `table4b` before tidying?
+
+```{r}
+# Take a look at both tables again
+table4a
+table4b
+```
+
+```{r}
+# Join untidy tables
+inner_join(table4a, table4b, by = "country")
+
+# Improve how we join these untidy tables
+joined_untidy <- inner_join(table4a, table4b, by = "country",
+                            # Adding explicit suffixes
+                            suffix = c("_cases", "_population"))
+joined_untidy
+```
+
+Now, let's try to tidy the joined dataset:
+
+```{r}
+# Using pivot_longer() on all columns
+pivot_longer(joined_untidy, 
+             # Refer to all variables with `:`
+             cols = c('1999_cases':'2000_population'))
+```
+
+Is that dataset tidy?
+
+**not tidy**
+
+We need to split values for the variable `name` like 1999.cases into two columns (one for `year`, one for `cases`/`population`). The function `separate()` can find the separator automatically (or we can specify the separator with `sep =`):
+
+```{r}
+# Using pivot_longer() on all columns
+pivot_longer(joined_untidy, cols = c('1999_cases':'2000_population')) |>
+  # Distinguish between year and cases/population variables
+  separate(name, sep = "_", into = c("year", "type"))
+```
+
+The column `value` does not refer to a unique variable and each row does not represent one observation of country/year (for example, Afghanistan in 1999 is represented by 2 rows) We need to make the dataset *wider*.
+
+### b. Long to wide
+
+The last dataset we created above is actually called `table2` in `tidyr`.
+
+```{r}
+# Take a look at table2
+table2
+```
+
+The function `pivot_wider()` makes datasets wider by increasing the number of columns and decreasing the number of rows.
+
+```{r}
+# Use pivot_wider() to have a variable for the number of cases and one for population
+pivot_wider(table2, 
+            # the values of the variable `type` will become variables 
+            names_from = type, 
+            # the cell values values of `count` will match the corresponding variable
+            values_from = count) 
+```
+
+Here is how we pivoted `table2` into a wider, tidy form:
+
+![](https://d33wubrfki0l68.cloudfront.net/8350f0dda414629b9d6c354f87acf5c5f722be43/bcb84/images/tidy-8.png)
+
+#### **Try it! Do something similar for `table1` so we only have one row per country. Is this resulting data tidy? Why or why not?**
+
+```{r}
+# Write and submit code here!
+pivot_wider(table1, 
+            # the values of the variable `type` will become variables 
+            names_from = year, 
+            # the cell values values of `count` will match the corresponding variable
+            values_from = c(cases, population)) 
+```
+
+**Tidy depends on what we want to use the data for.**
+
+## 3. Separating and uniting
+
+Some other functions that can help make our data tidy are `separate()` (see above for an example) and `unite()`.
+
+### a. Separate
+
+As mentioned in 2.a, we can split a variable into two or more variables with `separate()`. R can find the separator automatically or you could specify the separator with the argument `sep = " "`.
+
+```{r}
+# Take a look at table3
+table3
+```
+
+#### **Try it! Separate `rate` into two variables: `cases` and `population`. What do you notice about the type of the resulting variables? Why do you think that happened? Note: Add the argument `convert = TRUE` in `separate()` to convert the variables in the appropriate format.**
+
+```{r}
+# Write and submit code here!
+separate(data=table3, col=rate, into=c("cases", "population"), sep="/", convert=TRUE)
+```
+
+**Write sentences here.**
+
+### b. Unite
+
+On the opposite, we can combine two variables into one with `unite()`.
+
+```{r}
+# Take a look at table5
+table5
+```
+
+Let's gather `century` and `year`:
+
+```{r}
+# Use unite() to rejoin the variables century and year created above
+unite(table5, new, century, year)
+
+# R places "_" automatically or you can specify a separator with `sep = ""`
+unite(table5, new, century, year, sep ="")
+```
+
+## Your turn!
+
+Practice the `tidyr` functions we have learned on the `billboard` dataset. This built-in dataset contains songs rankings for Billboard top 100 in the year of 2000 for each week after it entered the Billboard (`wk1`-`wk76`).
+
+```{r}
+# Take a look at the dataset
+head(billboard)
+```
+
+1.  Why is that data not tidy? Which `pivot_...()` function should we use to make `billboard` tidy? Try it!
+
+**Write sentences here.**
+
+```{r}
+# Write and submit code here!
+
+```
+
+2.  Which function should you use to split the date into three variables: `year`, `month`, `day`? Try it!
+
+```{r}
+# Write and submit code here!
+
+```
+
+3.  Which function should you use to combine the name of the `artist` with the name of the `track`, separated by `:`? Try it!
+
+```{r}
+# Write and submit code here!
+
+```
+
+4.  In which format should `billboard` be if we wanted to count how many weeks a song stayed on the Billboard top 100? Try it! Which 5 songs stayed the longest?
+
+```{r}
+# Write and submit code here!
+
+```

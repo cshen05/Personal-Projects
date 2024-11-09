@@ -1,0 +1,314 @@
+---
+title: "HW 5"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,  
+                      warning = TRUE, message = FALSE, 
+                      fig.align = "center",
+                      R.options = list(max.print=100))
+
+# Edit the file starting below
+
+# Load packages
+library(tidyverse)
+```
+
+### Enter your name and EID here: Connor Shen, cs65692
+
+**You will submit this homework assignment as a pdf file on Gradescope.**
+
+*For all questions, include the R commands/functions that you used to find your answer (show R chunk). Answers without supporting code will not receive credit. Write full sentences to describe your findings.*
+
+------------------------------------------------------------------------
+
+## Part 1
+
+We will import the `pokemon` dataset from my GitHub:
+
+```{r}
+# Upload data from GitHub
+pokemon <- read_csv("https://raw.githubusercontent.com/laylaguyot/datasets/main//pokemon.csv")
+
+# Take a look 
+head(pokemon)
+```
+
+Each Pokémon creature has a `Number`, a `Name`, a type (`Type1` or `Type2`) and other features:
+
+`HP` (Hit Points) is a Pokémon's life force (if a Pokémon's `HP` hits zero, it faints and is no longer usable in battle).
+
+`Attack` and `SpAtk` both measure the strength of moves used by a Pokémon; the higher this is, the more damage it will do to opponents in terms of `HP`. Similarly, `Defense` and `SpDef` measure the ability to take attacks from other Pokémon; the higher the stat is, the fewer `HP` will be lost when attacked.
+
+The `Speed` decides which Pokémon will make the first move in battle (with the higher, the better).
+
+The `Total` is the combination of `HP`, `Attack`, `SpAtk`, `Defense`, `SpDef`, and `Speed`.
+
+Finally, a Pokémon can be classified as `Legendary` or not.
+
+### Question 1: (2 pts)
+
+Quickly describe the dataset: how many rows and how many columns?
+
+```{r}
+# looking at the rows and columns of pokemon
+dim(pokemon)
+head(pokemon, 1)
+```
+
+**There are 800 rows and 13 columns.**
+
+What does 1 row represent?
+
+**One row represents one pokemon which includes its number, name, types, HP, attack, special attack, defense, special defense, speed, total stat, the generation the pokemon is from, and whether or not the pokemon is legendary.**
+
+Which variables can be considered as numeric? Which variables can be considered as categorical?
+
+**Numeric variables are the number, name, HP, attack, special attack, defense, special defense, speed, total stat, and the generation. The categorical variables are the pokemon's name, types, and whether or not the pokemon is legendary.**
+
+------------------------------------------------------------------------
+
+### Question 2: (3 pts)
+
+Let's try to predict the `Total` points of a Pokémon using the variable `Generation`. First, look at the relationship between the two variables, using a visualization:
+
+```{r}
+# box plot comparing total points and generation
+ggplot(pokemon, aes(x = as.factor(Generation), y = Total)) +
+  geom_boxplot() +
+  labs(title = "Relationship between Pokémon Generation and Total Points",
+       x = "Generation",
+       y = "Total Points") +
+  theme_minimal()
+```
+
+Based on the visualization, do you think that the `Generation` can help predict the `Total` points of a Pokémon? Why/Why not?
+
+**Generation is not a good predictor of Total points because of the overlapping distributions and similar medians across generations.**
+
+Fit a linear regression model to predict the `Total` points based on `Generation`. What does the adjusted $R^2$ value indicate?
+
+```{r}
+# creting a model with Generation as a predictor
+model <- lm(Total ~ Generation, data = pokemon)
+summary(model)
+```
+
+**The adjusted** $R^2$ **value indicates that Generation explains almost none of the variability in Total points.**
+
+------------------------------------------------------------------------
+
+### Question 3: (3 pts)
+
+Let's try another predictor. Look at the relationship between the `Total` points of a Pokémon using the variable `HP`, using a visualization:
+
+```{r}
+# plotting HP points vs Total points
+ggplot(pokemon, aes(x = HP, y = Total)) +
+  geom_point(color = "red", alpha=0.5) +
+  labs(title = "Relationship between Pokémon HP and Total Points",
+       x = "HP",
+       y = "Total Points") +
+  theme_minimal()
+```
+
+Based on the visualization, do you think that `HP` can help predict the `Total` points of a Pokémon? Why/Why not?
+
+**The visualization shows that HP can predict a Pokémon's Total points due to a positive correlation, but other factors likely contribute to the variability in Total points.**
+
+Fit a linear regression model to predict the `Total` points based on `HP`. How does the adjusted $R^2$ value compare to the model with `Generation`?
+
+```{r}
+# creating a model using HP as a predictor
+model_hp <- lm(Total ~ HP, data = pokemon)
+
+summary(model_hp)
+```
+
+**The adjusted** $R^2$ **value for the HP model is 0.3821, which is significantly higher than the adjusted** $R^2$ **value of 0.001 for the model with Generation. This shows that HP is a much stronger predictor of Total points compared to Generation.**
+
+------------------------------------------------------------------------
+
+### Question 4: (3 pts)
+
+Let's try another kind of predictor. Look at the relationship between the `Total` points of a Pokémon using the variable `Legendary`, using a visualization:
+
+```{r}
+# plotting the relationship between legendary status and total points
+ggplot(pokemon, aes(x = as.factor(Legendary), y = Total)) +
+  geom_boxplot(fill = "skyblue") +
+  labs(title = "Relationship between Pokémon Legendary Status and Total Points",
+       x = "Legendary",
+       y = "Total Points") +
+  theme_minimal()
+```
+
+Based on the visualization, do you think that the fact that a Pokémon is `Legendary`, or not, can help predict the `Total` points of a Pokémon? Why/Why not?
+
+**The graph shows that Legendary status is a strong predictor of a Pokémon's Total points, as Legendary Pokémon consistently have higher Total points than non-Legendary ones with minimal overlap.**
+
+Fit a linear regression model to predict the `Total` points based on `Legendary`. How does the adjusted $R^2$ value compare to the model with `HP`?
+
+```{r}
+# creating a model with legendary as the predictor
+model_legendary <- lm(Total ~ as.factor(Legendary), data = pokemon)
+
+summary(model_legendary)
+```
+
+**The adjusted** $R^2$ **value for the model with Legendary as the predictor is approximately 0.251, which is lower than the adjusted** $R^2$ **value of 0.382 for the model with HP. This indicates that while Legendary status does predict some Total points, HP is a stronger predictor of Total points overall.**
+
+------------------------------------------------------------------------
+
+### Question 5: (3 pts)
+
+One more model! Let's try to predict `Total` points using all the variables used to calculate it: `HP`, `Attack`, `SpAtk`, `Defense`, `SpDef`, and `Speed`. Is the `Total` variable just the sum of these variables?
+
+```{r}
+# create a new column that calculates the total and then checks if its equal to the Total column
+pokemon <- pokemon |>
+  mutate(Calculated_Total = HP + Attack + SpAtk + Defense + SpDef + Speed)
+
+all.equal(pokemon$Total, pokemon$Calculated_Total)
+```
+
+**The Total column is just the sum of HP, attack, SpAtk, defense, SpDef, and speed.**
+
+Fit a linear regression model to predict the `Total` points based on `HP`, `Attack`, `SpAtk`, `Defense`, `SpDef`, and `Speed`. What does the adjusted $R^2$ value indicate?
+
+```{r}
+# creating a model with all the stats
+model_all_stats <- lm(Total ~ HP + Attack + SpAtk + Defense + SpDef + Speed, data = pokemon)
+
+summary(model_all_stats)
+```
+
+**Because the adjusted** $R^2$ **is equal to 1, this means the model is a perfect fit, suggesting that the Total variable is indeed just the sum of these attributes, as the model captures 100% of the variability in Total points.**
+
+------------------------------------------------------------------------
+
+## Part 2
+
+Let's analyze the overall "sentiment" of a Wikipedia page!
+
+Since we did not get to learn much about text analysis during lecture, let's take a look at an example. The code will be (mostly) provided for this part of the assignment and you interpret what we are trying to achieve.
+
+We need the following packages so make sure to install them first:
+
+```{r, eval=FALSE}
+# Install packages (only needed once!)
+install.packages("rvest")
+install.packages("tidytext")
+install.packages("textdata")
+```
+
+Then upload these packages:
+
+```{r}
+library(rvest)
+library(tidytext)
+library(textdata)
+```
+
+### Question 6: (2 pts)
+
+Let's retrieve the text content from a Wikipedia page using `read_html` from the `rvest` package:
+
+```{r}
+# Wikipedia page
+wikipedia_page <- read_html("https://en.wikipedia.org/wiki/Layla")
+
+# Retrieve text content
+wikipedia_text <- data.frame(text =
+  wikipedia_page |>
+    html_nodes("p") |>
+    html_text())
+```
+
+What does the object `wikipedia_text` contain?
+
+**wikipedia_text contains all the text from the Layla wikipedia page split by paragraph.**
+
+Using the `wikipedia_text`, we will "tokenize" the text into words using `unnest_tokens` from the `tidytext` package:
+
+```{r}
+wikipedia_words <- wikipedia_text |>
+  # Split text into words
+  unnest_tokens(input = text, output = word)
+```
+
+What does the object `wikipedia_words` contain?
+
+**wikipedia_words contains all the words within the wikipedia page.**
+
+Some researchers have identified a list of words to match a sentiment (for example, the word "happy" matches the sentiment of "joy"). The National Research Council created a lexicon that we can obtain with `get_sentiments` from the `tidytext` package:
+
+```{r}
+# Look at the lexicon
+get_sentiments("nrc")
+```
+
+Can you join the `sentiment` of each `word` in `wikipedia_words`? Then find the top 4 sentiments that occurred the most in this Wikipedia page.
+
+```{r}
+# selecting the top 4 sentiments that occurred on the wikipedia page
+nrc_sentiments <- get_sentiments("nrc")
+sentiment_words <- wikipedia_words |>
+  inner_join(nrc_sentiments, by = "word") |>
+  count(sentiment, sort = TRUE) |>
+  head(4)
+
+sentiment_words
+```
+
+Describe the overall sentiment in the Wikipedia page:
+
+**The overall sentiment in the Wikipedia page is more positive, with "positive" being the most frequent sentiment, followed by "trust," "anticipation," and "joy."**
+
+------------------------------------------------------------------------
+
+### Question 7: (1 pt)
+
+Choose any Wikipedia page you would like to explore. Can you retrieve the text content from this Wikipedia page and find top 4 sentiments that occurred the most in this Wikipedia page?
+
+```{r}
+# sentiment analysis on Mario Part DS wikipedia page
+mario_wiki <- read_html("https://en.wikipedia.org/wiki/Mario_Party_DS")
+
+mario_wiki_text <- data.frame(text = mario_wiki |> 
+                               html_nodes("p") |> 
+                               html_text())
+
+mario_wiki_words <- mario_wiki_text |>
+  unnest_tokens(input = text, output = word)
+
+mario_sentiment_words <- mario_wiki_words |>
+  inner_join(nrc_sentiments, by = "word") |>
+  count(sentiment, sort = TRUE) |>
+  head(4)
+
+mario_sentiment_words
+```
+
+Did the overall sentiment of the page you chose match what you expected? Why/Why not?
+
+**The sentiment analysis shows a primarily positive tone, with "trust" and "anticipation" also ranking high, which aligns with the game’s fun and engaging nature. There was also a lot of negative but this aligns with the game's competitive nature. This result makes sense for a family-friendly game, as it is designed to evoke excitement and enjoyment.**
+
+------------------------------------------------------------------------
+
+### Question 8: (2 pts)
+
+What could be some limitations of conducting sentiment analysis? Discuss at least two reasons why we should be careful when interpreting the results of sentiment analysis.
+
+**Sentiment analysis has some limitations such as, the inability to understand context and nuances in language, which can lead to misinterpretations, especially with sarcasm, irony, or ambiguous words. Additionally, sentiment lexicons may not be comprehensive or updated, causing certain words to be misclassified or overlooked, which can skew results.**
+
+------------------------------------------------------------------------
+
+## Formatting: (1 pt)
+
+Knit your file! You can knit into html and once it knits in html, click on `Open in Browser` at the top left of the window that pops out. **Print** your html file into pdf from your browser.
+
+Is it working? If not, try to decipher the error message: look up the error message, consult websites such as [stackoverflow](https://stackoverflow.com/) or [crossvalidated](https://stats.stackexchange.com/).
+
+Finally, remember to select pages for each question when submitting your pdf to Gradescope.

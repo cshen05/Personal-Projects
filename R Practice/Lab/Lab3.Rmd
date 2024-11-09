@@ -1,0 +1,172 @@
+---
+title: "Lab 3"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,  
+                      warning = FALSE, message = FALSE, 
+                      fig.align = "center",
+                      R.options = list(max.print=100))
+
+# Edit the file starting below
+```
+
+### Enter the group number here: 26
+
+### Enter the names of the group members here: Connor Shen, Siddhant Tiwary, Benjamin Zadok
+
+**This assignment is due by the end of the lab. Only one student in the group submits a pdf file on Gradescope.**
+
+*For all questions, include the R commands/functions that you used to find your answer (show R chunk). Answers without supporting code will not receive credit. Write full sentences to describe your findings.*
+
+In this lab, you will explore the dataset `starwars` which comes with `dplyr`. Let's first load the packages we will need to complete this lab (`dplyr` and `ggplot2`, all contained in`tidyverse`):
+
+```{r, message=FALSE}
+# Load the package
+library(tidyverse) 
+```
+
+Take a quick look at the dataset:
+
+```{r}
+# Take a quick look
+head(starwars)
+```
+
+This dataset contains information about Starwars characters which we will investigate using `dplyr` functions (included in `tidyverse`).
+
+------------------------------------------------------------------------
+
+### Question 1: (8 pts)
+
+Using `ggplot`, represent the relationship between `height` and `mass` (make sure to include units in the labels: refer to the documentation). What do you notice in this plot? Report the appropriate statistic.
+
+```{r}
+# your code goes below (replace this comment with something meaningful)
+ggplot(data=starwars) +
+  geom_point(aes(x=height, y=mass)) +
+  labs(title="Comparison Between Height and Mass",
+       x="Height(cm)",
+       y="Weight(kg)")
+mean(starwars$mass, na.rm=TRUE)
+```
+
+**There seems to be a positive correlation between height and mass. There is an outlier in mass that drags the average upwards**
+
+Do you notice any character displaying a trend that is different from the others in this plot? Who is this character?
+
+```{r}
+# your code goes below (replace this comment with something meaningful)
+max(starwars$mass, na.rm=TRUE)
+starwars |>
+  filter(mass == 1358)
+```
+
+**Yes, Jabba Desilijic Tiure (Jabba the Hut) is the outlier, coming in at 1358 kg.**
+
+Redo the plot without this character and recalculate the appropriate statistic. Do you notice any changes?
+
+```{r}
+# finds jabba row
+which(grepl(1358, starwars$mass))
+
+# removes jabba from the data
+no_jabba <- starwars[-16,]
+
+mean(no_jabba$mass, na.rm=TRUE)
+```
+
+**The mean has gone down to 75.58 kg compared to before when it was 97.31 kg.**
+
+------------------------------------------------------------------------
+
+### Question 2: (2 pts)
+
+Using `dplyr` core functions, find how many characters there are *per species*. What are the two most common species?
+
+```{r}
+# your code goes below (replace this comment with something meaningful)
+table(starwars$species)
+```
+
+**Humans are the most common species at 35 followed by Droids at 6.**
+
+------------------------------------------------------------------------
+
+### Question 3: (7 pts)
+
+Create a new variable to calculate the Body Mass Index (BMI) for a height (in meters) and a weight (in kilograms):
+
+$$
+BMI = \frac{weight}{height^{2}}
+$$
+
+Then using more `dplyr` and `ggplot` functions, compare the distribution of `BMI` between the two most common species, found in the previous question. Use `geom_boxplot()` to compare the two species but also show the data with `geom_jitter()`. Which of the two species seem to have the highest `BMI` on average? Is that reasonable to make such a comparison?
+
+```{r}
+# your code goes below (replace this comment with something meaningful)
+new_df <- mutate(starwars, BMI=mass/{height^{2}})
+
+human_droid <- new_df |>
+  filter(species == c("Human", "Droid"))
+
+ggplot(data = human_droid) +
+  geom_boxplot(aes(x = species, y = BMI, fill=species)) +
+  geom_jitter(aes(x = species, y = BMI)) +
+  labs(title="BMI Comparison between Droids and Humans",
+       x="Species",
+       y="BMI",
+       fill="Species")
+```
+
+**Droids have the higher mean BMI. Yes the comparison is reasonable because metal has more mass than flesh. Additionally, the median of the droid box plot is higher than the median of the human box plot.**
+
+------------------------------------------------------------------------
+
+### Question 4: (6 pts)
+
+Investigate the relationship between two other features of the Starwars characters. Write a research question to explore two variables about the Starwars characters (excluding `films`, `vehicles`, and `starships`, we haven't learned how to deal with these types of variables yet!). *For example, (create a question of your own, don't use this one!): How does hair color vary across homeworlds?*
+
+**Does the homeworld influence the mass of the character for the 2 most common homeworlds.**
+
+Answer your research question using a `ggplot` visualization and some summary statistics (using `dplyr` functions for example). Include a title and labels to your viz and interpret what you see!
+
+```{r}
+# your code goes below (replace this comment with something meaningful)
+table(starwars$homeworld)
+
+df <- starwars |>
+  filter(homeworld == c("Tatooine", "Naboo"))
+ggplot(data=df) +
+  geom_boxplot(aes(x=homeworld, y=mass, fill=homeworld)) +
+  geom_jitter(aes(x=homeworld, y=mass)) +
+  labs(title="Distribution of Mass on Naboo and Tatooine",
+       x="Homeworld",
+       y="Mass(kg)",
+       fill="Homeworld")
+
+summary(df$mass, na.rm=TRUE)
+```
+
+**The mass of the characters seem to be influenced by the homeworld that they come from. Characters coming from Tatooine seem to have a higher mass on average compared to characters coming from Naboo.**
+
+------------------------------------------------------------------------
+
+### Question 5: (1 pt)
+
+After investigating some characteristics of Starwars characters, did the data match your expectations or not? If the data differed from your expectation, provide a possible explanation for why the data differed from what you expected.
+
+**No. We thought that the home world will not affect the mass of the characters. We believed that because the two most common worlds are both mostly inhabited by human and human-like characters, the mass wouldn't differ as much.**
+
+------------------------------------------------------------------------
+
+### Formatting: (1 pt)
+
+Make sure the names of all group members are included at the beginning of the document.
+
+Knit your file! You can knit into pdf directly or into html. Once it knits in html, click on `Open in Browser` at the top left of the window pops out. Print your html file into pdf from your browser.
+
+Any issue? Ask other classmates or TA!
+
+Finally, remember to select pages for each question when submitting your pdf to Gradescope and to identify your group members.

@@ -1,0 +1,234 @@
+---
+title: "Logistic Regression"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r global_options, include=FALSE}
+# The following code is a basic setup of options for your document
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE, 
+                      warning = TRUE,
+                      message = FALSE,
+                      fig.align = "center", 
+                      R.options = list(max.print=50))
+
+# Edit the file starting below
+
+```
+
+In this worksheet, we will discuss our first classification model with logistic regression.
+
+## 1. Dataset and Libraries
+
+We will use the packages `tidyverse` and `plotROC`.
+
+```{r, message = FALSE}
+# Load packages
+library(tidyverse)
+library(plotROC) 
+```
+
+We will continue working with the `biopsy` dataset that contains information about tumor biopsy results.
+
+```{r}
+# Upload the data from GitHub
+biopsy <- read_csv("https://raw.githubusercontent.com/laylaguyot/datasets/main//Biopsy.csv")
+
+# Take a quick look at 10 random rows
+head(biopsy, 10)
+```
+
+This dataset contains information about 9 different features of tumors that we will use to predict the `outcome` variable (a malignant vs. benign tumor). When using classification models in R, the functions usually expects the outcome to be coded as 0 or 1 (0 represents a "negative" case and 1 a "positive" case).
+
+#### **Try it! Overwrite the `outcome` variable in `biopsy` so that it has value 0 or 1. What proportion of tumors are malignant?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here!**
+
+
+## 2. Predicting a binary response with a numeric predictor
+
+First, let's predict the `outcome` based on `clump_thickness`.
+
+### a. Visualizing the model
+
+In the previous worksheet, we already looked at the relationship between these two variables but let's take a slightly different look:
+
+```{r}
+# Represent the relationship with a model
+biopsy |>
+  ggplot(aes(x = clump_thickness, y = outcome)) +
+  # Consider a logistic regression model
+  geom_smooth(method = "glm", se = FALSE, 
+              method.args = list(family = "binomial"),
+              color = "steelblue", size = 2) + 
+  # Show original data
+  geom_point(size = 4, alpha = 0.5) +
+  labs(x = "Clump thickness (scale 1-10)", 
+       y = "Outcome (1 = malignant, 0 = benign)",
+       title = "Logistic regression model to predict malignancy based on clump thickness")
+```
+
+How did R choose a logistic curve to fit this data?
+
+### b. Fitting a model
+
+We can consider find the expression of the logistic regression model with the `glm(outcome ~ predictor, data = ..., family = "binomial")` function (`glm` stands for generalized linear models):
+
+```{r}
+# Fit the model
+fit_log <- glm(outcome ~ clump_thickness, data = biopsy, family = "binomial")
+
+# Take a look at the model summary
+summary(fit_log)
+```
+
+The output gives the logit-form of the model which is:
+
+$\ln{\frac{\hat{p}}{1-\hat{p}}} = -5.11012 + 0.93042 * clump\_thickness$
+
+where $\hat{p}$ is the probability of the tumor being malignant (the value of 1).
+
+Then we can predict the probability of the transmission being manual by using the probability form:
+
+$\hat{p} = \frac{exp(-5.11012 + 0.93042 * clump\_thickness)}{1 + exp(-5.11012 + 0.93042 * clump\_thickness)}$
+
+### c. Making predictions
+
+Let's use the expression of the model to calculate predicted values.
+
+#### **Try it! Use the expression of the probability form (note that `exp()` refers to the exponential function) to create a new variable called `probability` that predicts the probability of the tumor being malignant based on values of `clump_thickness`. Based on these probabilities, how do we decide if the tumor should be considered as malignant or benign?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here!**
+
+
+Much more convenient to calculate probability values (especially when we will have more predictors with a longer expression for the model) is the `predict(model_name, type = "response")` function:
+
+```{r}
+biopsy |> 
+  # Calculate probability values
+  mutate(probability = predict(fit_log, type = "response")) |>
+  select(clump_thickness, outcome, probability)
+```
+
+We can use the probability values to predict the outcome as malignant or benign (1 or 0, respectively). We would have to decide on a cutoff value for the probability of the tumor being malignant. For example, let's try the cutoff value 0.5:
+
+```{r}
+biopsy_pred <- biopsy |>
+  # Create new variables for probability and predicted values
+  mutate(probability = predict(fit_log, type = "response"),
+         predicted = ifelse(probability > 0.5, 1, 0)) |>
+  select(clump_thickness, outcome, probability, predicted)
+
+# Take a look
+head(biopsy_pred, 10)
+```
+
+We can also make predictions for new data. For example, let's consider a tumor with a clump thickness of 5:
+
+```{r}
+# Make predictions for new data
+tumor <- data.frame(clump_thickness = 5)
+predict(fit_log, newdata = tumor, type = "response")
+```
+
+The model predicts a probability of approximately 39% for the tumor to be malignant if it has a clump thickness of 5.
+
+### d. Error in predicted values
+
+Sometimes our predicted values are correct, sometimes they're not! Recall the concepts of True Positive/True Negative (correct predicted values) and False Positive/False Negative (incorrect predicted values).
+
+#### **Try it! Using `biopsy_pred`, visualize the logistic regression model as above and color the original data points by the `predicted` value for the outcome. Which points on the graph show True Positive cases? False Positive cases?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here!**
+
+
+### e. Performance
+
+To assess the performance for a logistic regression models, we can consider the ROC curve and the corresponding area under the curve (AUC):
+
+```{r}
+# ROC curve
+ROC <- biopsy_pred |>
+  ggplot() + 
+  # the predictions are based on the probability values
+  geom_roc(aes(d = outcome, m = probability), n.cuts = 10)
+ROC
+```
+
+The cutoff values on the ROC curve represents the possible cutoff values for the `probability` to decide if a tumor should be considered malignant or benign (it does not have to be 0.5 as we tried earlier).
+
+```{r}
+# Calculate the area under the curve
+calc_auc(ROC)$AUC
+```
+
+Our classifier seems to perform well with a AUC of approximately 91%.
+
+## 3. Using multiple predictors
+
+What if we add more predictors to our model? That way we can try to predict the outcome with more information:
+
+```{r}
+# Fit the model using two predictors
+fit_log <- glm(outcome ~ clump_thickness + uniform_cell_size, 
+               data = biopsy, 
+               family = "binomial")
+
+# Take a look at the model summary
+summary(fit_log)
+```
+
+The model becomes more complex. How has the performance of our model improved?
+
+```{r}
+# ROC curve
+ROC <- biopsy |>
+  # Recalculate predictions
+  mutate(probability = predict(fit_log, type = "response")) |>
+  ggplot() + 
+  geom_roc(aes(d = outcome, m = probability), n.cuts = 10)
+ROC
+```
+
+The curve looks like the performance has improved (curving close to the top left corner, meaning that the True Positive rate is high for a low False Positive rate).
+
+```{r}
+# Calculate the area under the curve
+calc_auc(ROC)$AUC
+```
+
+The value of the AUC is closer to 1 so our model with two predictors can better predict *true* malignant cases without many *false* malignant cases!
+
+Notes:
+
+-   Adding too many variables can create issues such as **overfitting**: the model can become too specific to the tumors in the dataset on which we "train" the model and it will be very difficult to generalize to other tumors (which is the goal of creating a model).
+
+-   We can quickly check which features might be more useful for predicting the outcome by looking at the last column in the model output. Any `.` or `*` shows which features could better to use in the model.
+
+#### **Try it! Fit a model with all predictors that make sense. Which predictors seem to be most useful to predict the malignancy of a tumor? What is the corresponding value of AUC?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here!**

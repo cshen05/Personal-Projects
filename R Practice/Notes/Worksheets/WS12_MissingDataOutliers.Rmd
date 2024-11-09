@@ -1,0 +1,269 @@
+---
+title: "Worksheet 12: Missing Data and Outliers"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r global_options, include=FALSE}
+# The following code is a basic setup of options for your document
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE, 
+                      warning = TRUE,
+                      message = FALSE,
+                      fig.align = "center", 
+                      R.options = list(max.print=50))
+
+# Edit the file starting below
+
+```
+
+In this worksheet, we will consider some practices about handling missing data and outliers (extreme values).
+
+## 1. Dataset and Library
+
+Let's load `tidyverse` for data wrangling:
+
+```{r, message=FALSE}
+# Load package
+library(tidyverse)
+```
+
+We will investigate a dataset that was retrieved from the National Centers for Environmental Information <https://www.ncei.noaa.gov/> about various daily weather parameters recorded in Austin, Texas, between January 1st, 2000 and December 31st, 2015.
+
+```{r}
+# Upload the weather dataset from my GitHub to your environment
+daily_atxweather <- read_csv("https://raw.githubusercontent.com/laylaguyot/datasets/main//atx_weather.csv")
+
+# Take a look!
+head(daily_atxweather)
+```
+
+Here is a description of the variables included in this dataset:
+
+| Variables | Description                        |
+|-----------|------------------------------------|
+| `date`    | date in                            |
+| `AWND`    | average daily wind speed (mph)     |
+| `PRCP`    | total precipitation (in)           |
+| `SNOW`    | total snowfall (in)                |
+| `TAVG`    | average of hourly temperature (°F) |
+| `TMAX`    | max temperature (°F)               |
+| `TMIN`    | min temperature (°F)               |
+| `TSUN`    | total sunshine (minutes)           |
+
+Visit the following page for the documentation of how the data is collected and recorded: <https://www.ncei.noaa.gov/data/daily-summaries/doc/GHCND_documentation.pdf>. In a perfect world, this type of documentation would exist for all datasets!
+
+## 2. Missing data
+
+It is pretty common to have missing data. We need to check for any underlying reasons and consider those when deciding how to handle missing values.
+
+### a. R messages
+
+In R, the philosophy is that missing values should never silently go missing. Check the number of missing values for each variable:
+
+```{r}
+# Summary of the data shows the number of NA values for numeric variables
+summary(daily_atxweather)
+```
+
+
+That's why if there is any missing value in the input, the output will be a missing value.
+
+For example, we have come across that issue many times by now, what happens if we calculate the mean of a variable with some missing values?
+
+```{r}
+mean(daily_atxweather$TAVG)
+```
+
+We discussed how to compute the mean, ignoring missing values, with the argument `na.rm = TRUE`.
+
+```{r}
+mean(daily_atxweather$TAVG, na.rm = TRUE)
+```
+
+What happens when there are missing values in a `ggplot`?
+
+```{r}
+# How do missing values appear in a boxplot?
+ggplot(daily_atxweather) +
+  geom_boxplot(aes(x = TAVG))
+```
+
+The warning message indicates that there was an issue with 2 values (the missing values).
+
+#### **Try it! Create a new variable, `freezing`, to keep track of freezing average temperatures (less than 32 degrees Fahrenheit). Then represent this new variable in a bar plot. How does R let you know about missing values?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+
+### b. Making sense of the structure
+
+It's always a good idea to check the number of rows and columns that we expect. 
+
+#### **Try it! If the weather data is recorded daily from January 1st, 2000 to December 31st, 2015, how many rows do we expect? Does it match the actual number of rows in `daily_atxweather`?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+
+Is there any reason why some average temperatures are missing? Let's check for patterns:
+
+```{r}
+# Check for missing values per year
+daily_atxweather |>
+  mutate(year = year(mdy(date))) |>
+  group_by(year) |>
+  summarize(missing = sum(is.na(TAVG)))
+```
+
+It looks like there was an issue with reporting average temperatures between 2005 and 2013.
+
+
+### c. Handling missing values
+
+There is no perfect way of handling missing values. But we should always keep the context in consideration.
+
+How would removing missing values from the dataset potentially affect our data analysis?
+
+**Write sentences here.***
+
+
+We could just decide not using a variable if it has many values missing or we could find a way around!
+
+Let's consider a daily average temperature as the average of the minimum temperature and maximum temperature instead:
+
+```{r}
+# Create a new variable in daily_atxweather
+daily_atxweather |>
+  mutate(TAVG_calc = (TMIN + TMAX)/2) |>
+# Double check it worked!
+  select(date,TAVG,TMIN,TMAX,TAVG_calc)
+```
+
+The calculated values seem pretty close to the hourly average! But no missing values for that new variable!
+
+
+#### **Try it! There are 2 values of snowfall that are missing, take a look at these values. Is there a value that would be reasonable to replace these missing values? If so, replace the missing values in a new variable called `SNOW_recoded`.**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+
+If it makes sense to remove missing values, we could choose to remove all rows containing any missing values (for any variable):
+
+```{r}
+# Using na.omit()
+daily_atxweather |> na.omit()
+
+# Using drop_na()
+daily_atxweather |> drop_na()
+```
+
+Just be careful that it makes sense and that we are not omitting important information!
+
+## 3. Outliers/Extreme values
+
+### a. Checking extreme values
+
+It's always a good idea to check basic summary statistics to see if there is any values that may seem surprising:
+
+```{r}
+# Generate basic summary statistics
+summary(daily_atxweather)
+```
+
+Notice anything surprising?
+
+**Write sentences here.**
+
+Let's investigate variables that may have some extreme values. 
+
+#### **Try it! Take a look at the 10 highest values for `PRCP`. Does the maximum value seem reasonable?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+
+Then consider the maximum value for the daily amount of sunshine. Since it was recorded in minutes and knowing that the longest day is about 17 hours long in Austin, what would be the maximum value that is plausible?
+
+```{r}
+# Maximum value of sunshine to expect
+17*60
+
+# Maximum value of sunshine in weather data
+max(daily_atxweather$TSUN, na.rm = TRUE)
+```
+
+That's not possible to observe such a high value!
+
+```{r}
+# Check the rows with more than 17 hours of sunshine (or more than 1020 minutes)
+daily_atxweather |>
+  filter(TSUN > 1020) |>
+  arrange(desc(TSUN)) |>
+  select(date, TSUN)
+```
+
+Some of the highest observations are even reported in winter time...
+
+Do you think it is reasonable to drop the values for `TSUN` that are less than 1020? Why or why not?
+
+**Write sentences here.**
+
+
+### b. Representing extreme values
+
+Take a look at the distribution of a variable with some extreme values:
+
+```{r}
+# Check distribution of PRCP
+daily_atxweather |>
+  ggplot() +
+  geom_boxplot(aes(x = PRCP))
+```
+
+Let's transform the distribution of this variable:
+
+```{r}
+# Check distribution of PRCP
+daily_atxweather |>
+  ggplot() +
+  geom_boxplot(aes(x = log(PRCP+1)))
+```
+
+Still not great because there are many days without rain. What if we only focus on the days with precipitation:
+
+```{r}
+# Check distribution of PRCP when greater than 0
+daily_atxweather |>
+  filter(PRCP > 0) |>
+  ggplot() +
+  geom_boxplot(aes(x = PRCP))
+  #geom_boxplot(aes(x = log(PRCP))) # with transformation
+```
+
+### c. Handling extreme values
+
+Again, handling extreme values should rely on the context of our data.
+
+Always check that extreme values make sense. If they don't, we can choose to remove them from the analysis. Because some extreme values can refer to exceptional conditions we might not be interested in, we could choose to remove them but we need to justify why we remove them.  

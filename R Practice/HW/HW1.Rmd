@@ -1,0 +1,176 @@
+---
+title: "HW 1"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,  
+                      warning = FALSE, message = FALSE, 
+                      fig.align = "center",
+                      R.options = list(max.print=100))
+
+# Edit the file starting below
+library(tidyverse)
+```
+
+### Enter your name and EID here: Connor Shen - cs65692
+
+**You will submit this homework assignment as a pdf file on Gradescope.**
+
+*For all questions, include the R commands/functions that you used to find your answer (show R chunk). Answers without supporting code will not receive credit. Write full sentences to describe your findings.*
+
+------------------------------------------------------------------------
+
+## Part 1
+
+The dataset `mtcars` was extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and other aspects of automobile design and performance for different cars (1973-74 models). Look up the documentation for this data frame with a description of the variables by typing `?mtcars` **in the console** pane.
+
+### Question 1: (1 pt)
+
+Take a look at the first 6 rows of the dataset by using an `R` function in the code chunk below. Have you heard about any (or all) of these cars?
+
+```{r}
+# First 6 rows of mtcars
+head(mtcars)
+```
+
+**I've heard of the first 3 cars before.**
+
+------------------------------------------------------------------------
+
+### Question 2: (2 pts)
+
+How many rows and columns are there in this data frame in total?
+
+```{r}
+# number of rows and columns in mtcars
+nrow(mtcars)
+ncol(mtcars)
+```
+
+**There are 32 rows and 11 columns.**
+
+------------------------------------------------------------------------
+
+### Question 3: (1 pt)
+
+It is always a good practice to make a local copy of the dataset in your environment. Save `mtcars` in your environment and name it as your `eid`. From now on, use this new object instead of the built-in dataset.
+
+```{r}
+# making a local copy of mtcars
+cs65692 <- mtcars
+```
+
+------------------------------------------------------------------------
+
+### Question 4: (2 pts)
+
+When is your birthday? Using indexing, grab the row number of `mpg` that corresponds to the day of your birthday (the latter should be a number between 1 and 31).
+
+```{r}
+# Grabbing the value of the row that corresponds with my birthday (Jan 24)
+cs65692[24, "mpg"]
+```
+
+**The 24th row value in the mpg column is 13.3 mpg.**
+
+------------------------------------------------------------------------
+
+### Question 5: (2 pts)
+
+Count the number of rows in the dataset where the variable `mpg` takes on values greater than 30.
+
+```{r}
+# Counting the number of rows in the dataset where mpg is greater than 30
+length(which(cs65692$mpg > 30))
+```
+
+**There are only 4 rows in the dataset where mpg is greater than 30.**
+
+------------------------------------------------------------------------
+
+### Question 6: (2 pts)
+
+Let's create a new variable called `kpl` which converts the fuel efficiency `mpg` in kilometers per liter. Knowing that 1 mpg corresponds to 0.425 kpl, what is the maximum value of `kpl` in the dataset?
+
+```{r}
+# Maximum value of mpg in kpl
+kpl <- cs65692$mpg * 0.425
+max(kpl)
+```
+
+**The maximum value of mpg in kpl is 14.4075 kpl.**
+
+------------------------------------------------------------------------
+
+## Part 2
+
+Let's quickly explore another built-in dataset: `airquality` which contains information about daily air quality measurements in New York, May to September 1973.
+
+### Question 7: (2 pts)
+
+Calculate the mean `Ozone` (in ppb) using the `mean()` function. Why does it make sense to get this answer? *Hint: take a look at the column `Ozone` in the dataset.*
+
+```{r}
+# average of all Ozone values
+mean(airquality$Ozone)
+
+airquality$Ozone
+```
+
+**It makes sense that the mean shows up as NA because there are values missing in Ozone.**
+
+------------------------------------------------------------------------
+
+### Question 8: (1 pt)
+
+Look at the documentation for the function `mean()` by running `?mean` **in the console**. What argument should be used to find the mean value that we were not able to get in the previous question? What type of values does that argument take?
+
+**We should use na.rm and set it equal to True to strip all NA values before calculating the mean.**
+
+------------------------------------------------------------------------
+
+### Question 9: (2 pts)
+
+Sometimes the R documentation does not feel complete. We wish we had more information or more examples. Find a post online (include the link) that can help you use that argument in the `mean()` function. Then finally find the mean ozone!
+
+```{r}
+# https://www.codecademy.com/learn/learn-r/modules/r-stats-mean-median-mode/cheatsheet
+mean(airquality$Ozone, na.rm=TRUE)
+```
+
+**The average of all values in the column Ozone is 42.12931 excluding all the missing values.**
+
+------------------------------------------------------------------------
+
+## Part 3
+
+The Internet clothing retailer Stitch Fix wants to develop a new model for selling clothes to people online. Their basic approach is to send people a box of 5--6 items of clothing and allow them to try the clothes on. Customers keep (and pay for) what they like while mailing back the remaining clothes. Stitch Fix then sends customers a new box of clothes a month later.
+
+A critical question for Stitch Fix to consider is "Which clothes should we send to each customer?" Since customers do not request specific clothes, Stitch Fix has to come up with 5--6 items on its own that it thinks the customers will like (and therefore buy). In order to learn something about each customer, they administer an **intake survey** when a customer first signs up for the service. The survey has about 20 questions and the data is then used to predict what kinds of clothes customers will like. In order to use the data from the intake survey, a statistical algorithm must be built in order to process the customer data and make clothing selections.
+
+Suppose you are in charge of building the intake survey and the algorithm for choosing clothes based on the intake survey data.
+
+### Question 10: (2 pts)
+
+What kinds of questions do you think might be useful to ask of a customer in the intake survey in order to better choose clothes for them? Come up with 4 questions to ask customers, with 2 questions leading to numeric data and 2 questions leading to categorical data. *Make sure to indicate which question is which type.*
+
+**Numeric 1: On a scale of 1-10, how comfortable do you want your clothing to be? Numeric 2: What is your budget when purchasing clothes? Categorical 1: What kind of style do you prefer? Categorical 2: What colors do you prefer your outfits to be in?**
+
+------------------------------------------------------------------------
+
+### Question 11: (2 pts)
+
+In addition to the technical challenges of collecting the data and building this algorithm, you must also consider the impact the algorithm may have on the people involved. What potential negative impact might the algorithm have on the customers who are submitting their data? Consider both the data being submitted as well as the way in which the algorithm will be used when answering this question.
+
+**The algorithm is making broad assumptions about the customer that may or may not be true. There is also the possibility that the customer's preferences change over time, making the data irrelevant.**
+
+------------------------------------------------------------------------
+
+## Formatting: (1 pt)
+
+Knit your file! You can knit into html and once it knits in html, click on `Open in Browser` at the top left of the window that pops out. **Print** your html file into pdf from your browser.
+
+Is it working? If not, try to decipher the error message (look up the error message, consult websites such as [stackoverflow](https://stackoverflow.com/) or [crossvalidated](https://stats.stackexchange.com/).
+
+Finally, remember to select pages for each question when submitting your pdf to Gradescope.

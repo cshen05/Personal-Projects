@@ -1,0 +1,190 @@
+---
+title: "Lab 5"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,  
+                      warning = TRUE, message = FALSE, 
+                      fig.align = "center",
+                      R.options = list(max.print=100))
+
+# Edit the file starting below
+```
+
+### Enter the names of the group members here: Connor Shen, Benjamin Zodak, Siddhant Tiwary
+
+**This assignment is due by the end of the lab. Only one student in the group submits a pdf file on Gradescope.**
+
+*For all questions, include the R commands/functions that you used to find your answer (show R chunk). Answers without supporting code will not receive credit. Write full sentences to describe your findings.*
+
+In this lab, you will explore one of the published books of Jane Austen, accessible through the `janeaustenr` package. Let's first install it:
+
+```{r, eval=FALSE}
+# Install package (Note, eval=FALSE means this code chunk is not submitted when knitting)
+install.packages("janeaustenr")
+```
+
+Then load that package and other necessary packages for today:
+
+```{r, message=FALSE}
+# To access the text data
+library(janeaustenr)
+
+# If you haven't installed these packages remember to do so from the Text Mining Worksheet
+library(tidyverse)
+library(tidytext)
+library(ggwordcloud)
+```
+
+Let's take a quick look at the data available for the books:
+
+```{r}
+# Save data in your environment
+austen_books <- austen_books()
+
+# Take a quick look at the different books
+austen_books |>
+  distinct(book)
+```
+
+The goal of the lab is to conduct some sentiment analysis of the text data for one of these books.
+
+------------------------------------------------------------------------
+
+### Question 1: (8 pts)
+
+Choose **only one of the books** to analyze. Then we will need to keep track of the chapter for the text in the book with a new variable. To help you, we started on the code:
+
+```{r}
+book <- austen_books |>
+  # Select one book
+  filter(book == "Emma") |>
+  # Create a chapter variable
+  mutate(chapter = cumsum(str_detect(text,"^Chapter|^CHAPTER")))
+book
+```
+
+What does one row represent in this dataset?
+
+**One row just represents the text, the book the text is from, and which chapter the text is in.**
+
+Now manipulate the `book` to 1) get rid of empty lines, 2) get rid of the information about the book before the first chapter starts, 3) get one word as its own observation with `unnest_token()`. Save the resulting text data as `words_book`.
+
+```{r}
+# attached NA values to any row with an empty text value and got rid of the rows
+words_book <- book |>
+  mutate(text = ifelse(text == "", NA, text)) |>
+  filter(!is.na(text)) |>
+  slice(-(1:3)) |> # get rid of anything before chapter 1
+  unnest_tokens(input = text, output = word)
+
+words_book
+```
+
+How many chapters were contained in the `book` you chose?
+
+```{r}
+# finds the number of chapters minus chapter 0 which got cut
+n_distinct(words_book$chapter)
+```
+
+**There are 55 chapters in Emma.**
+
+------------------------------------------------------------------------
+
+### Question 2: (8 pts)
+
+What are the 10 most common words in the book you chose? What do you think about the meaning of these words?
+
+```{r}
+# created a dataframe of just the most common words
+common_words <- words_book |>
+  group_by(word) |>
+  summarize(freq = n()) |>
+  arrange(desc(freq))
+
+common_words |>
+  slice_max(order_by = freq, n=10)
+```
+
+**These words don't really have any meaning. They're just common connector words for grammar.**
+
+Let's get rid of the stop words with the `SMART` lexicon:
+
+```{r}
+# Recall the SMART lexicon
+SMARTstops <- stop_words |> filter(lexicon == "SMART")
+```
+
+Use a joining function to get rid of stop words in `words_book` then find the 10 most common words and display them in a word cloud (most frequent words should appear bigger and in a different color). Do you notice any pattern in these words?
+
+```{r}
+# creates a word cloud based on the 10 most common words without the words in the SMART lexicon
+common_words |>
+  anti_join(SMARTstops, by="word") |>
+  slice_max(order_by = freq, n=10) |>
+  ggplot(aes(label = word, color=freq, size = freq)) + 
+  geom_text_wordcloud() + 
+  scale_size_area(max_size = 24) +
+  theme_minimal()
+```
+
+**The words are all pronouns or ways of addressing people or things. The only exception is the word good.**
+
+------------------------------------------------------------------------
+
+### Question 3: (7 pts)
+
+Let's take a look at the sentiments associated with words in the book and how these sentiments change as the story goes. Consider the sentiment value associated with each word from the `afinn` lexicon:
+
+```{r}
+# Sentiments value
+get_sentiments("afinn") |> sample_n(5)
+```
+
+Follow these steps to keep track of the sentiments as the story goes:
+
+1.  Use a joining function to only keep the words in `words_book` that are associated with a sentiment value.
+
+2.  Find the average sentiment value per chapter.
+
+3.  Create a `ggplot` with `geom_line()` to represent the average sentiment value across the chapters.
+
+How do the sentiments evolve as the story goes?
+
+```{r}
+# Graphs the averge sentiment in Emma by chapter using the afinn dataset for sentiment tracking
+words_book |> 
+  inner_join(get_sentiments("afinn"), by = "word") |>
+  group_by(chapter) |>
+  summarize(average_sentiment = mean(value, na.rm = TRUE)) |>
+  ggplot() +
+  geom_line(aes(x=chapter, y=average_sentiment)) +
+  labs(title="Average Sentiment by Chapter",
+       x="Chapters",
+       y="Average Sentiment") +
+  theme_minimal()
+```
+
+**The beginning is slightly positive before a quarter of the way through the sentiment becomes very negative. Then the middle part of the story is very positive before falling back to being negative in the 3rd quarter of the story before ending slightly positive.**
+
+------------------------------------------------------------------------
+
+### Question 4: (1 pt)
+
+After investigating how the sentiments change over the chapters, did the data match your expectations or not? If the data differed from your expectation, provide a possible explanation for why the data differed from what you expected.
+
+**After the investigation, the data did not match our expectation, We had thought that there was going to be a linear positive relationship, with the words getting more positive overtime. But according to the data, it stayed fairly consistent with occasional jumps and dips throughout the story. The reason for this could be that the story was written in a mostly neutral manner with crucial points such as the call to action and resolution needed to move the story forward, thus the negative and positive fluctuations.**
+
+------------------------------------------------------------------------
+
+### Formatting: (1 pt)
+
+Make sure the names of all group members are included at the beginning of the document.
+
+Knit your file! You can knit into pdf directly or into html. Once it knits in html, click on `Open in Browser` at the top left of the window pops out. Print your html file into pdf from your browser.
+
+Any issue? Ask other classmates or TA!
+
+Finally, remember to select pages for each question when submitting your pdf to Gradescope and to identify your group members.

@@ -1,0 +1,325 @@
+---
+title: "Worksheet 3: Grammar of Graphics"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r global_options, include=FALSE}
+# The following code is a basic setup of options for your document
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE, 
+                      warning = TRUE,
+                      message = FALSE,
+                      fig.align = "center", 
+                      R.options = list(max.print=50))
+
+# Edit the file starting below
+
+```
+
+This semester we will learn how to make different types of visualizations to explore our data. In this worksheet, we will get familiar with principles of \`ggplot, the Grammar of Graphics.
+
+## 1. Dataset and Library
+
+We will consider the built-in dataset `quakes` again. It contains information about earthquakes occurring near Fiji islands since 1964. To refresh our memory, let's take a look:
+
+```{r}
+# Take a look at the data frame
+head(quakes)
+```
+
+We will keep exploring this dataset, using `ggplot` which is also in the `tidyverse` library:
+
+```{r}
+# Upload the library
+library(tidyverse)
+```
+
+We will also use the pipe `|>` which is a very important operator to build on code:
+
+```{r}
+# Filter a dataframe
+filter(quakes, depth > 300)
+
+# Equivalent to piping quakes into filter()
+quakes |> 
+  filter(depth > 300)
+```
+
+```{r}
+# Create a new variable in a dataframe
+mutate(quakes, depth_2cat = ifelse(depth > 300, "Deep", "Not deep"))
+
+# Equivalent to piping quakes into mutate()
+quakes |> 
+  mutate(depth_2cat = ifelse(depth > 300, "Deep", "Not deep"))
+```
+
+## 2. Create a `ggplot`
+
+### a. Define a plot
+
+The `ggplot()` function helps us build a graph. Within this function, we specify the dataframe to explore:
+
+```{r}
+# Create a ggplot
+ggplot(data = quakes)
+```
+
+Well, it's empty because we haven't specified how to represent the variables in the `quakes` object...
+
+### b. Add a geometric object
+
+The `geom_...()` functions helps us define how to represent the variables with geometric objects (points, lines, bars, etc.). For example, `geom_point()` can represent our data with points:
+
+```{r, eval = FALSE}
+# Create a ggplot with a geometric object
+ggplot(data = quakes) +
+  geom_point()
+```
+
+Well, it does not work because we haven't specified which variables to represent... Using `aes()`, aesthetics, we can define the mapping of the variables to each aesthetic of the plot. We can either define the aesthetics for each geometric object or for the whole plot:
+
+```{r}
+# Create a ggplot with mapping variables to a geometric object
+ggplot(data = quakes) +
+  geom_point(aes(x = long, y = lat))
+
+# which here is equivalent to:
+ggplot(data = quakes, aes(x = long, y = lat)) +
+  geom_point()
+
+# Note the importance of placing "+" correctly
+```
+
+You can add many layers to the `ggplot` and it is a good practice to put the new layers on a new line (be sure to end a line with +).
+
+```{r}
+# Add layers to the plot
+ggplot(data = quakes, aes(x = long, y = lat)) + 
+  geom_point() + 
+  geom_line() 
+
+# Note that we would have to define the mapping for each geom if the mapping is not specified as a whole
+ggplot(data = quakes) + 
+  geom_point(aes(x = long, y = lat)) +
+  geom_line(aes(x = long, y = lat))
+```
+
+Other common `geom` functions we will use are:
+
+```{r}
+# Make a histogram for numeric variables
+ggplot(data = quakes) + 
+  geom_histogram(aes(x = mag))
+
+# Make a boxplot for numeric variables
+ggplot(data = quakes) + 
+  geom_boxplot(aes(x = mag))
+
+# Make a barplot for categorical variables
+quakes |> 
+  # But first create a categorical variable
+  mutate(depth_2cat = ifelse(depth > 300, "Deep", "Not deep")) |> 
+  ggplot() + 
+  geom_bar(aes(x = depth_2cat))
+```
+
+We will learn in the next worksheets in which cases it is more appropriate to use each one.
+
+### d. Map to color, shape, size
+
+We can change the appearance of some characteristics of the geometric object.
+
+```{r}
+# What does color vs fill do? 
+ggplot(data = quakes, aes(x = long, y = lat)) +
+  geom_point(color = "blue", fill = "orange")
+ggplot(data = quakes, aes(x = mag)) +
+  geom_histogram(color = "blue", fill = "orange")
+```
+
+Other options include `shape`, `size` and `alpha`.
+
+#### **Try it! In the code below, input different values between 0 and 10 for `shape`, `size` and `alpha`. What do these options control?**
+
+```{r}
+# What does shape vs size vs alpha do?
+ggplot(data = quakes, aes(x = long, y = lat)) +
+  geom_point(shape = 0.5, size = 0.5, alpha = 0.5)
+```
+
+**Shape changes the shape of the points. Size changes the size. Alpha controls the opacity.**
+
+More importantly, we can change the appearance of some characteristics of the geometric object **depending on the values of some variables**. For example, let's control the size of the points by the magnitude of the earthquake:
+
+```{r}
+# Map the size to the mag variable 
+ggplot(data = quakes, aes(x = long, y = lat, size = mag)) +
+  geom_point()
+
+# Note that the option for size is now within the aes() function
+```
+
+#### **Try it! Instead of differentiating the earthquakes based on the size of the magnitude, change the `color` of the points based on depth. Anything you notice in this graph?**
+
+```{r}
+# Write and submit code here!
+ggplot(data = quakes, aes(x = long, y = lat, color = mag)) +
+  geom_point()
+```
+
+**Write sentences here.**
+
+Compare your plot to the following plot that considers `depth` as a categorical variable instead:
+
+```{r}
+# Use a pipe to apply a function to the object quakes
+quakes |> 
+  # Pipe into mutate: no need to repeat the name of the dataframe
+  mutate(depth_2cat = ifelse(depth > 300, "Deep", "Not deep")) |> 
+  # Pipe into ggplot: no need to repeat the name of the dataframe
+  ggplot() +
+  # Define geom and aesthetics
+  geom_point(aes(x = long, y = lat, color = depth_2cat))
+
+# How does the legend of color differ from before?
+```
+
+## 3. Layering
+
+### a. Add labels and controlling scales
+
+Plots should be easy to interpret and informative labels are a key element in achieving this goal. The `labs()` function provides customized labels for titles, axes, legends, etc.:
+
+```{r}
+# Build a plot...
+ggplot(data = quakes, aes(x = long, y = lat, color = depth)) + 
+  geom_point() +
+  # ...and add labels
+  labs(
+    # Title
+    title = "Distribution of the depth across the trenches",
+    # Subtitle
+    subtitle = "For earthquakes that occurred near the Fiji Islands since 1964",
+    # Caption with source of data
+    caption = "Data obtained from Dr. John Woodhouse, Dept. of Geophysics, Harvard University",
+    # Label x-axis and y-axis
+    x = "Longitude",
+    y = "Latitude",
+    # Legend of color
+    color = "Depth (km)")
+```
+
+### b. Control scales
+
+We can also change the scales (tick marks) for a better readability with functions starting with `scale_`:
+
+```{r}
+# Build a plot...
+ggplot(data = quakes, aes(x = long, y = lat, color = depth)) + 
+  geom_point() +
+  # ...and adjust scales
+  scale_x_continuous(limits = c(160,190), breaks = seq(160, 190, 2)) + # enforce limits between 160 and 190, show tick marks every 2 degrees
+  scale_y_continuous(limits = c(-40,-10), breaks = seq(-40, -10, 5)) # enforce limits between -40 and -10, show tick marks every 5 degrees
+```
+
+### c. Facet
+
+Faceting reproduce a graph for each level of another variable (or combination of variables). Let's take a look at the map for three categories of depths:
+
+```{r}
+quakes |> 
+  # Create a variable called depth_3cat
+  mutate(depth_3cat = case_when(
+    depth <= 70 ~ "Shallow",
+    depth > 70 & depth <= 300 ~ "Intermediate",
+    depth > 300 ~ "Deep")) |> 
+  # Create a plot
+  ggplot() + 
+  geom_point(aes(x = long, y = lat, color = depth_3cat)) +
+  # Facet by depth category
+  facet_wrap(~depth_3cat)
+```
+
+#### **Try it! Compare 3 histograms of magnitude for each of the three categories of depth. Anything you noticed in this graph?**
+
+```{r}
+# Write and submit code here!
+quakes |> 
+  # Create a variable called depth_3cat
+  mutate(depth_3cat = case_when(
+    depth <= 70 ~ "Shallow",
+    depth > 70 & depth <= 300 ~ "Intermediate",
+    depth > 300 ~ "Deep")) |> 
+  # Create a plot
+  ggplot() + 
+  geom_histogram(aes(x=mag, color = depth_3cat)) +
+  # Facet by depth category
+  facet_wrap(~depth_3cat, nrow=3)
+```
+
+**Write sentences here.**
+
+### d. Color palettes and themes
+
+We can customize many aspects of our graphs by hand (colors, scales, background color, grid, ...) or we can use some themes or palettes other than the defaults.
+
+To define our own palette of colors for numeric values, we can use `scale_color_gradient()` with setting the color for *low* values and another color for *high* values:
+
+```{r}
+# Compare values of magnitude (low: not too dangerous, high: more dangerous)
+  ggplot(quakes, aes(x = long, y = lat, color = mag)) + 
+  geom_point() +
+  # Change the color palette
+  scale_color_gradient(low = "yellow", high = "darkred")
+```
+
+#### **Try it! Display the depth of earthquakes depending on their location and choosing an appropriate color palette.**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+Here is a list of some of the discrete palettes that are color-blind friendly:
+
+```{r}
+RColorBrewer::display.brewer.all(colorblindFriendly = TRUE)
+```
+
+We can use `scale_color_brewer()` when we are mapping a categorical variable to the aesthetic `color =`:
+
+```{r}
+quakes |> 
+  # Create a variable called depth_cat
+  mutate(depth_3cat = case_when(
+    depth <= 70 ~ "Shallow",
+    depth > 70 & depth <= 300 ~ "Intermediate",
+    depth > 300 ~ "Deep"
+  )) |> 
+  # Compare categories of depth
+  ggplot(aes(x = long, y = lat, color = depth_3cat)) + 
+  geom_point() +
+  # Change the color palette
+  scale_color_brewer(palette = "Set2")
+```
+
+### e. Themes
+
+There are so many adjustments we can make to our `ggplot` (change background color, color of axis, color of font, ...) and sometimes it is easier to use some predefined themes:
+
+```{r}
+# Still same plot
+  ggplot(quakes, aes(x = long, y = lat, color = depth)) + 
+  geom_point() +
+  # Use the default theme_minimal()
+  theme_minimal()
+```
+
+Visit this website to find a list of all themes available: <https://ggplot2.tidyverse.org/reference/ggtheme.html>

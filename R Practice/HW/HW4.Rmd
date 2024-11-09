@@ -1,0 +1,347 @@
+---
+title: "HW 4"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,  
+                      warning = TRUE, message = FALSE, 
+                      fig.align = "center",
+                      R.options = list(max.print=100))
+
+# Edit the file starting below
+
+# Upload main package
+library(tidyverse)
+```
+
+### Enter your name and EID here: Connor Shen, cs65692
+
+**You will submit this homework assignment as a pdf file on Gradescope.**
+
+*For all questions, include the R commands/functions that you used to find your answer (show R chunk). Answers without supporting code will not receive credit. Write full sentences to describe your findings.*
+
+------------------------------------------------------------------------
+
+## Part 1
+
+Let's explore some dataset retrieved from the [City of Austin data portal](https://data.austintexas.gov/) for the [Austin 311 Public Data](https://data.austintexas.gov/Utilities-and-City-Services/Austin-311-Public-Data/xwdj-i9he/about_data). The data was filtered to only include **complaints about coyotes** for the year of 2023:
+
+```{r}
+# Upload the data from GitHub
+coyotes <- read_csv("https://raw.githubusercontent.com/laylaguyot/datasets/main//coyotes_2023.csv")
+
+# Take a quick look
+head(coyotes)
+```
+
+------------------------------------------------------------------------
+
+### Question 1: (2 pts)
+
+Look at the variables available in this dataset. How many variables are related to dates/times? How many variables are related to location?
+
+**There are 4 variables related to dates/times and 14 variables related to location.**
+
+Clean up the dataset by following these steps to create `coyotes_clean`:
+
+-   Keep only the necessary variables for answering the questions in this assignment.
+
+-   Ensure variable names are lowercase and use only one word.
+
+-   Convert date/time variables to proper R date/time formats.
+
+*Note: You will want to update this section as you work on this assignment to know which variables you will need to include and clean up!*
+
+```{r}
+# converts all variable names to lowercase and changes all date variables in datetime format
+coyotes_clean <- coyotes |>
+  rename_all(~ make.names(tolower(.))) |>
+  rename_all(~ gsub("\\.+", "_", .)) |> #replaces any periods with underscores
+  mutate(across(contains("date"), ~ mdy_hms(.))) |> #checks for column with "date" and converts
+  mutate(zip_code = ifelse(is.na(zip_code) & str_detect(sr_location, "\\d{5}"),
+                           str_extract(sr_location, "\\d{5}$"),
+                           zip_code)) |>
+  mutate(zip_code = as.numeric(zip_code))
+
+coyotes_clean
+```
+
+------------------------------------------------------------------------
+
+### Question 2: (2 pts)
+
+What time of the year are the 311 calls most likely to report a complaint about coyotes? Plot the number of complaints per month:
+
+```{r}
+# plotting the amount of 311 calls per month
+coyotes_clean |>
+  mutate(month = month(created_date, label = TRUE)) |>
+  group_by(month) |>
+  summarise(num_complaints = n()) |>
+  ggplot(aes(x = month, y = num_complaints)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "Number of Coyote Complaints per Month",
+       x = "Month", y = "Number of Complaints") +
+  theme_minimal()
+```
+
+**Most of the 311 calls come at the end of the year, with December being the busiest followed by November and then October.**
+
+------------------------------------------------------------------------
+
+### Question 3: (3 pts)
+
+Where do the 311 calls complaining about coyotes come from? Plot the distribution of the calls based on their latitude and longitude:
+
+```{r}
+# plotting longitude against latitude to see location of 311 calls
+ggplot(coyotes_clean, aes(x = longitude_coordinate, y = latitude_coordinate)) +
+  geom_point(alpha = 0.6, color = "steelblue") +
+  labs(title = "Geographic Distribution of Coyote Complaints",
+       x = "Longitude", y = "Latitude") +
+  theme_minimal()
+```
+
+Investigate `coyotes` with all original data for invalid latitude and/or longitude values. Anything you notice?
+
+```{r}
+# checking for any invalid or missing values in the longitude or latitude coordinates
+coyotes |>
+  filter(is.na(`Latitude Coordinate`) | is.na(`Longitude Coordinate`) |
+           !(`Latitude Coordinate` > 29 & `Latitude Coordinate` < 31) & 
+           !(`Longitude Coordinate` > -98 & `Longitude Coordinate` < -96)
+          #checks if the coordinates are in Austin
+         )
+```
+
+**There are two invalid values in the coyotes dataset where the longitude and latitude are not in the Austin area.**
+
+Note that one of these calls also had a missing value for the `Zip Code` variable but it was given in the `SR Location`. Replace the missing value with the appropriate `Zip Code` in `coyotes_clean` (do that in **Question 1**).
+
+Then, remove the invalid values for latitude and longitude and represent again the distribution of the calls in the Austin area. Do all 311 calls coming from the same location?
+
+```{r}
+# removes non Austin coordinates and graphs all 311 calls' location
+coyotes_clean |>
+  filter(latitude_coordinate > 29 & latitude_coordinate < 31 &
+           longitude_coordinate > -98 & longitude_coordinate < -96) |>
+  ggplot(aes(x = longitude_coordinate, y = latitude_coordinate)) +
+  geom_point(alpha = 0.6, color = "steelblue") +
+  labs(title = "Geographic Distribution of Coyote Complaints in Austin",
+       x = "Longitude", y = "Latitude") +
+  theme_minimal()
+```
+
+**311 calls do not all come from the same location.**
+
+------------------------------------------------------------------------
+
+### Question 4: (3 pts)
+
+Let's take a different perspective to analyze the location of the calls. Summarize the number of 311 calls, with `nb_calls`, complaining about coyotes for each ZIP code and save this table into `coyotes_summary`:
+
+```{r}
+# finding the number of calls by zip code
+coyotes_summary <- coyotes_clean |>
+  group_by(zip_code) |>
+  summarise(nb_calls = n()) |>
+  arrange(desc(nb_calls))
+
+coyotes_summary
+```
+
+What if we want to represent the ZIP code on a map? We need what we call a shapefile: this type of file provide information about the borders of a location entity such as ZIP codes, districts, counties, states, countries, ... We can represent the contours of this entity with the geometry of a multipolygon.
+
+We will need a new package, `sf`, to manipulate shapefiles and we will need to upload shapefiles from the US Census Bureau with the `tigris` package. If it is the first time you use these packages, run `install.packages("sf")` and `install.packages("tigris")` in your console then:
+
+```{r}
+# Upload the new libraries
+library(sf)
+library(tigris)
+```
+
+Then let's get the geometry of the ZIP codes from the US Census bureau:
+
+```{r}
+# Fetch ZIP code shapefiles for Texas
+zipcodes <- zctas(year = 2010, state = "TX") |>
+  select(ZCTA5CE10, geometry) |>
+  mutate(ZCTA5CE10 = as.numeric(ZCTA5CE10))
+
+zipcodes
+```
+
+Let's join the information of the number of 311 calls related to coyote complaints per ZIP code with the `zipcodes` shapefile: adjust the key variable name(s). Then we make a map of ZIP codes in Austin! Comment each line of code with what each piece achieves and improve the plot with labels and appropriate colors. Which area of Austin seem to have more 311 calls for coyote complaints? Does that make sense?
+
+```{r}
+coyotes_summary |>
+  # rename the key variable for ZIP code in the shapefile to match the name in coyotes_summary (zip_code)
+  inner_join(zipcodes, by = c("zip_code" = "ZCTA5CE10")) |>
+  # creating the map with ggplot
+  ggplot() +
+  # plot the ZIP code areas from the shapefile, coloring them by the number of coyote complaints
+  geom_sf(aes(geometry = geometry, fill = nb_calls), color = "black") +
+  # label the plot with a title, labels for the axes, and a color scale to represent the number of calls
+  geom_sf_text(aes(geometry = geometry, label = zip_code), size = 2, color = "black") +
+  # label the plot with a title, labels for the axes, and a color scale to represent the number of calls
+  labs(title = "Number of 311 Coyote Complaints per ZIP Code in Austin",
+       fill = "Number of Calls",
+       x = "Longitude", y = "Latitude") +
+  # choose better a color scale for better visual interpretation
+  scale_fill_gradient(low = "lightyellow", high = "red") +
+  # theme minimal to make the plot look good
+  theme_minimal()
+```
+
+**Zip codes 78757, 78704, and 78723 seem to have the highest number of calls for complaints, all of which are located close to the center of Austin. It kind of makes sense because these places are relatively close to parks that may contain coyotes but are also far enough away that it would be reasonable to complain about coyotes being there.**
+
+------------------------------------------------------------------------
+
+### Question 5: (2 pts)
+
+We can do a similar analysis with the council districts:
+
+```{r}
+# Import the shapefile from the portal
+districts <- read_csv("https://data.austintexas.gov/resource/w3v2-cj58.csv") |>
+  # Define the geometry in R format
+  mutate(geometry = st_as_sfc(the_geom)) |>
+  # District 10 is repeated and one of them has less information so we can remove it
+  filter(objectid != 8)
+
+districts
+```
+
+Use the `districts` shapefile to explore the number of 311 calls complaining about coyotes per council district. Which area of Austin seem to have more 311 calls for coyote complaints?
+
+```{r}
+# map of coyote complaints by council district in Austin
+coyotes_clean |>
+  filter(!is.na(council_district)) |>
+  group_by(council_district) |>
+  summarise(nb_calls = n()) |>
+  arrange(desc(nb_calls)) |>
+  inner_join(districts, by = c("council_district" = "district_number")) |>
+  ggplot() +
+  geom_sf(aes(geometry = geometry, fill = nb_calls), color = "black") +
+  geom_sf_text(aes(geometry = geometry, label = council_district), size = 2, color = "black") +
+  labs(title = "311 Coyote Complaints by Council District in Austin",
+       fill = "Number of Calls",
+       x = "Longitude", y = "Latitude") +
+  scale_fill_gradient(low = "lightyellow", high = "red") +
+  theme_minimal()
+```
+
+**Council district 7 appears to have the most amount of coyote complaint calls.**
+
+------------------------------------------------------------------------
+
+### Question 6: (2 pts)
+
+Discuss the potential ethical issues for using location data like ZIP codes or latitude/longitude in data analysis. How could this information be misused, and what steps can we take to ensure it’s handled responsibly?
+
+**Using location data such as ZIP codes or latitude/longitude in data analysis raises several ethical concerns around privacy and security. This data could potentially be misused to identify individuals or communities, leading to invasions of privacy, discrimination, or targeted surveillance. For instance, analyzing ZIP codes could reveal socioeconomic information, which might be used for discriminatory practices or biased decision-making. To ensure the data is handled responsibly, we can make the data anonymous to protect sensitive information. Additionally, transparency with users about how their location data is being collected and used is can be used to minimize ethical risks.**
+
+------------------------------------------------------------------------
+
+## Part 2
+
+In this part, we are interested in comparing our own code to AI-generated code! More specifically, you will use **Microsoft Copilot**. Review instructions on how to access it (free for UT students!) here: <https://cloud.wikis.utexas.edu/wiki/spaces/Microsoft365/pages/43552791/Copilot>
+
+------------------------------------------------------------------------
+
+### Question 7: (2 pts)
+
+Copy/Paste this prompt to **Copilot**:
+
+*Consider the `world_bank_pop` dataset, a built-in dataset in `tidyverse`. Why is `world_bank_pop` not tidy? What shall we do to make it tidy?*
+
+Include the code provided by **Copilot**:
+
+```{r, eval=FALSE}
+# AI CODE
+#The world_bank_pop dataset isn’t considered tidy because it doesn’t adhere to the tidy data principles. In a tidy dataset, each variable forms a column, each observation forms a row, and each type of observational unit forms a table.
+
+#In the world_bank_pop dataset, different years are spread across multiple columns instead of being a single column. To tidy it up, you would need to gather these year columns into a single column, so each row represents a unique combination of country, indicator, and year.
+
+#Here’s an example in R using the tidyr package:
+
+#r
+
+#Copy
+library(tidyverse)
+# Assuming `world_bank_pop` is already loaded
+tidy_world_bank_pop <- world_bank_pop %>%
+  pivot_longer(
+    cols = `1960`:`2020`, # Modify this based on the actual year range in your dataset
+    names_to = "Year",
+    values_to = "Value"
+  ) %>%
+  mutate(Year = as.integer(Year)) # Convert Year from character to integer
+
+# View the tidied dataset
+print(tidy_world_bank_pop)
+#This will transform the dataset into a long format, which is the tidy format. Have you worked much with the tidyr package before?
+```
+
+Did **Copilot** provide an accurate solution? Was the resulting dataset tidy? Explain why you think the AI-generated code is correct or needs refinement.
+
+**Copilot did not give an accurate solution. The code error coded when trying to run pivot_longer() due to the incorrect range being inputted. However, if I input the correct range of years in the dataset, the resulting dataset is pretty tidy. There can be some refinements but in general, each variable forms a column and each observation forms a row.**
+
+------------------------------------------------------------------------
+
+### Question 8: (2 pts)
+
+Refine the code provided by **Copilot** to ensure the dataset is tidy and conforms to best practices from class.
+
+```{r}
+# YOUR OWN CODE
+tidy_world_bank_pop <- world_bank_pop |>
+  pivot_longer(
+    cols = `2000`:`2017`, # Modify this based on the actual year range in your dataset
+    names_to = "year",
+    values_to = "population"
+  ) |>
+  mutate(year = as.integer(year))
+tidy_world_bank_pop
+```
+
+Explain how you improved Copilot’s code: What did you change? Why do you think your version is better or more accurate?
+
+**I gave it the appropriate range and renamed the Value column to population to make it easier to understand. I also made both the year and population columns lower case to match the rest of the dataset. This version is better simply because it is more consistent and it works.**
+
+How did comparing AI-generated code to yours impact your coding process? Do you feel more efficient or aware of certain tasks?
+
+**The AI-generated code was a good place to start as it did the bulk of the programming but it cannot be solely relied upon. While the coding process did feel more efficient, this is because I had the knowledge on what to look out for and how to solve the issue. Had I not known what pivot_longer() did or in general if I was used to a different method, using AI would be more of a hindrance than a benefit.**
+
+------------------------------------------------------------------------
+
+### Question 9: (1 pt)
+
+Using the tidy version of `world_bank_pop`, represent how the world's *urban population growth* has changed over the years. *Note: the country code `WLD` represents the entire world.* Why does this graph not contradict the fact that the urban population worldwide has been increasing over the years?
+
+```{r}
+# graph of world urban population growth from 2000 to 2017
+tidy_world_bank_pop |>
+  filter(country == "WLD", indicator == "SP.URB.GROW") |>
+  ggplot(aes(x = year, y = population)) +
+  geom_line(color = "blue") +
+  geom_point(color = "red") +
+  labs(title = "World's Urban Population Growth (Annual %)",
+    x = "Year",
+    y = "Urban Population Growth (%)") +
+  theme_minimal()
+```
+
+**While the physical number has increased over the years, the rate that the population grows has decreased. Thus we see the percentage of urban population growth decrease over the years.**
+
+------------------------------------------------------------------------
+
+## Formatting: (1 pt)
+
+Knit your file! You can knit into html and once it knits in html, click on `Open in Browser` at the top left of the window that pops out. **Print** your html file into pdf from your browser.
+
+Is it working? If not, try to decipher the error message: look up the error message, consult websites such as [stackoverflow](https://stackoverflow.com/) or [crossvalidated](https://stats.stackexchange.com/).
+
+Finally, remember to select pages for each question when submitting your pdf to Gradescope.

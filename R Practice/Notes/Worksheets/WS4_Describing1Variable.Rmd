@@ -1,0 +1,312 @@
+---
+title: "Worksheet 4: Describing 1 variable"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r global_options, include=FALSE}
+# The following code is a basic setup of options for your document
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE, 
+                      warning = TRUE,
+                      message = FALSE,
+                      fig.align = "center", 
+                      R.options = list(max.print=50))
+
+# Edit the file starting below
+
+```
+
+In this worksheet, we will use `ggplot` and some `geom` functions to explore univariate distributions: describing 1 variable at a time.
+
+## 1. Dataset and Library
+
+We will consider the built-in dataset `quakes` again. It contains information about earthquakes occurring near Fiji islands since 1964. To refresh our memory, let's take a look:
+
+```{r}
+# Take a look at the data frame
+head(quakes)
+```
+
+We will keep exploring this dataset, using `ggplot` which is also in the `tidyverse` library:
+
+```{r}
+# Upload the library
+library(tidyverse)
+```
+
+Let's use some univariate graphs and summary statistics to explore the numeric variables in this dataset.
+
+## 2. Describing 1 numeric variable
+
+When describing numeric variables, we pay attention to what a typical value is (center) and how the values vary from each other (spread), what values are most common and what values are rare (shape).
+
+### a. Histogram
+
+Since we can have a wide range of different values, especially for continuous variables, it does not necessarily make sense to visualize what *exact value* is the most common but rather focus on what *range of values* is the most common.
+
+A histogram represents how frequent some ranges of values (called bins) are. Let's use `geom_histogram()`:
+
+```{r}
+# Define the ggplot and the dataframe
+ggplot(data = quakes) +
+  # Use geom_histogram and define mapping aesthetics (we will need more!)
+  geom_histogram(aes(x = depth)) 
+```
+
+See the message on top of the graph? By default, the number of bins is 30 in `ggplot`. Can you tell which range of values is the most common?
+
+**Not exactly**
+
+The bins in a histogram define the *ranges of values* that are represented by bars. We can adjust the bins by setting the `binwidth`:
+
+```{r}
+ggplot(data = quakes) +
+  geom_histogram(aes(x = depth), 
+                 # Set bin width (we still need more!)
+                 binwidth = 100)
+```
+
+Now can you tell which range of values is the most common?
+
+**Write sentences here.**
+
+We can adjust how the bins are cut by specifying the `center` (which should be **half of the bin width**):
+
+```{r}
+ggplot(data = quakes) +
+  geom_histogram(aes(x = depth), 
+                 # Set bin width and center (that's better!) 
+                 binwidth = 100, center = 50)
+```
+
+Which range of values appears to be the most common?
+
+**Range 0 to 100 km is the most common.**
+
+Noticed how the shape of the histogram changes depending on how we define the bins? We usually recommend to have at least 10 different bins to be able to "see" the variation in our data.
+
+#### **Try it! Create a better representation of the distribution of `depth`! Adjust the previous histogram to represent earthquakes with 1) bins in increments of 50 km, starting at 0, 2) color on the outline and inside of bars, 3) tick marks that matches each bin (Hint: use `scale_x_continuous()`), and 4) appropriate labels for the x- and y-axes. Based on this histogram, at what depth do the earthquakes seem to be most common?**
+
+```{r}
+# Write and submit code here!
+ggplot(data = quakes) +
+  geom_histogram(aes(x = depth), 
+                 # Set bin width and center (that's better!) 
+                 binwidth = 50, center = 25, 
+                 color="black", fill="salmon") + 
+  scale_x_continuous(limits = c(0,700), breaks = seq(0, 700, 50)) + 
+  labs(title = "Distribution of depth for earthquakes near Fiji Islands",
+       x = "Depth (km)", y="Frequency of earthquakes")
+```
+
+**Most commonly earthquakes occur at a depth between 50-100 km.**
+
+### b. Boxplot
+
+Another common graph for numeric variables is a boxplot which represents the 5-number summary of a variable: minimum, first quartile, median, third quartile, maximum (delimiting the lower point of the whisker, the lower bar of the box, the solid bar in the box, the upper bar of the box, and the upper point of the whisker, respectively).
+
+```{r}
+ggplot(data = quakes) +
+  # Use geom_boxplot and define mapping aesthetics
+  geom_boxplot(aes(x = depth)) 
+
+# Or we sometimes represent the distribution vertically for a boxplot
+ggplot(data = quakes) +
+  # Switch to y position in the aesthetics
+  geom_boxplot(aes(y = depth)) 
+```
+
+Note that one of the axes has no meaning when representing a single boxplot and the box takes the entired width. We can remove the information that is not relevant and adjust the x-axis as follows:
+
+```{r}
+ggplot(data = quakes) +
+  geom_boxplot(aes(y = depth)) +
+  # Remove labels and tick marks that have no meaning
+  scale_x_continuous(labels = NULL, breaks = NULL, limits = c(-1,1))
+```
+
+Note: boxplots sometimes summarize the data too much (just into five numbers) and we might miss important characteristics of the data. What information are we missing compared to what we could see in the histogram for `depth`?
+
+**Write sentences here.**
+
+### c. Density and Violin plots
+
+Sometimes, we use density and violin plots to display the "smooth" distribution of a numeric variable:
+
+```{r}
+ggplot(data = quakes) +
+  # Use geom_density and define mapping aesthetics
+  geom_density(aes(x = depth)) 
+
+ggplot(data = quakes) +
+  # Use geom_violin and define mapping aesthetics (note: it needs an x- and y-aesthetics)
+  geom_violin(aes(x = depth, y = ""))
+```
+
+------------------------------------------------------------------------
+
+#### **Try it! Create a plot to represent the number of `stations`, adjusting the tick marks appropriately on all axes and adding appropriate labels. Do you notice anything in this graph?**
+
+```{r}
+# Write and submit code here!
+ggplot(data = quakes) +
+  geom_boxplot(aes(y = stations)) +
+  scale_x_continuous(labels = NULL, breaks = NULL, limits = c(-1,1)) + 
+  labs(title="Number of Stations")
+```
+
+**Write sentences here.**
+
+------------------------------------------------------------------------
+
+### d. Reporting summary statistics
+
+In statistics, *center* is a measure that represents a typical value for a numeric variable (we typically report the mean or median). The mean is the arithmetic average of the numeric values: it is the sum of all data values divided by the number of observations. The median splits the data in two halves: into the lowest 50% values and the highest 50% values.
+
+```{r}
+# Find the mean
+mean(quakes$stations)
+
+# Find the median
+median(quakes$stations)
+```
+
+Are these two values the same? different? Why/Why not?
+
+**Write sentences here.**
+
+Let's take this opportunity to introduce a new `tidyverse` function that will help us create summary statistics: `summarize(dataframe, stats functions)`.
+
+```{r}
+# Find the mean and median
+summarize(quakes,
+          mean_stations = mean(stations), 
+          median_stations = median(stations))
+
+
+# Or using the pipe
+quakes |>
+  summarize(
+    mean_stations = mean(stations),
+    median_stations = median(stations))
+```
+
+Another important measure to report is the *spread* of a numeric variable which represents how values differ from each other. In statistics, we usually use standard deviation or Interquartile Range (IQR). The standard deviation is the average distance between each data point and the mean of the dataset. The IQR splits the middle 50% of the data. (Note: the first quartile (Q1) separates the data from the lowest 25% values and the third quartile (Q3) separate the data from the highest 25% values; then IQR = Q3 - Q1).
+
+```{r}
+# Using the pipe
+quakes |>
+  # Summarize
+  summarize(
+    mean_stations = mean(stations),
+    sd_stations = sd(stations),
+    median_stations = median(stations),
+    IQR_stations = IQR(stations))
+```
+
+The *shape* of the distribution of a numeric variable will influence which statistics we prefer to report. We generally talk about two kinds of shapes: (approximately) symmetric or skewed (with one tail longer than another). We usually report mean/sd for distributions that are (approximately) symmetric and median/IQR for distributions that are more skewed. But always interpret the distributions in context!
+
+Which measure of center seems to better represent a typical value for the number of stations that report an earthquake?
+
+**Write sentences here.**
+
+Also, remember the `summary()` function that provides several stats at once:
+
+```{r}
+summary(quakes$stations)
+```
+
+------------------------------------------------------------------------
+
+#### **Try it! Create a plot to represent the magnitude of an earthquake, adjusting the tick marks appropriately on all axes and adding appropriate labels. How would you describe the center, spread, shape of this distribution? Write a description grounded in context.**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+------------------------------------------------------------------------
+
+## 3. Describing 1 categorical variable
+
+When describing categorical variables, we pay attention to which category are the most/least common.
+
+Let's categorize `depth` as indicating *Deep* vs *Not deep* earthquakes:
+
+```{r}
+# Create a new variable
+new_quakes <- mutate(quakes, depth_2cat = ifelse(depth > 300, "Deep", "Not deep"))
+```
+
+### a. Bar plot
+
+We can represent a single categorical variable with a bar graph using `geom_bar()` where the height of the bar of each category represents how frequently a category appears in the dataset.
+
+```{r}
+ggplot(data = new_quakes) +
+  # Use geom_bar and define mapping aesthetics
+  geom_bar(aes(x = depth_2cat))
+```
+
+------------------------------------------------------------------------
+
+#### **Try it! What could be done to improve the previous bar plot?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+------------------------------------------------------------------------
+
+### b. Reporting summary statistics
+
+When reporting statistics about a categorical variable, we often include counts (frequencies) or proportions (relative frequencies). We can use the function `table` to find counts:
+
+```{r}
+# Find counts/frequencies
+table(new_quakes$depth_2cat)
+```
+
+There are 452 earthquakes that were categorized as *Deep* and 548 earthquakes that were categorized as *Not deep*.
+
+Then we can use the function `prop.table` on the counts to find proportions:
+
+```{r}
+# Find proportions/relative frequencies
+prop.table(table(new_quakes$depth_2cat))
+```
+
+About 45.2% of the earthquakes were categorized as *Deep* .
+
+Another way to find the counts and proportions for each category is using another `tidyverse` function called `group_by`: combined with the `summarize` function that allows us to find summaries by groups (`n()` is used to count observations in the groups):
+
+```{r}
+new_quakes |>
+  # Split the data in groups 
+  group_by(depth_2cat) |>
+  # Summarize per group
+  summarize(count = n(),
+            proportion = n() / nrow(new_quakes))
+```
+
+All summary statistics in one table!
+
+------------------------------------------------------------------------
+
+#### **Try it! Create a new variable called `depth_median` to categorize values less than/more than the median depth. Represent the distribution of that new variable with the appropriate graph. Why does it make sense to see what we see?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**

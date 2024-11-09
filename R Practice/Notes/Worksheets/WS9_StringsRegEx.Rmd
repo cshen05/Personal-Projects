@@ -1,0 +1,303 @@
+---
+title: "Worksheet 9: Strings and Regular expressions"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r global_options, include=FALSE}
+# The following code is a basic setup of options for your document
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE, 
+                      warning = TRUE,
+                      message = FALSE,
+                      fig.align = "center", 
+                      R.options = list(max.print=50))
+
+# Edit the file starting below
+
+```
+
+In this worksheet, we will focus on manipulating strings and will introduce regular expressions.
+
+## 1. Set up
+
+Let's load `tidyverse` which contains the `stringr` and `lubridate` package:
+
+```{r, message=FALSE}
+# Load package 
+library(tidyverse)
+```
+
+We will refer to some string objects and also manipulate strings within a dataframe, like `txhousing`:
+
+```{r}
+# Take a look at the distinct cities in txhousing
+txhousing |>
+  distinct(city)
+```
+
+Let's manipulate strings with functions from the `stringr` package: the name of these functions start with `str_`.
+
+## 2. Strings
+
+Strings are defined with either single quotes `'` or double quotes `"`:
+
+### a. Calculating length
+
+The `str_length()` function can help us find the length of a string:
+
+```{r}
+# String length
+str_length("abc")
+
+# How is that different?
+str_length("a b c")
+```
+
+We can apply this function to many strings contained in a vector!
+
+```{r}
+# String length of a vector
+str_length(txhousing$city)
+```
+
+We can also apply this function to create a new variable in a dataframe:
+
+```{r}
+# Keep track of the length of a city in a variable
+txhousing |>
+  # Only see distinct cities
+  distinct(city) |>
+  # Find the length and create a new variable
+  mutate(city_length = str_length(city)) |>
+  # Sort from shorter to longer name
+  arrange(city_length)
+```
+
+### b. Combining strings
+
+We can use `str_c()` to combine two or more strings:
+
+```{r}
+# Combine strings
+str_c("Happy", "Monday", "!")
+
+# By default, no space but we can add the argument sep = 
+str_c("Happy", "Monday", "!", sep = " ")
+```
+
+#### **Try it! Add ", TX" to all cities in `txhousing`.**
+
+```{r}
+# Write and submit code here!
+txhousing |>
+  mutate(str_c(city,", TX"))
+```
+
+What if we want to combine all the values of one vector/variable together?
+
+```{r}
+# Use the argument collapse =
+str_c(c("a","b","c"), collapse = "")
+
+# Or separate by a comma and a space
+str_c(c("a","b","c"), collapse = ", ")
+```
+
+We can get all distinct cities in one object!
+
+```{r}
+# Add state information
+txhousing |> 
+  # Only distinct cities
+  distinct(city) |> 
+  # Pull the city as a vector
+  pull() |> 
+  # Collapse all cities together, separated by a comma and a space
+  str_c(collapse = ", ")
+```
+
+### c. Changing cases
+
+We can change the strings from lower to uppercase and vice-versa (also use sentence case):
+
+```{r}
+# To lower case
+str_to_lower("Happy Monday!")
+
+# To upper case
+str_to_upper("Happy Monday!")
+
+# To sentence case
+str_to_sentence("Happy Monday!")
+```
+
+Especially useful if there is some inconsistencies in the categories of a variable!
+
+### d. Subsetting strings
+
+We can focus on a subset of a string with `str_sub()` (only works with indexing positions though):
+
+```{r}
+# Select a position in the string
+str_sub("Happy Monday!", start = 1, end = 5)
+
+# Or count backwards with -
+str_sub("Happy Monday!", start = -7, end = -2)
+```
+
+We can also split a string by finding a separator:
+
+```{r}
+# Split given a pattern
+str_split("Happy Monday!", pattern = " ")
+```
+
+Note that the resulting object is called a list and is difficult to manipulate within dataframes.
+
+### e. Finding (exact) matches in strings
+
+Let's start finding patterns in strings! We can find if a pattern occurs in our data with `str_detect()`:
+
+```{r}
+# Detect the matches
+str_detect("Monday", pattern = "day")
+```
+
+#### **Try it! Any cities in `txhousing` contain "county" in their name? If you don't find any, try to change the names to lower cases first.**
+
+```{r}
+# Write and submit code here!
+txhousing |>
+  mutate(city=str_to_lower(city)) |>
+  filter(str_detect(city, "county")) |>
+  distinct(city)
+```
+
+**Write sentences here.**
+
+What if we want to replace a pattern with `str_replace()`:
+
+```{r}
+# Replace the matches
+str_replace("Monday", pattern = "Mon", replacement = "Tues")
+```
+
+#### **Try it! Replace `Fort` with `Ft` in the names of the cities.**
+
+```{r}
+# Write and submit code here!
+txhousing |>
+  mutate(city = str_replace(city, pattern="Fort", replacement="Ft")) |>
+  filter(str_detect(city, "Ft"))
+```
+
+## 3. Regular expressions (Regex)
+
+Regular expressions are used to describe patterns in strings. They're a little weird at first but they can be very useful, especially when we are looking for patterns with some flexibility.
+
+### a. Wildcards
+
+Use `.` to match any character (except a new line):
+
+```{r}
+# Detect the matches in a dataframe
+txhousing |>
+  # Only distinct cities
+  distinct(city) |>
+  # Filter cities with any character and "ounty"
+  filter(str_detect(city, ".ounty"))
+```
+
+### b. Anchors
+
+Let's find a match at the beginning of a string with `^` or at the end of a string with `$` :
+
+```{r}
+# Detect the matches in a dataframe
+txhousing |>
+  # Only distinct cities
+  distinct(city) |>
+  # Filter cities starting with A
+  filter(str_detect(city, "^A"))
+```
+
+```{r}
+# Detect the matches in a dataframe
+txhousing |>
+  # Only distinct cities
+  distinct(city) |>
+  # Filter cities ending with n
+  filter(str_detect(city, "n$"))
+```
+
+#### **Try it! What is the number of cities that start with the initial of your first name?**
+
+```{r}
+# Write and submit code here!
+txhousing |>
+  distinct(city) |>
+  filter(str_detect(city, "^C")) |>
+  nrow()
+```
+
+**Write sentences here.**
+
+### c. Flexible patterns
+
+To look for certain patterns, we will use `[]`. Here are a few useful patterns:
+
+-   `[0-9]` matches any digit
+
+-   `[ ]` matches any single space
+
+-   `[abc]` matches a, b, or c
+
+-   `[a-zA-Z]` matches any letter, lower case or upper case
+
+-   `[a-zA-Z0-9]` matches any alphanumeric character
+
+Let's check any cities with a space in their name:
+
+```{r}
+txhousing |>
+  # Only distinct cities
+  distinct(city) |>
+  # Filter cities starting with A or B
+  filter(str_detect(city, "^[AB]"))
+```
+
+#### **Try it! Find how many city names end with a vowel.**
+
+```{r}
+# Write and submit code here!
+txhousing |>
+  # Only distinct cities
+  distinct(city) |>
+  # Filter cities starting with A or B
+  filter(str_detect(city, "[aeiouAEIOU]$"))
+```
+
+**Write sentences here.**
+
+### d. Special characters
+
+In regular expressions, some characters have special meanings (e.g., `.` matches any character, `^` indicates the start of a string, etc.). Sometimes, we may want to search for these special characters themselves rather than their functionality.
+
+To do this, we can "escape" them using a backslash (`\`).
+
+```{r}
+# Actually referring to a quote for a string
+'\''
+```
+
+The trick is that `\` is a special character itself so we sometimes have to use a few of those `\\`:
+
+```{r}
+# Compare these two pieces of code:
+str_replace_all("Happy Monday.", pattern = ".", replacement = "!")
+str_replace_all("Happy Monday.", pattern = "\\.", replacement = "!")
+```

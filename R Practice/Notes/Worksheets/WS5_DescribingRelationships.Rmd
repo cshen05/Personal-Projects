@@ -1,0 +1,346 @@
+---
+title: "Worksheet 5: Describing Relationships"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r global_options, include=FALSE}
+# The following code is a basic setup of options for your document
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE, 
+                      warning = TRUE,
+                      message = FALSE,
+                      fig.align = "center", 
+                      R.options = list(max.print=50))
+
+# Edit the file starting below
+
+```
+
+In this worksheet, we will use `ggplot` and some more `geom` functions to explore relationships: describing at least 2 variables.
+
+## 1. Dataset and Library
+
+We will consider the built-in dataset `quakes` again. It contains information about earthquakes occurring near Fiji islands since 1964. To refresh our memory, let's take a look:
+
+```{r}
+# Take a look at the data frame
+head(quakes)
+```
+
+We will keep exploring this dataset, using `ggplot` so we need to upload the library `tidyverse` containing all related functions:
+
+```{r}
+# Upload the library
+library(tidyverse)
+```
+
+The type of plots we will use to explore relationships depends on the types of the variables involved.
+
+## 2. Comparing two numeric variables
+
+When comparing two numeric variables, we may wonder if high values on one variable are associated with high/low values for another variable.
+
+### a. Using a scatterplot
+
+The relationship between two numeric variables is typically displayed using a scatterplot with `geom_point()`. For example, we can investigate if the depth of an earthquake affects the magnitude of that earthquake. In this context, we are considering the depth of an earthquake as an explanatory variable for the magnitude, the response variable. By convention, the response variable is represented on the y-axis and the explanatory on the x-axis.
+
+```{r}
+# Define the ggplot and the dataframe
+ggplot(data = quakes) +
+  # Use geom_point and define mapping aesthetics 
+  # x = explanatory, y = response
+  geom_point(aes(x = depth, y = mag)) 
+```
+
+No matter how deep the earthquake is, the magnitude seems to vary greatly.
+
+#### **Try it! Does the magnitude of an earthquake affects how many stations reported that earthquake? Identify what the explanatory and response variables are in this context and make an appropriate plot. What do you notice in this plot?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+### b. Reporting correlation
+
+Correlation describes the strength of a (linear) relationship between two variables. With the function `cor`, we refer by default to the Pearson correlation coefficient which takes values between -1 (strong negative correlation) and 1 (strong positive correlation) with 0 indicating that there is no correlation.
+
+```{r}
+# Find the correlation between depth and magnitude
+cor(quakes$depth, quakes$mag)
+```
+
+The correlation between the depth and magnitude of an earthquake is not strong (as shown in the scatterplot above).
+
+What about these perfect relationships:
+
+```{r}
+# Find the correlation between one variable and itself
+cor(quakes$depth, quakes$depth)
+
+# Find the correlation between one variable and its opposite
+cor(quakes$depth, -quakes$depth)
+```
+
+#### **Try it! Can you guess the correlation between the magnitude and the number of stations that reported an earthquake? Calculate it!**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+## 3. Comparing a numeric variable and a categorical variable
+
+When comparing a numeric variable across categories, we may wonder if the distribution of the numeric variable (shape, center, spread) is about the same across all categories or not.
+
+In previous worksheets, we created the following categorical variables:
+
+```{r}
+# Create new categorical variables in a new object
+new_quakes <- mutate(quakes,
+                     depth_2cat = ifelse(depth > 300, "Deep", "Not Deep"),
+                     mag_cat = case_when(
+                       mag >= 4 & mag < 5 ~ "Light",
+                       mag >= 5 & mag < 6 ~ "Moderate",
+                       mag >= 6 & mag < 7 ~ "Strong"))
+```
+
+### a. Using grouped boxplots
+
+The most convenient way (using R) to compare the distribution of a numeric variable across categories is to use grouped boxplots.
+
+Let's take a different approach to investigate if the depth affects the magnitude of an earthquake by considering depth at 2 different levels. In this context, the explanatory variable would be categorical (deep, not deep) and the response variable would be numeric:
+
+```{r}
+# Define the ggplot and the dataframe
+ggplot(data = new_quakes) +
+  # Use geom_boxplot and define mapping aesthetics 
+  # x = explanatory, y = response
+  geom_boxplot(aes(x = depth_2cat, y = mag))
+```
+
+The magnitude seems to be slightly lower on average for the deep earthquakes compared to earthquakes that were not as deep. There is a lot of overlap between these three boxplots though.
+
+We discussed in the previous worksheet that a boxplot only represent 5 numbers about a distribution and we miss information about the frequency of each value. We can add the data on a boxplot with `geom_jitter`:
+
+```{r}
+ggplot(data = new_quakes) +
+  geom_boxplot(aes(x = depth_2cat, y = mag)) +
+  # Add the data
+  geom_jitter(aes(x = depth_2cat, y = mag))
+```
+
+#### **Try it! Use a plot to compare the number of stations that reported the earthquakes depending on the magnitude level (light, moderate, strong). Make this plot a little prettier by 1) representing the magnitude levels with customized fill colors, 2) including the data points with `geom_jitter` with 20% transparency, 3) adding labels to the axes.**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+### b. Using grouped histograms
+
+We need to be careful about grouped histograms. Let's see why:
+
+```{r}
+# Define the ggplot and the dataframe
+ggplot(data = new_quakes) +
+  # Use geom_histogram and define mapping aesthetics 
+  # x = response, fill = explanatory
+  geom_histogram(aes(x = mag, fill = depth_2cat))
+```
+
+Ugly: don't fill histograms per categories like that!
+
+What if we create one histogram for each level of depth instead? We can easily do that with faceting:
+
+```{r}
+# Represent the brain weight on the x-axis
+ggplot(data = new_quakes) +
+  # Use geom_histogram and define mapping aesthetics, x = response
+  geom_histogram(aes(x = mag)) +
+  # Facet per category 
+  facet_wrap(~depth_2cat)
+```
+
+#### **Try it! How could we improve the grouped histograms above?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+### c. Reporting center and spread for each category
+
+We briefly introduced the `tidyverse` function called `group_by`: combined with the `summarize` function that allows us to find summaries by groups:
+
+```{r}
+new_quakes |>
+  # Split the data in groups 
+  group_by(depth_2cat) |>
+  # Summarize per group
+  summarize(mean(mag),
+            sd(mag))
+```
+
+All in one table!
+
+### d. Using a special case of bar plot
+
+We can represent the mean value of a numeric variable for each category using a bar with a `stat` option:
+
+```{r}
+# Define the ggplot, the dataframe, and mapping aesthetics
+ggplot(data = new_quakes, aes(x = depth_2cat, y = mag)) +
+  # By default a bar represents a count but we can change what the height of a bar represents
+  # For example, represent a statistic using the mean function 
+  geom_bar(stat = "summary", fun = "mean")
+```
+
+But as we mentioned before, we should not only focus on a typical value for a numeric variable but also consider how spread out the values are. We can add error bars to our plot with `geom_errorbar()` (representing +/- 1 standard deviation from the mean):
+
+```{r}
+ggplot(data = new_quakes, aes(x = depth_2cat, y = mag)) +
+  geom_bar(stat = "summary", fun = "mean") +
+  # Add error bars
+  geom_errorbar(stat = "summary", fun.data = "mean_se")
+```
+
+The mean magnitude seems to be lower for the deep earthquakes but there does not seem to be a huge difference in mean magnitude across the two categories of depth.
+
+#### **Try it! Represent the mean number of stations reporting an earthquake for each level of magnitude (light, moderate, strong). Which level of magnitude has the highest number of stations on average? Which level of magnitude has the highest variation in the number of stations?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+## 4. Comparing two categorical variables
+
+When comparing two categorical variables, we may wonder what are the most and least common categories of one variable for other categories of the other variable.
+
+### a. Using a stacked or side-by-side bar plot (not usually recommended)
+
+We can create stacked bar plots that compares the distribution of two categorical variables by stacking their counts:
+
+```{r}
+# Define the ggplot and the dataframe
+ggplot(data = new_quakes) +
+  # Use `fill =` to differentiate between categories of magnitude
+  geom_bar(aes(x = depth_2cat, fill = mag_cat)) 
+```
+
+It looks like there are mostly light magnitude across both levels of depth. When the different groups do not have the same size though, it can be difficult to compare across categories. Let's try the side-by-side bar plot with `position = "dodge"`:
+
+```{r}
+ggplot(data = new_quakes) +
+  # Use `fill =` to differentiate between categories of magnitude and put the bars side-by-side
+  geom_bar(aes(x = depth_2cat, fill = mag_cat), position = "dodge") 
+```
+
+It looks like there is a similar number of earthquakes with a light magnitude at both levels of depth. Earthquakes with strong magnitude only happened at a depth less than 300 km.
+
+### b. Using a segmented bar plot (usually preferred)
+
+We can display the relative distribution at each level with a segmented bar plot with the option `position = "fill"`:
+
+```{r}
+ggplot(data = new_quakes) +
+  # Use `fill =` to differentiate between categories of magnitude
+  geom_bar(aes(x = depth_2cat, fill = mag_cat), position = "fill") 
+```
+
+Now we can see that the deep earthquakes has the highest proportion of light magnitude.
+
+#### **Try it! Swap the variables for `x =` and `fill =`. Does the graph look any different? Note that the default label for the y-axis is count. But what does it represent? Adjust the label for the y-axis in the segmented bar plot.**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+### c. Reporting frequencies and relative frequencies
+
+When reporting statistics about two categorical variables, we often include counts (frequencies) or proportions (relative frequencies). We can use the function `table` to find counts:
+
+```{r}
+# Find frequencies
+table(new_quakes$depth_2cat, new_quakes$mag_cat)
+```
+
+For example, out of the strong earthquakes, 0 were at a deep depth, 4 were at the intermediate level and 1 was at a shallow depth.
+
+```{r}
+# Find proportions (from frequency table)
+prop.table(table(new_quakes$depth_2cat, new_quakes$mag_cat), 1)
+prop.table(table(new_quakes$depth_2cat, new_quakes$mag_cat), 2)
+
+# What's the difference between these two tables?
+```
+
+## 5. Relationships with more than 2 variables
+
+We can display the relationships between more than 2 variables but it can become tricky. There are many ways to adapt graphs to display more than two variables: grouping by color, size, shape, using faceting, etc.
+
+#### **Try it!**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+------------------------------------------------------------------------
+
+#### Group Practice
+
+Create an appropriate plot and report appropriate statistics to answer the following questions with data from `msleep`:
+
+```{r}
+head(msleep)
+```
+
+For each question, think about how we could improve the visualization.
+
+#### **What is the most common order for these mammals?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+#### **Does the body weight of a mammal affect the brain weight?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+#### **Does the body weight of a mammal differs based on the diet?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**

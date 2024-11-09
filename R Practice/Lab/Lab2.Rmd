@@ -1,0 +1,169 @@
+---
+title: "Lab 2 Key"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,  
+                      warning = TRUE, message = FALSE, 
+                      fig.align = "center",
+                      R.options = list(max.print=100))
+
+# Edit the file starting below
+```
+
+### Enter the group number here: 26
+
+### Enter the names of the group members here: Connor Shen, Siddhant Tiwary, Benjamin Zaadok
+
+**This assignment is due by the end of the lab. Only one student in the group submits a pdf file on Gradescope.**
+
+*For all questions, include the R commands/functions that you used to find your answer (show R chunk). Answers without supporting code will not receive credit. Write full sentences to describe your findings.*
+
+In this lab, you will explore the dataset `diamonds` contained in the package `tidyverse`. Let's first upload the functions and objects available through that package:
+
+```{r, warning=FALSE}
+# Upload the package
+library(tidyverse)
+```
+
+The dataset contains information about diamonds. The first few observations are listed below.
+
+```{r}
+# Take a quick look at the dataset
+head(diamonds)
+```
+
+### Question 1: (4 pts)
+
+Save the dataset `diamonds` in the environment and name it using the initials of all team members. *Remember that you can get more details about the dataset by running `?diamonds` in the console.*
+
+```{r}
+# local copy of diamonds
+csstbz <- diamonds
+```
+
+How many rows are there in the dataset? What does one row represent? How many columns? What do the column represent?
+
+```{r}
+# Number of rows and columns in diamonds
+nrow(csstbz)
+ncol(csstbz)
+```
+
+**There are 53940 rows and 10 columns. One row represents the price, carat, cut, color, clarity, length, width, depth, total depth percentage, and width of the top of the diamond. One column represents one of those variables.**
+
+------------------------------------------------------------------------
+
+### Question 2: (3 pts)
+
+Consider the variable `price`. Represent the distribution of this variable with a histogram (`hist()`) and make sure to include a title and labels with units. What information can you retrieve from this visualization? Anything you wonder/you are curious about?
+
+```{r}
+# your code goes below (replace this comment with something meaningul)
+hist(csstbz$price, xlab="Price (USD)", main="Price of Diamonds (USD)")
+```
+
+**There are more cheaper diamonds than there are expensive diamonds. The distribution of the data skews left. We are curious if the quality of the diamonds increases as the price increases.**
+
+------------------------------------------------------------------------
+
+### Question 3: (6 pts)
+
+The "4 Cs" of diamonds are traditionally `carat`, `cut`, `color`, and `clarity`. Create a new variable in your dataset, called `topfourC`, that has a `TRUE` value when satisfying ALL of these conditions (and is FALSE otherwise):
+
+-   the diamond's cut is Ideal or Premium
+
+-   the color is D, E, or F (colorless)
+
+-   the clarity is IF, VVS1 or VVS2 (internally flawless or with very very slight inclusions)
+
+-   the diamond is in the top 25 percent for carat (i.e., carat is above the 3rd quartile which you can find with `summary()`).
+
+*Hint: you could first play around with the conditional statement `%in%` (e.g., what does `cut %in% c("Ideal","Premium")` do?).*
+
+```{r}
+# your code goes below (replace this comment with something meaningul)
+csstbz <- csstbz |>
+  mutate(topfourC = ifelse(csstbz$cut %in% c("Ideal", "Premium") 
+                   & csstbz$color %in% c("D", "E", "F")
+                      & csstbz$clarity %in% c("IF", "VVS1", "VVS2") 
+                        & csstbz$carat >= 1.04, TRUE, FALSE))
+csstbz
+                     
+```
+
+Find the proportion of diamonds that meet these criteria. Is it rare for a diamond to meet this criteria?
+
+```{r}
+# your code goes below (replace this comment with something meaningul)
+prop.table(table(csstbz$topfourC))
+```
+
+**Yes, it is extremely rare to find a diamond of this criteria. There is only a .59% chance.**
+
+------------------------------------------------------------------------
+
+### Question 4: (4 pts)
+
+Create a subset of your dataset to focus on the diamonds meeting the conditions for `topfourC` and save it in your environment as `yourdataset_topfourC`:
+
+```{r}
+# your code goes below (replace this comment with something meaningul)
+yourdataset_topfourC <- subset(csstbz, topfourC %in% TRUE)
+yourdataset_topfourC
+```
+
+Represent the distribution of `price` with the same type of graph you used in question 3 (update the title and labels if necessary). How does this visualization compare to the one in question 3?
+
+```{r}
+# your code goes below (replace this comment with something meaningul)
+hist(yourdataset_topfourC$price, xlab="Price (USD)", main="Distribution of the 4 C's")
+```
+
+**The distribution is more normal but still skews left while also being at a higher price.**
+
+------------------------------------------------------------------------
+
+### Question 5: (5 pts)
+
+Still focusing on the diamonds meeting the conditions for `topfourC`, choose a numeric variable that you think might affect the `price` of a top diamond. Write a research question that you could investigate using these variables and a plot:
+
+**Does the carat weight affect the price of the diamond?**
+
+Using `plot()` (or you could also try a `ggplot` with `geom_point()`), make a visualization to answer your question (include a title and labels).
+
+```{r}
+# your code goes below (replace this comment with something meaningul)
+ggplot(data=yourdataset_topfourC) +
+  geom_point(aes(x=carat, y=price)) +
+  labs(x="Carat Weight", y="Price (USD)", title="Carat Weight vs Price (USD)")
+```
+
+Answer your research question based on this visualization?
+
+**The carat weight does affect the price of the diamond. As the carat weight increases, so does the price.**
+
+------------------------------------------------------------------------
+
+### Question 6: (1 pt)
+
+After investigating how some variables relate to the price of the diamonds, did the data match your expectations or not? If the data differed from your expectation, provide a possible explanation for why the data differed from what you expected.
+
+**Yes, we assumed the higher the carat weight, the higher the price. The ggplot confirmed our hypothesis.**
+
+------------------------------------------------------------------------
+
+### Formatting: (2 pts)
+
+Make sure the names of all group members are included at the beginning of the document.
+
+Knit your file! You can knit into pdf directly or into html. Once it knits in html, click on `Open in Browser` at the top left of the window pops out. Print your html file into pdf from your browser.
+
+Any issue? Ask other classmates or TA!
+
+Finally, remember to select pages for each question when submitting your pdf to Gradescope and to identify your group members.

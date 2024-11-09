@@ -1,0 +1,165 @@
+---
+title: "Lab 4"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,  
+                      warning = FALSE, message = FALSE, 
+                      fig.align = "center",
+                      R.options = list(max.print=100))
+
+# Edit the file starting below
+```
+
+### Enter the names of the group members here: Connor Shen, Benjamin Zadok
+
+**This assignment is due by the end of the lab. Only one student in the group submits a pdf file on Gradescope.**
+
+*For all questions, include the R commands/functions that you used to find your answer (show R chunk). Answers without supporting code will not receive credit. Write full sentences to describe your findings.*
+
+In this lab, you will explore the `who2` and `population` datasets which come with `tidyr`. Let's first load the packages we will need to complete this lab (`tidyr`, `dplyr` and `ggplot2`, all contained in `tidyverse`):
+
+```{r, message=FALSE}
+# Load the package
+library(tidyverse) 
+```
+
+Take a quick look at the datasets:
+
+```{r}
+# Take a quick look
+head(who2)
+head(population)
+```
+
+The `who2` dataset contains information about tuberculosis (TB) cases per country over the years. The TB cases are reported in the columns `sp_m_014:rel_f_65` following these conventions:
+
+1.  The first two/three letters describe the method of diagnosis: `rel` = relapse, `sn` = negative pulmonary smear, `sp` = positive pulmonary smear, `ep` = extra pulmonary.
+
+2.  The next letter indicates the gender category: females `f` or males `m`.
+
+3.  The remaining numbers gives the age group (for example, `014` means 0-14 years old).
+
+The goal of the lab is to compare tuberculosis (TB) cases over time, taking into account the change in population.
+
+------------------------------------------------------------------------
+
+### Question 1: (8 pts)
+
+Is the `who2` dataset tidy for comparing tuberculosis (TB) cases across countries and over time? Why/Why not?
+
+**Each variable does not have its own column. Therefore the data is not tidy.**
+
+Using a `tidyr` function, put all of the column names with format *diagnosis_gender_age* into a single column (call it `diagnosis_gender_age`) and all of their cell values into another single column (call it "cases"). Save the resulting dataset. How many rows does this dataset have?
+
+```{r}
+# created a dataset with 4 columns for country, year, diagnosis_gender_age, and cases
+who2_long <- who2 |>
+  pivot_longer(
+    cols = starts_with("sp") | starts_with("rel") | starts_with("ep") | starts_with("sn"),
+    names_to = "diagnosis_gender_age",
+    values_to = "cases"
+  )
+who2_long
+```
+
+**There are 405,440 rows in this table.**
+
+Using the dataset created above, now separate the `diagnosis_gender_age` variable into `diagnosis`, `gender`, and `age`. Call the resulting dataset `tidy_who`. Do you think that data is indeed tidy? Why/Why not?
+
+```{r}
+# tidy up who2_longer
+tidy_who <- who2_long |>
+  separate(diagnosis_gender_age, into= c("diagnosis", "gender", "age"), sep="_")
+tidy_who
+```
+
+**This data is tidy because there is one variable per column.**
+
+------------------------------------------------------------------------
+
+### Question 2: (8 pts)
+
+Let’s take a look at missing values in `tidy_who.` In particular, there are some missing values for `cases`. How many values of `cases` are missing? *Hint: recall the function `is.na()` to check for missing values.*
+
+```{r}
+# the number of missing values in tidy_who
+sum(is.na(tidy_who))
+```
+
+**There are 329,394 case values missing.**
+
+But does a missing value mean that there was 0 case of TB for a specific country/year or does it mean that the WHO did not report the number of TB cases for a specific country/year?
+
+```{r}
+# filter out missing values from the cases in tidy_who
+zero_case <- tidy_who |>
+  filter(cases == 0)
+zero_case
+```
+
+**Typically, missing values mean that the WHO did not report the number of TB cases for that specific country/year. If there were no cases, it would be listed as 0. In the dataset, we can see that there are 0 cases, meaning the missing values are caused from a lack of reporting.**
+
+When we have missing values, we should explore if there is an explanation for why these values are missing. Represent the number of missing values per year. Do you think there is a pattern over time?
+
+```{r}
+# graphed the amount of TB cases over time
+ggplot(tidy_who) +
+  geom_point(aes(x=year, y=cases))
+```
+
+**Yes, there does seem to be a pattern where as the years increase, the amount of TB cases also increase.**
+
+------------------------------------------------------------------------
+
+### Question 3: (8 pts)
+
+Let's investigate the number of TB cases over time. To do so, follow these steps within one piece of code using pipes `|>`:
+
+-   Join the data from the `population` dataset.
+
+-   Find the total cases and population for each year. *Tip: you will need to remove missing values.*
+
+-   Calculate the number of TB cases per 100,000 people.
+
+-   Represent the number of TB cases per 100,000 people over the years.
+
+```{r}
+# graphed the TB cases per 100,000 people over year
+tidy_who |>
+  filter(!is.na(cases)) |> #gets rid of any missing values in cases
+  left_join(population, by = c("country", "year")) |> 
+  filter(!is.na(population) & population > 0) |> #fixes an issue where we would get Inf values
+  group_by(year) |>
+  summarize(total_cases = sum(cases, na.rm = TRUE), #sums all values, excluding NA
+            total_population = sum(population, na.rm = TRUE)) |>
+  mutate(cases_per_100k = (total_cases / total_population) * 100000) |>
+  ggplot(aes(x = year, y = cases_per_100k)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Number of TB Cases per 100,000 People Over Time",
+       x = "Year", 
+       y = "TB Cases per 100,000 People") +
+  theme_minimal()
+```
+
+However, the WHO had reported a decrease for TB cases worldwide since 1990:
+
+![](https://www.researchgate.net/profile/Masumeh-Saeidi/publication/291321618/figure/fig3/AS:667623389929474@1536185228889/Global-trends-in-estimated-rates-of-TB-incidence-1990-2014-and-prevalence-and.ppm)
+
+Why didn't we observe that with the plot above?
+
+**The WHO looked at the rate while we looked at just the number of people. As the population outgrows the rate of TB, the rate would decrease as seen on the WHO's graphs.**
+
+------------------------------------------------------------------------
+
+### Formatting: (1 pt)
+
+Make sure the names of all group members are included at the beginning of the document.
+
+Knit your file! You can knit into pdf directly or into html. Once it knits in html, click on `Open in Browser` at the top left of the window pops out. Print your html file into pdf from your browser.
+
+Any issue? Ask other classmates or TA!
+
+Finally, remember to select pages for each question when submitting your pdf to Gradescope and to identify your group members.

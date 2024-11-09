@@ -1,0 +1,186 @@
+---
+title: "Worksheet 11: Recoding"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r global_options, include=FALSE}
+# The following code is a basic setup of options for your document
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE, 
+                      warning = TRUE,
+                      message = FALSE,
+                      fig.align = "center", 
+                      R.options = list(max.print=50))
+
+# Edit the file starting below
+
+```
+
+In this worksheet, we will give examples of recoding variables for data exploration.
+
+## 1. Datasets and Libraries
+
+Let's load `tidyverse` for data wrangling and `nycflights13` which contains two of the datasets for today:
+
+```{r, message=FALSE}
+# Load packages
+library(tidyverse)
+library(nycflights13)
+```
+
+Here are the datasets we will manipulate today:
+
+```{r}
+# Take a look at flights and weather
+head(flights)
+head(airports)
+head(weather)
+```
+
+Flights get delayed... What do you think could be associated with the delay of a flight?
+
+**Write sentences here.**
+
+
+## 2. Recoding data
+
+There are many reasons why we may want to recode some variables. This list is definitely not exhaustive!
+
+### a. Log-transformation
+
+When a variable is highly skewed, it might be difficult to "see" the variation:
+
+```{r}
+flights |> 
+  ggplot() +
+  geom_boxplot(aes(x = dep_delay))
+```
+
+For distributions of numeric variables that are heavily right-skewed like this one we can apply a log-transformation:
+
+```{r}
+flights |> 
+  ggplot() +
+  geom_boxplot(aes(x = log10(dep_delay))) # represent log(dep_delay)
+```
+
+What is the unit of this new variable?
+
+**Write sentences here.**
+
+Applying this transformation created many missing values because `log10()` can only be applied to positive values. Here is a quick fix:
+
+```{r}
+flights |> 
+  ggplot() +
+  geom_boxplot(aes(x = log10(dep_delay - min(dep_delay, na.rm = TRUE) + 1))) # represent log(dep_delay)
+```
+
+Now what is the unit of this new variable?
+
+**Write sentences here.**
+
+Note that this log-transformation only works for **right-skewed** data.
+
+#### **Try it! Compare the delay across the 3 origins with and without a transformation. Are all airports comparable in terms of delayed flights?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+
+### b. Consider a numeric variable as a categorical variable
+
+Consider the relationship between the delay and the month:
+
+```{r}
+flights |> 
+  ggplot() +
+  geom_point(aes(x = month, y = dep_delay))
+```
+
+There is a lot of overlap in this plot. Let's try a boxplot:
+
+```{r}
+flights |> 
+  ggplot() +
+  geom_boxplot(aes(x = month, y = dep_delay))
+```
+
+What are we representing here? Let's try to consider month as a categorical variable instead with `as.factor()`:
+
+```{r}
+flights |> 
+  ggplot() +
+  geom_boxplot(aes(x = as.factor(month), y = dep_delay))
+```
+
+The `as.numeric()` would do the opposite: force a variable to be considered as numeric.
+
+### c. Recoding values based on conditions
+
+We can recode some values based on conditions with `case_when()`. 
+
+```{r}
+flights |>
+  # Recode months into 4 quarters
+  mutate(month_cat = case_when(
+    month <= 3 ~ "1st quarter",
+    4 <= month & month <= 6 ~ "2nd quarter",
+    7 <= month & month <= 9 ~ "3rd quarter",
+    10 <= month & month <= 12 ~ "4th quarter")) |>
+  # Use this new variable in a ggplot
+  ggplot() +
+  geom_boxplot(aes(x = month_cat, y = dep_delay))
+```
+
+#### **Try it! Recode the departure delay as "Delayed" if the flights was more than 15 minutes late, and as "On time" otherwise. Are flights more likely to be delayed or on time?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+
+Or we can recode values with `recode()` (and we don't need to recode all values actually!).
+
+```{r}
+flights |>
+  # Recode origin with names
+  mutate(origin_name = dplyr::recode(origin, 
+                                     "JFK" = "John F Kennedy Intl",
+                                     "LGA" = "La Guardia",
+                                     "EWR" = "Newark")) |>
+  # Use this new variable in a ggplot
+  ggplot(aes(x = origin_name, y = dep_delay)) +
+  geom_bar(stat = "summary", fun = sum)
+```
+
+## 3. Using data from different sources
+
+Instead of recoding the names of the airports by "hand", we could import the names from the `airports` dataset:
+
+```{r}
+flights |> 
+  left_join(airports, by = c("origin" = "faa")) |>
+  ggplot(aes(x = name, y = dep_delay)) +
+  geom_bar(stat = "summary", fun = sum)
+```
+
+#### **Try it! Investigate if the weather had an impact on the delay. Join the data from `flights` and `weather` and explore a relationship between weather and departure delay.**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**

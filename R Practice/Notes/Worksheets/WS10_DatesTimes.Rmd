@@ -1,0 +1,239 @@
+---
+title: "Worksheet 10: Dates and Times"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r global_options, include=FALSE}
+# The following code is a basic setup of options for your document
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE, 
+                      warning = TRUE,
+                      message = FALSE,
+                      fig.align = "center", 
+                      R.options = list(max.print=50))
+
+# Edit the file starting below
+
+```
+
+In this worksheet, we will focus on manipulating dates and times in different formats.
+
+## 1. Datasets and Libraries
+
+Let's load `tidyverse` which contains the `lubridate` package and `nycflights13` which contains one of the datasets for today:
+
+```{r, message=FALSE}
+# Load packages
+library(tidyverse)
+library(nycflights13)
+```
+
+Here are the datasets we will manipulate today:
+
+```{r}
+# Take a look at txhousing and flights
+head(txhousing)
+head(flights)
+```
+
+In what format are dates/times reported in each dataset?
+
+**Write sentences here.**
+
+## 2. Parsing dates and times
+
+Parsing dates and times means converting a string or numeric representation of a date or time into a proper object that R can understand and work with. When data is read from a file, sometimes dates and times appear in formats that are not automatically recognized as dates/times.
+
+### a. R formats
+
+Here is a typical date/time format in R:
+
+```{r}
+# Look at what date/time is now!
+now()
+```
+
+By default, R considers:
+
+-   `dates` as "yyyy-mm-dd" (year-month-day)
+
+-   `times` as "hh:mm:ss" (hours:minutes:seconds)
+
+-   date/times, `dttm` as "yyyy-mm-dd hh:mm:ss"
+
+Here are some examples of different ways to report dates as a string and to convert it as a date in an R format:
+
+```{r}
+# year, month, day
+ymd("2024-10-02")
+
+# day, month, year
+dmy("2.10.2024")
+dmy("2/10/2024")
+dmy("2-10-2024")
+dmy("the 2nd of October 2024")
+dmy("02-octobre-2024") # this one did not work, why?
+
+# month, day, year
+mdy("10/2/2024")
+mdy("October 2nd, 2024")
+```
+
+Similarly, we can convert strings into time:
+
+```{r}
+# date in year, month, day and time
+ymd_hms("2024-10-02 11:00:00 AM")
+
+# also check other date functions with _hms or _hm, or simply the function hm() and hms()
+hms("11:00:00 AM")
+```
+
+If the date is already in a R format but appears as a string, we can change it as a date with `as_date()` or `as_datetime()`:
+
+```{r}
+# date in year, month, day and time
+class("2024-10-02 11:00:00 AM")
+
+# Change it as a date
+as_date("2024-10-02 11:00:00 AM")
+class(as_date("2024-10-02 11:00:00 AM"))
+
+# Change it as a date/time
+as_datetime("2024-10-02 11:00:00 AM")
+class(as_datetime("2024-10-02 11:00:00 AM"))
+```
+
+### b. Combining date/time components
+
+We can combine the different parts of a date with `make_date()` or also add time with `make_datetime()`.
+
+```{r}
+# Combine year and month into a date
+txhousing |>
+  mutate(new_date = make_date(year, month))
+```
+
+By default, the day on the date was set to the first day of the month.
+
+#### **Try it! In flights, the `time_hour` variable does not contain the minutes for the scheduled flights. Can you make a new variable that contains all the appropriate time information?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+### c. Extracting part(s) of the date
+
+On the contrary, we might want to extract some specific date/time information from a date:
+
+```{r}
+# Extract year, month, day and time
+year(now())
+month(now())
+week(now())
+day(now())
+wday(now()) # what is that?
+
+hour(now())
+minute(now())
+second(now())
+```
+
+Check the `label` and `abbr` options for `month()` and `wkday()`:
+
+```{r}
+# Convenient options
+month(now(), label = TRUE, abbr = FALSE)
+wday(now(), , label = TRUE, abbr = TRUE)
+```
+
+#### **Try it! In the `flights` dataset, extract the information of the weekday from the `time_hour` variable. On which day are there more flights?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+## 3. Manipulating dates and times
+
+### a. Finding differences between dates and times
+
+We can find date/time differences with `difftime()`:
+
+```{r}
+# How many days between now and the first day of the year?
+difftime(now(), mdy_hms("1-1-2024 00:00:01 am"), units = "days")
+
+# What if we want to find the difference with another unit?
+difftime(now(), mdy_hms("1-1-2024 00:00:01 am"), units = "weeks")
+difftime(now(), mdy_hms("1-1-2024 00:00:01 am"), units = "hours")
+difftime(now(), mdy_hms("1-1-2024 00:00:01 am"), units = "mins")
+difftime(now(), mdy_hms("1-1-2024 00:00:01 am"), units = "secs")
+```
+
+Note that the output reports the time difference with a unit. If we would like to find the value of the difference, we can use the function `as.numeric()`:
+
+```{r}
+# Report only a value
+as.numeric(difftime(now(), mdy_hms("1-1-2024 00:00:01 am"), units = "days"))
+```
+
+### b. Summarizing date/time data
+
+Depending on the level of detail we would like to focus on, we can aggregate the data by specific time units. For example, we can compare summaries over years, months, days of the week, or by the hour, minute, second.
+
+#### **Try it! We looked at the number of `flights` per day before. Compare the number of flights at another time unit. Do you notice any differences?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+We can also represent the values of a variable over time:
+
+```{r}
+# Comparing sales over time
+txhousing |>
+  group_by(date) |>
+  summarize(total_sales = sum(sales, na.rm = TRUE)) |>
+  ggplot() + geom_line(aes(x = date, y = total_sales))
+```
+
+And compare if there is the same pattern over a repeating time unit (for example, months repeat every year):
+
+```{r}
+# Comparing monthly sales for each year
+txhousing |>
+  group_by(year,month) |>
+  summarize(total_sales = sum(sales, na.rm = TRUE)) |>
+  ggplot() + geom_line(aes(x = month, y = total_sales)) +
+  facet_wrap(~year)
+```
+
+#### **Try it! Compare the maximum distance for a flight per hour of the day. When do longer flights depart from NYC airports?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+### c. A few remarks
+
+Here are some common pitfalls to look out for:
+
+-   Different date formats (e.g., MM/DD/YYYY vs. DD/MM/YYYY) can lead to incorrect parsing. Always specify the date format explicitly when converting strings to dates.
+
+-   Take into account that not all years are 365 days (leap years), not all days are 24 hours (daylight saving time), and not all months have the same amount of days. Most `lubridate` functions are designed to take those facts into account.
+
+-   The time is not the same depending on where the data was collected. Convert dates/times between time zones `with_tz()` from the `lubridate` package.

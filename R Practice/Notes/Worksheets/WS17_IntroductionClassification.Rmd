@@ -1,0 +1,339 @@
+---
+title: "Introduction to Classification"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r global_options, include=FALSE}
+# The following code is a basic setup of options for your document
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE, 
+                      warning = TRUE,
+                      message = FALSE,
+                      fig.align = "center", 
+                      R.options = list(max.print=50))
+
+# Edit the file starting below
+
+```
+
+In this worksheet, we will discuss introduce the concept of classification and how to evaluate some basic models.
+
+## 1. Dataset and Libraries
+
+We will use the packages `tidyverse` and `plotROC`. Install the `plotROC` package if you are using it for the first time:
+
+```{r, eval=FALSE}
+# Install new packages (only needed once!)
+install.packages("plotROC")
+```
+
+Then load both packages:
+
+```{r, message=FALSE}
+# Load packages 
+library(tidyverse)
+library(plotROC) 
+```
+
+We will work with the `biopsy` dataset that contains information about tumor biopsy results. Nine features of the tumor were measured (on a 1-10 scale) as well as the `outcome` variable (malignant vs. benign).
+
+```{r}
+# Upload the data from GitHub
+biopsy <- read_csv("https://raw.githubusercontent.com/laylaguyot/datasets/main//Biopsy.csv")
+
+# Take a quick look at 10 random rows
+head(biopsy, 10)
+```
+
+#### **Try it! How many outcomes were malignant? How many were benign?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here!**
+
+
+## 2. Basic classifications
+
+Let's try different ways to classify a tumor as malignant or benign. We will focus on predicting the `outcome` based on `clump_thickness`.
+
+#### **Try it! Use `ggplot` to represent the distribution of `clump_thickness` for malignant and benign tumors. Does there seem to be a relationship?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here!**
+
+
+### a. Random classification
+
+Let's first predict the outcome randomly. For example, a tumor with any value of `clump_thickness` would have equal probability of being malignant or benign.
+
+```{r}
+# Create a new object
+biopsy_pred <- biopsy |>
+  # Only keep variables of interest
+  select(clump_thickness, outcome) |> 
+  # Create a predicted variable: using the `sample()` function sample 
+  mutate(predicted = sample(x = c("malignant","benign"), # values to sample from
+                            size = length(outcome), # how many values to sample
+                            replace = TRUE)) # can use each value more than once
+
+# Take a look at the predicted variable
+head(biopsy_pred, 10)
+```
+
+Were our predicted values correct? 
+
+```{r}
+# How do the predicted values compare to the outcome values? 
+table(outcome = biopsy_pred$outcome, predicted = biopsy_pred$predicted) 
+```
+
+**Write sentences here!**
+
+
+We can compute the accuracy of our predicted values: how many observations were correctly identified as malignant or benign? 
+
+```{r}
+# Accuracy
+mean(biopsy_pred$outcome == biopsy_pred$predicted) 
+```
+
+Why does it make sense to get about 50% accuracy? Do we all get the same accuracy? Why/Why not?
+
+**Write sentences here!**
+
+
+Let's represent the distribution of randomly predicted malignancy across values of `clump_thickness`:
+
+```{r}
+# Distribution of predicted malignancy across clump_thickness
+ggplot(biopsy_pred, aes(x = clump_thickness, fill = predicted)) + 
+  geom_boxplot() +
+  scale_y_discrete() +
+  labs(x  = "Clump thickness (scale 1-10)")
+```
+
+It looks like the distribution of malignant/benign is about the same, regardless of the values of `clump_thickness`. It is NOT a good classification because it does not match what we observed earlier.
+
+### b. Classification based on 1 variable
+
+As observed earlier, we think that higher values of `clump_thickness` seem to indicate than the tumor is oftentimes malignant rather than benign. Let's classify all tumors with a high value of `clump_thickness` (greater than 9) as malignant, and benign otherwise.
+
+```{r}
+# Update our new object
+biopsy_pred <- biopsy |>
+  # Only keep variables of interest
+  select(clump_thickness, outcome) |> 
+  # Create another predicted variable based on clump_thickness > 9 
+  mutate(predicted = ifelse(clump_thickness > 9, 
+                            "malignant", "benign")) 
+
+# Take a look at the new predicted variable
+head(biopsy_pred, 10)
+```
+
+Represent the distribution of `clump_thickness` depending on the new predicted outcome:
+
+```{r}
+# Distribution of predicted malignancy across clump_thickness
+ggplot(biopsy_pred, aes(x = clump_thickness, fill = predicted)) + 
+  geom_boxplot() +
+  scale_y_discrete() +
+  labs(x  = "Clump thickness (scale 1-10)")
+```
+
+Were our predicted values correct?
+
+```{r}
+# How do the predicted values compare to the outcome values? 
+table(outcome = biopsy_pred$outcome, predicted = biopsy_pred$predicted) 
+```
+
+None of the benign cases were predicted as malignant. But the majority of malignant cases were predicted as benign. Does that mean the accuracy has improved?
+
+```{r}
+# Accuracy
+mean(biopsy_pred$outcome == biopsy_pred$predicted) 
+```
+
+**Write sentences here!**
+
+
+### c. Classification based on any cutoff value
+
+We chose a cutoff value of 9 for `clump_thickness` in the previous section. But what if we had chosen a different value? Let's calculate the accuracy of our prediction based on different cutoff values. We'll use a `for`-loop to repeat the process.
+
+```{r}
+# Initialize vector for accuracy values
+accuracy <- vector()
+
+# Define possible cutoff values: from min to max clump thickness
+cutoff <- min(biopsy$clump_thickness):max(biopsy$clump_thickness)
+
+# For each cutoff value:
+for(i in cutoff){
+  biopsy_pred <- biopsy |> 
+  # Create a predicted variable 
+  mutate(predicted = ifelse(clump_thickness > i, # i takes values in cutoff
+                            "malignant", "benign")) 
+  # Find the resulting accuracy and save it into a vector
+  accuracy[i] <- mean(biopsy_pred$outcome == biopsy_pred$predicted) # add element i to accuracy object 
+}
+accuracy
+```
+
+Let's represent the accuracy for each cutoff value:
+
+```{r}
+# To use ggplot, we need accuracy to be considered as a data frame
+ggplot(as.data.frame(accuracy),
+       # x-axis are values of clump thickness
+       aes(x = min(biopsy$clump_thickness):max(biopsy$clump_thickness),
+           y = accuracy)) + 
+  geom_point() + geom_line() + 
+  scale_x_continuous(breaks = 1:10) +
+  labs(x = "Cutoff values for clump thickness to determine malignancy")
+```
+
+Which value of clump thickness seems to result in the highest accuracy for the predicted values?
+
+**Write sentences here!**
+
+
+## 3. Metrics
+
+Let's consider the classifier based on clump thickness greater than 5.
+
+```{r}
+# Make predictions when the cutoff value is 5 for clump_thickness
+biopsy_pred <- biopsy |>
+  # Only keep variables of interest
+  select(clump_thickness, outcome) |> 
+  # Create another predicted variable based on clump_thickness > 9
+  mutate(predicted = ifelse(clump_thickness > 5, "malignant", "benign"))
+```
+
+We should also consider other metrics for evaluating our classification such as true positive rate (TPR) and true negative rate (TNR), also called sensitivity and specificity, respectively. *Note: we will consider that a malignant case is a positive outcome and benign is a negative outcome (in medical contexts, a positive case usually means that a disease/condition was detected).*
+
+```{r}
+# Confusion matrix: compare the true outcomes to predicted values
+table(outcome = biopsy_pred$outcome, predicted = biopsy_pred$predicted) |> 
+  # Add total cases for rows and columns 
+  addmargins()
+```
+
+The *true positive* rate (TPR) is the number of truly predicted positive cases over the number of positive cases.
+
+The *false positive* rate (FPR) is the number of truly negative cases that were predicted to be positive over the number of negative cases.
+
+#### **Try it! Based on the table above, what is the value of TPR? What is the value of FPR? What shall we do to increase the value of TPR? How would it affect the value of FPR?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here!**
+
+
+What if we wanted to do a better job at predicting malignant outcomes? 
+
+## 4. ROC/AUC
+
+The trade-off between TPR and FPR can be represented by the ROC curve.
+
+### a. Receiver Operating Characteristics (ROC) curve
+
+A ROC curve usually represents the false positive rate (called FPR and representing 1 - TNR) on the x-axis and the true positive rate (FPR) is represented on the y-axis:
+
+```{r}
+# Plot ROC depending on values of clump_thickness to predict the outcome
+ROC <- ggplot(biopsy) + 
+  # New geom!
+  geom_roc(aes(d = outcome, m = clump_thickness), n.cuts = 10) +
+  labs(title = "ROC curve based on clump thickness (scale 1 to 10")
+ROC
+```
+
+*Note: R usually expects the outcome to be coded as 0 and 1, representing a negative and positive outcome, respectively. Since R assigns values in alphabetical order, here it made sense that the benign outcome is 0 and the malignant outcome is 1.*
+
+When the cutoff value to predict a malignant outcome is based on a `clump_thickness` greater or equal to 1, we get a TPR value of 100% and a FPR value of 100% as well. Why? 
+
+When the cutoff value to predict a malignant outcome is based on a `clump_thickness` greater or equal to 10, we get a TPR value of about 29% (see below or on the graph) and a FPR value of 0% as well. Why?
+
+```{r}
+# Number of predicted malignant values with a clump thickness of 10 out of all true malignant outcomes
+sum((biopsy_pred |> filter(clump_thickness == 10))$predicted == "malignant") / sum(biopsy_pred$outcome == "malignant")
+```
+
+What about when the cutoff value to predict a malignant outcome is based on a `clump_thickness` greater or equal to 5?
+
+### b. Area under the curve (AUC)
+
+The area under the curve (AUC) quantifies how well our classification is predicting the outcome.
+
+```{r}
+# Calculate the area under the curve with function calc_auc()
+calc_auc(ROC)
+```
+
+Let's investigate what it means (this is a little bit difficult). If we randomly select 2 patients, one with a malignant tumor and one with a benign tumor, we will compare their clump thickness:
+
+-   if the clump thickness was higher for the patient with a malignant tumor, we assign a probability of 1 (that agrees with our model),
+
+-   if the clump thickness was the same for the two patients, we assign a probability of 0.5,
+
+-   if the clump thickness was lower for the patient with a malignant tumor, we assign a probability of 0 (that does not agree with our model).
+
+Then we replicate that process 1,000 times.
+
+```{r}
+# Replicate the process 1000 times
+probs <- replicate(1000,{
+  
+  # Sample 1 patient with a malignant outcome
+  rand_positive <- biopsy |>
+    filter(outcome == "malignant") |>
+    select(clump_thickness) |>
+    sample_n(size = 1) |> pull()
+  
+  # Sample 1 patient with benign outcome
+  rand_negative <- biopsy |>
+    filter(outcome == "benign") |>
+    select(clump_thickness) |>
+    sample_n(size = 1) |> pull()
+  
+  # Assign a probability value according to our model
+  case_when(rand_positive > rand_negative ~ 1, 
+            rand_positive == rand_negative ~ .5, 
+            rand_positive < rand_negative ~ 0)
+})
+
+# AUC
+mean(probs)
+```
+
+You can interpret the AUC as the fact that a randomly selected patient with a malignant tumor has a higher predicted probability to have a malignant tumor than a randomly selected person with a benign tumor. On average, about 91% of the time, malignant tumors will have higher probabilities of being malignant compared to benign outcomes. 
+
+In a nutshell: the higher the AUC, the better the classifier is!
+
+#### **Try it! Pick another predictor in the `biopsy` dataset. Visualize the relationship with the `outcome`. Could this new predictor help us classify a tumor as `malignant` or `benign`? Build the ROC curve and find the corresponding AUC value. Is this new predictor resulting in a better model than the one with clump thickness?**
+
+Paste the visualization of the relationship, your ROC plot, and the value of AUC on the slide corresponding to the new predictor: https://docs.google.com/presentation/d/1glbNNylMKn-BAYgOj4S0vZDxr0YAQlIFJYNXZ-tl5UA/edit?usp=sharing
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here!**

@@ -1,0 +1,338 @@
+---
+title: "Worksheet 6: Grammar of Data Wrangling"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r global_options, include=FALSE}
+# The following code is a basic setup of options for your document
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE, 
+                      warning = TRUE,
+                      message = FALSE,
+                      fig.align = "center", 
+                      R.options = list(max.print=50))
+
+# Edit the file starting below
+
+```
+
+In this worksheet, we will discuss `dplyr` functions to manipulate our data.
+
+## 1. Dataset and Library
+
+We will consider a new dataset in this worksheet. It is a built-in dataset in the `tidyverse` package so first load the package which also contains the `dplyr` functions:
+
+```{r}
+# Upload the package
+library(tidyverse)
+```
+
+The `txhousing` dataset contains information about the housing market in Texas. Run `?txhousing` in your console for more details and take a look at the dataset:
+
+```{r}
+# Take a look at the first few rows of the dataset
+head(txhousing) 
+```
+
+Get information about the dimensions, types of variables, and some examples of values with `glimpse()`:
+
+```{r}
+# Dimensions and structure of the dataset
+glimpse(txhousing) 
+```
+
+There are `r nrow(txhousing)` rows and `r ncol(txhousing)` in the dataset.
+
+What does one row represent?
+
+**Write sentences here.**
+
+Looking at the documentation with `?txhousing`, we are told that the information about the housing market in Texas was provided by the [TAMU real estate center](https://www.recenter.tamu.edu/). The variables are defined as follows:
+
+| Variables       | Description                                                                                    |
+|---------------|---------------------------------------------------------|
+| `city`          | Name of multiple listing service (MLS) area                                                    |
+| `year`, `month` | Year, Month for the housing market data                                                        |
+| `sales`         | Number of sales                                                                                |
+| `volume`        | Total value of sales                                                                           |
+| `median`        | Median sale price                                                                              |
+| `listings`      | Total active listings                                                                          |
+| `inventory`     | Amount of time (in months) it would take to sell all current listings at current pace of sales |
+| `date`          | Date for the housing market data (`year` + `month` / 12)                                       |
+
+Take a look at general summary statistics with `summary()`:
+
+```{r}
+# Try to make sense of the values of the variables in the dataset
+summary(txhousing) 
+```
+
+Let's manipulate this dataset, with the 6 core `dplyr` functions, including some we already know!
+
+## 2. Operations on rows/observations
+
+Let's consider some `dplyr` functions that apply to the rows/observations of our dataset.
+
+### a. Filter
+
+Use `filter()` to choose rows/observations verifying some conditions:
+
+```{r}
+# Filter with one criteria
+txhousing |>
+  filter(city == "Austin")
+```
+
+```{r}
+# Filter with multiple criteria
+txhousing |>
+  filter(city == "Austin", sales <= 1000)
+
+# or using connectors
+txhousing |>
+  filter(city == "Austin" & sales <= 1000)
+```
+
+We can check the number of rows that satisfy the conditions by pipping into `nrow()`:
+
+```{r}
+# Filter to check missing values for one variable
+txhousing |>
+  # Filter with multiple criteria
+  filter(city == "Austin", sales <= 1000) |>
+  # Count the rows
+  nrow()
+```
+
+Only 2 rows satisfied these conditions!
+
+### b. Arrange
+
+Use `arrange()` to sort rows/observations for some variables Default is ascending (from least to greatest or alphabetically for categories) but to sort in the other direction use `desc()`.
+
+```{r}
+# Sort by number of sales, least-to-greatest 
+txhousing |>
+  arrange(sales)
+```
+
+```{r}
+# Sort by number of sales, greatest-to-least (descending order)
+txhousing |> 
+  arrange(desc(sales))
+```
+
+### c. Minimum/Maximum values
+
+Let's try `top_n()` vs `slice_max()`/`slice_min()`, and `top_frac()`.
+
+```{r}
+# Select top rows (max values) for a variable
+txhousing |> 
+  # Use `top_n(number of rows, variables)`
+  top_n(n = 4, sales)
+```
+
+How does it differ from `slice_max`?
+
+```{r}
+# Select top percent of rows (max values) for a variable
+txhousing |>
+  # Use `slice_max(number of rows, variables)`
+  slice_max(n = 4, sales)
+```
+
+```{r}
+# Select bottom rows (min values) for a variable
+txhousing |> 
+  # Use `top_n(-number of rows, variables)`
+  top_n(n = -4, sales)
+
+# Why did we get more than 4 rows?
+```
+
+```{r}
+# Select top percent of rows (max values) for a variable
+txhousing |>
+  # Use `top_frac(proportion of rows, variables)`
+  top_frac(n = 0.001, sales)
+
+# Note: for the minimum values add `-` in front of the proportion
+```
+
+#### **Try it! When were the lowest 5 numbers of sales for Austin? Display them in chronological order.**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+## 3. Operations on columns
+
+Let's consider some `dplyr` functions that apply to the columns/variables of our dataset.
+
+### a. Select
+
+Use `select()` to keep or rename a subset of columns/variables.
+
+```{r}
+# Select to keep only some variables
+txhousing |>
+  # Only see 3 variables
+  select(city, year, month, sales)
+```
+
+```{r}
+# Select to keep columns using indexes of the columns
+txhousing |>
+  select(1:4)
+```
+
+```{r}
+# Drop variables using "-"
+txhousing |>
+  # See all but these 4 variables
+  select(-city, -year, -month, -date)
+```
+
+```{r}
+# Select and rename...
+txhousing |>
+  # Use `select()` to rename some variables new_name = old_name
+  select(Location = city, 
+         Calendar_Year = year,
+         Month = month,
+         Number_of_sales = sales)
+```
+
+```{r}
+# or just use rename() with the same structure
+txhousing |> 
+  rename(Location = city, 
+         Calendar_Year = year,
+         Month = month,
+         Number_of_sales = sales)
+```
+
+### b. Mutate
+
+Use `mutate()` to create new columns/variables:
+
+```{r}
+# Find the mean sale price per row
+txhousing |> 
+  mutate(mean_price = volume/sales)
+```
+
+#### **Try it! Calculate the difference between the average price as calculated above and the median sale price. Are these two measures the same? Why/Why not?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+## 4. Create summaries
+
+Let's consider some `dplyr` functions that can create some summaries for our dataset.
+
+### a. Summarize
+
+Use `summarize()` (or `summarise()` in British!) to calculate summary statistics on columns/variables. Some useful summary functions: `mean()`, `sd()`, `median()`, `IQR()`, `min()`, `max()`, `n()`, `n_distinct()`, `cor()`, ...
+
+```{r}
+# Find the mean number of sales
+txhousing |>
+  summarize(mean_sales = mean(sales, na.rm = T)) # ignore NA values
+```
+
+```{r}
+# Add more summaries:
+txhousing |>
+  summarize(
+    # the mean
+    mean_sales = mean(sales, na.rm = T), 
+    # the median
+    median_sales = median(sales, na.rm = T),
+    # the number of rows
+    n_rows = n(),
+    # the number of distinct cities in the dataset
+    n_cities = n_distinct(city),
+    # the correlation between sales and median price
+    correlation = cor(sales, median, use = "complete.obs"))
+```
+
+#### **Try it! Find the total number of `sales` for Austin in 2009.**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+What if we wanted to generate a similar report for each year across all cities in `txhousing`? Let's use a function that allows us to create summaries per subgroup.
+
+### b. Group by
+
+This is one very important function! It enables us to create subgroups and apply a function to all these subgroups For example, find summaries per city and per year:
+
+```{r}
+# Find summaries by subgroups 
+txhousing |>
+  # Each year is a subgroup
+  group_by(year) |> 
+  # Create summaries for each subgroup
+  summarize(total_sales = sum(sales, na.rm = TRUE), # total number of sales
+            nb_rows = n()) # count how many rows in each subset 
+```
+
+Note that there are less rows in 2015. How could it influence the total number of sales during that year?
+
+**Write sentences here.**
+
+Let's try to be a little more specific and find the total number of sales per year and per month:
+
+```{r}
+# Find summaries by subgroups 
+txhousing |>
+  # Each year/month is a subgroup
+  group_by(year, month) |> 
+  # Create summaries for each subgroup
+  summarize(total_sales = sum(sales, na.rm = TRUE), # total number of sales
+            nb_rows = n()) # count how many rows: what does this number correspond to?
+```
+
+#### **Try it! Find the total number of `sales` per month across all cities in `txhousing`, but ignoring values from 2015 since there are not complete. Then create a `ggplot` to show how the number of sales may vary per month.**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+One more example with a plot! Put comments to describe what each line of code does and add a title+labels:
+
+```{r}
+txhousing |> 
+  #
+  group_by(city) |>
+  #
+  summarize(total_sales = sum(sales, na.rm = TRUE)) |>
+  #
+  top_n(n = 10, total_sales) |>
+  #
+  ggplot(aes(y = reorder(city, total_sales), x = total_sales)) + 
+  #
+  geom_bar(stat = "identity")
+```
+
+*Note that `group_by` is not just use to create summaries but that's its most common use.*

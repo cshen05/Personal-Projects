@@ -1,0 +1,178 @@
+---
+title: "Worksheet 14: Supervised Learning"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r global_options, include=FALSE}
+# The following code is a basic setup of options for your document
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE, 
+                      warning = TRUE,
+                      message = FALSE,
+                      fig.align = "center", 
+                      R.options = list(max.print=50))
+
+# Edit the file starting below
+
+```
+
+In this worksheet, we will discuss a basic example of supervised learning.
+
+## 1. Library and dataset
+
+Let's first load `tidyverse` because we always need functions to manipulate our dataset:
+
+```{r, message=FALSE}
+# Load packages 
+library(tidyverse)
+```
+
+It's been a while since we introduced this dataset but remember `mtcars`?
+
+```{r}
+# Take a quick look
+head(mtcars)
+```
+
+Let's discuss how we could predict the value of fuel efficiency (`mpg`) of the Alfa Romeo Alfetta GTV 2.0 based on other features of cars. Note: this particular car is not in the `mtcars` dataset but it was introduced in 1974 like many of the cars in this dataset.
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Alfa_Romeo_Alfetta_Genf_%28despeck_col_balance_etc%29.jpg/1920px-Alfa_Romeo_Alfetta_Genf_%28despeck_col_balance_etc%29.jpg){width="403"}
+
+## 2. Defining a model
+
+If the goal is to predict the fuel efficiency of the car, the `mpg` variable is the **outcome**. But what should our predictor(s) be?
+
+### a. A model with no predictor
+
+How could we predict a value of `mpg` if we have no information about the Alfa Romeo Alfetta GTV 2.0? Consider the distribution of `mpg` for other cars and an average value:
+
+```{r}
+# Take a look at the values of mpg
+mtcars |> 
+    ggplot(aes(x = mpg)) +
+    geom_histogram(binwidth = 2.5, center = 1.25, 
+                   color = "black", fill = "blue") + 
+    labs(x = "Miles per gallon",
+         y = "Number of cars") 
+
+# Find the mean value of mpg
+mean(mtcars$mpg)
+```
+
+We could estimate the `mpg` of the Alfa Romeo Alfetta GTV 2.0 to be average, about 20 mpg.
+
+### b. Some models with one predictor
+
+Let's find the correlation coefficient between `mpg` and each predictor in the dataset:
+
+```{r}
+# Find the correlation matrix
+cor(mtcars)[,1] # only show the first column
+```
+
+Some features of the cars seem to be highly correlated with `mpg`. Let's focus on the weight of a car: consider the `wt` variable is the **predictor**. We can represent the relationship between the two variables with a scatterplot (recall: by convention, the outcome variable is represented on the y-axis). Before, we estimated the predicted `mpg` to just be the average, regardless of the weight (a very simple model):
+
+```{r}
+# Represent mpg vs. weight
+mtcars |> 
+  ggplot(aes(x = wt, y = mpg)) + 
+  geom_point(size = 4) + 
+  labs(x = "Weight (thousands of lbs)",
+       y = "Miles per gallon",
+       title = "Using the mean: Prediction is constant") +
+  # Show the overall mean of mpg as a horizontal line
+  geom_hline(aes(yintercept = mean(mpg)), size = 3, color = "steelblue")
+```
+
+With this model, regardless of the weight, we predict the fuel efficiency to be about 20 mpg.
+
+We know that the weight of an Alfa Romeo Alfetta GTV 2.0 was about 2500 lbs (see [Wikipedia](https://en.wikipedia.org/wiki/Alfa_Romeo_Alfetta#)). Consider the following model that goes through each data point:
+
+```{r}
+mtcars |>
+  ggplot(aes(x = wt, y = mpg)) +
+  # Consider a very refined model that goes through each data point
+  geom_line(color = "steelblue", size = 2) +
+  geom_point(size = 4) + 
+  labs(x = "Weight (thousands of lbs)",
+       y = "Miles per gallon",
+       title = "Using all data points: Prediction is car specific") +
+  scale_y_continuous(breaks = seq(10, 35, 2)) +
+  # Show the weight as a vertical line
+  geom_vline(xintercept = 2.5, color = "red")
+```
+
+Has the prediction for the `mpg` of the Alfa Romeo Alfetta GTV 2.0 changed based on the value of its weight with this model?
+
+**Write sentences here.**
+
+
+Now, let's consider another model with an overall linear trend (we will talk about linear regression in the next worksheet):
+
+```{r}
+mtcars |>
+  ggplot(aes(x = wt, y = mpg)) +
+  # Consider a linear regression model
+  geom_smooth(method = "lm", se = FALSE, color = "steelblue", size = 2) +
+  geom_point(size = 4) + 
+  labs(x = "Weight (thousands of lbs)",
+       y = "Miles per gallon",
+       title = "Using linear regression: Prediction is based on a trend") +
+  scale_y_continuous(breaks = seq(10, 35, 2)) +
+  # Show the weight as a vertical line
+  geom_vline(xintercept = 2.5, color = "red")
+```
+
+Has the prediction for the `mpg` of the Alfa Romeo Alfetta GTV 2.0 changed based on this new model?
+
+**Write sentences here.**
+
+
+Which model is more useful to make a prediction? It's hard to say. Overall, we want:
+
+-   Predictions that are accurate (close to the truth)
+
+-   Predictions that are stable (should not change much if we add new data)
+
+But it is difficult to be both accurate and stable: there is a trade-off between these two conditions.
+
+## 3. Comparing models
+
+Let's add a new data point, about the Volvo 200 Series in 1974:
+
+```{r}
+mtcars |> 
+  # Only keep variables of interest
+  select(mpg, wt) |>
+  # Add a new data point (add a new row)
+  rbind(data.frame(mpg = 29,
+                   wt = 2.5)) |>
+  # Only look at the last 6 rows
+  tail()
+```
+
+How does this new data point affect, or not, our models?
+
+#### **Try it! Represent the 3 models (constant, all data points, linear regression) with the new data point. Which model resulted in the biggest change in the prediction for the Alfa Romeo Alfetta GTV 2.0? the smallest change? Note: only guess-estimate the prediction based on the visualizations.**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+
+Notes on the bias-variance trade-off:
+
+-   A model that is stable and not sensitive to changes in the data is said to have **low variance**. A model that is highly sensitive to changes in the data is said to have **high variance** (and is not very useful to make predictions for new data).
+
+-   A model that is flexible and captures complex patterns in the data is said to have **low bias** (however, there is a risk of overfitting the data). A model that is simplistic and does not take into account the complexities in the data is said to have **high bias** (there is a risk of underfitting the data).
+
+Ideally, a model should have low variance and low bias but can you see that there is a trade-off between the two conditions?
+
+For each model we introduce this semester, we will introduce a measure to check potential *bias* by comparing our predictions to the real data (looking at what we call "residuals"). Then we will also check potential *variance* by comparing the model based on new data (this is called cross-validation).

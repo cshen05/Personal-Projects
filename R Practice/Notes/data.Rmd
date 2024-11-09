@@ -1,0 +1,3 @@
+```{r}
+boxplot(survey_age&age ~ survey_major$major)
+```

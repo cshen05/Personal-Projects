@@ -1,0 +1,331 @@
+---
+title: "HW 2"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,  
+                      warning = TRUE, message = FALSE, 
+                      fig.align = "center",
+                      R.options = list(max.print=100))
+
+# Edit the file starting below
+
+# Upload packages
+library(tidyverse)
+```
+
+### Enter your name and EID here: cs65692
+
+**You will submit this homework assignment as a pdf file on Gradescope.**
+
+*For all questions, include the R commands/functions that you used to find your answer (show R chunk). Answers without supporting code will not receive credit. Write full sentences to describe your findings.*
+
+------------------------------------------------------------------------
+
+## Part 1
+
+The dataset `ChickWeight` was obtained as the result of an experiment and contains information about the weights (in grams) of chicks on four different diets over time (measured at 2-day intervals). The first few observations are listed below.
+
+```{r}
+# Take a look at the first ten rows of the dataset
+head(ChickWeight,10)
+```
+
+### Question 1: (2 pts)
+
+Answer the following questions using code:
+
+-   How many distinct chicks are there?
+
+-   How many distinct time points?
+
+-   How many distinct diet conditions?
+
+-   How many chicks per diet condition at the beginning of the experiment?
+
+```{r}
+# calculates number of distinct chicks
+n_chicks <- length(unique(ChickWeight$Chick))
+n_chicks
+
+# calculates distinct time points
+n_time <- length(unique(ChickWeight$Time))
+n_time
+
+# calculates number of distinct diets
+n_diet <- length(unique(ChickWeight$Diet))
+n_diet
+
+# calculates the number of chickens for each diet
+chicks_p_diet <- ChickWeight |>
+  filter(Time==0) |>
+  group_by(Diet) |>
+  summarize(Chicks=n())
+chicks_p_diet
+```
+
+**There are 50 distinct chicks, 12 distinct time points, and 4 distinct diets. At the beginning of the experiment, there are 20 chicks on diet 1 and 10 chicks on the other 3 diets.**
+
+------------------------------------------------------------------------
+
+### Question 2: (3 pts)
+
+Using a `ggplot`, create a scatterplot showing chick `weight` (on the y-axis) depending on `Time`. Add a title to the plot and label the axes, including the units of the variables.
+
+```{r}
+# plots weight over time of chicks
+ggplot(data=ChickWeight) +
+  geom_point(aes(x=Time, y=weight, alpha=0.5)) +
+  labs(title="Weight over Time", x="Time", y="Weight") +
+  theme_minimal()
+```
+
+How does chick `weight` change over `Time`?
+
+**As time increases, the weight of the chick increases. They have a positive correlation.**
+
+Building upon the previous plot, add lines that connect each chick's points together with `geom_line()` and are represented with a different color per chick. Make sure the points representing the chicks are on top of the lines (each point should still be black by the way). Finally, remove the legend.
+
+```{r}
+# creates a colored line for each chick to make reading the data easier
+ggplot(data=ChickWeight) +
+  geom_point(aes(x=Time, y=weight, alpha=0.5)) +
+  geom_line(aes(x=Time, y=weight, color=Chick)) +
+  labs(title="Weight over Time", x="Time", y="Weight") +
+  theme(legend.position="none")
+```
+
+Do all chicks seem to gain weight in the same manner? Why/Why not?
+
+**No, the chicks all have a different rates of gaining weight. This is most probably because their conditions, both environmentally and internally in their bodies are different for each chick.**
+
+------------------------------------------------------------------------
+
+### Question 3: (1 pt)
+
+Now, facet your last plot by diet.
+
+```{r}
+# splits the graph by diet
+ggplot(data=ChickWeight) +
+  geom_point(aes(x=Time, y=weight, alpha=0.5)) +
+  geom_line(aes(x=Time, y=weight, color=Chick)) +
+  labs(title="Weight over Time", x="Time", y="Weight") +
+  theme(legend.position="none") +
+  facet_wrap(~Diet)
+```
+
+Can you tell from this new plot which diet results in greater weight? Describe how the relationship between `weight` and `Time` changes, or not, across the different diets.
+
+**Diet 3 seems to have the greatest increase in weight. Diets 2 and 4 seem to have similar increase in weights over time but the variance between each chick in diet 2 is much lower than the variance in the chick weights for diet 4.**
+
+------------------------------------------------------------------------
+
+### Question 4: (3 pts)
+
+A scatterplot might not be the best way to compare the different diets: it calls attention to the relationship between weight and time, but it can be hard to see the differences between diets. It would be more meaningful to compare the distribution of weight for each diet.
+
+Would it make sense to visualize the distribution of the variable `weight` overall? Why/Why not?
+
+**Visualizing the distribution of the variable weight overall could make sense depending on how the distribution are visualized. For example, if we visualized the distribution of the weight for chicks who have a weight in the upper 5% and colored based on which diet, we could see which diet is more effective.**
+
+Only focus on the end of the experiment with the last `Time` point. *Hint: find the maximum value of `Time`.* Then create a `ggplot` using `geom_histogram` with a bin width of 40 grams, make the major tick marks go from 40 to 400 to match the bins, and label the x-axis to include units.
+
+```{r}
+# compares chick weight at the end of the experiement using a histogram
+max_time <- max(ChickWeight$Time)
+last_time_data <- ChickWeight |>
+  filter(Time == max_time)
+
+ggplot(last_time_data, aes(x = weight)) +
+  geom_histogram(binwidth = 40, color = "black", fill = "skyblue") +
+  scale_x_continuous(breaks = seq(40, 400, by = 40)) +
+  labs(title = "Chick Weight Distribution at the End of the Experiment",
+       x = "Weight (grams)",
+       y = "Count") +
+  theme_minimal()
+```
+
+Building upon the previous plot, make the bars in the histogram of a different color depending on the diet.
+
+```{r}
+# splits the histogram bars by diet proportion
+ggplot(last_time_data, aes(x = weight, fill = as.factor(Diet))) +
+  geom_histogram(binwidth = 40, color = "black") +
+  scale_x_continuous(breaks = seq(40, 400, by = 40)) +
+  labs(title = "Chick Weight Distribution by Diet at the End of the Experiment",
+       x = "Weight (grams)",
+       y = "Count",
+       fill = "Diet") +
+  theme_minimal()
+```
+
+Why does it NOT make sense to make such a graph? How could you improve this graph to compare the distribution of weight at the end of the experiment across the diets?
+
+**It does not make sense to make such a graph because there's so much overlapping information and confusing comparisons being made. This graph can be improved by faceting the data by diets and choosing a density plot rather than a histogram.**
+
+Improve the last plot!
+
+```{r}
+# replaces the histogram for a density plot
+ggplot(last_time_data, aes(x = weight, color = as.factor(Diet))) +
+  geom_density() +
+  labs(title = "Chick Weight Distribution by Diet at the End of the Experiment",
+       x = "Weight (grams)",
+       y = "Density",
+       color = "Diet") +
+  scale_x_continuous(breaks = seq(40, 400, by = 40)) +
+  theme_minimal()
+```
+
+Which diet you think results in the highest `weight` on average at the end of the experiment?
+
+**Diet 3. Diets 1, 2, and 4 all tail off as the weight increases. Diet 3 has the highest proportion of chicks with weights over 280.**
+
+------------------------------------------------------------------------
+
+### Question 5: (3 pts)
+
+Another way to explore the effect of diet on the weight is with a bar plot where the height of the bars represent the mean weight at the end of the experiment for each diet.
+
+Focus again on the end of the experiment with the last `Time` point. Then create a `ggplot` using `geom_bar` where each bar's height corresponds to a statistic: the mean weight for each of the four diet conditions. Label the y-axis to include units and make the major tick marks on the y-axis go from 0 to 300 by 25.
+
+```{r}
+# your code goes below (replace this comment with something meaningful)
+mean_weights <- last_time_data |>
+  group_by(Diet) |>
+  summarise(mean_weight = mean(weight))
+
+ggplot(mean_weights, aes(x = as.factor(Diet), y = mean_weight)) +
+  geom_bar(stat = "identity", fill = "skyblue", color = "black") +
+  scale_y_continuous(breaks = seq(0, 300, by = 25)) +
+  labs(title = "Mean Chick Weight by Diet at the End of the Experiment",
+       x = "Diet",
+       y = "Mean Weight (grams)") +
+  theme_minimal()
+```
+
+Which diet has the highest mean `weight`?
+
+**Diet 3 has the highest mean weight.**
+
+Building on the previous graph, add error bars showing + or - 1 standard error. Color the bars (not the error bars, but the bars of the bar plot) by diet.
+
+```{r}
+# your code goes below (replace this comment with something meaningful)
+mean_weights <- last_time_data |>
+  group_by(Diet) |>
+  summarise(
+    mean_weight = mean(weight),
+    se_weight = sd(weight) / sqrt(n())  # standard error
+  )
+
+ggplot(mean_weights, aes(x = as.factor(Diet), y = mean_weight, fill = as.factor(Diet))) +
+  geom_bar(stat = "identity", color = "black") +
+  geom_errorbar(aes(ymin = mean_weight - se_weight, ymax = mean_weight + se_weight), 
+                width = 0.2, color = "black") + 
+  scale_y_continuous(breaks = seq(0, 300, by = 25)) + 
+  labs(title = "Mean Chick Weight by Diet at the End of the Experiment",
+       x = "Diet",
+       y = "Mean Weight (grams)",
+       fill = "Diet") +
+  theme_minimal()
+```
+
+Compare the different diets in terms of how the spread in `weight`.
+
+**Diet 1 seems to have the lowest variance among the chicks' weight, closely followed by diet 4. This tells us that while diet 1 may have the least amount of total growth in weight, its results are much more consistent, especially considering the much higher variance in diet 3.**
+
+------------------------------------------------------------------------
+
+### Question 6: (1 pt)
+
+Copy your code for the last graph and replace `geom_bar()` with `geom_point()`. Make the points larger and color them all in red. Put them *on top of* the error bars.
+
+```{r}
+# your code goes below (replace this comment with something meaningful)
+ggplot(mean_weights, aes(x = as.factor(Diet), y = mean_weight, fill = as.factor(Diet))) +
+  geom_point(stat = "identity", color = "red", size=5) +
+  geom_errorbar(aes(ymin = mean_weight - se_weight, ymax = mean_weight + se_weight), 
+                width = 0.2, color = "black") + 
+  scale_y_continuous(breaks = seq(0, 300, by = 25)) + 
+  labs(title = "Mean Chick Weight by Diet at the End of the Experiment",
+       x = "Diet",
+       y = "Mean Weight (grams)",
+       fill = "Diet") +
+  theme_minimal()
+```
+
+Does the mean chick weight seem to differ based on the diet? *Note: avoid the word "significant", that's stats jargon.*
+
+**The mean chick weight does seem to differ based on the diet, with diet 3 leading to the greatest average weight and diet 1 resulting in the lowest. There are some overlap between diets 2, 3, and 4, but overall the mean weights for each diet appear to vary. This suggests that the diet influences the average chick weight at the end of the experiment.**
+
+------------------------------------------------------------------------
+
+### Question 7: (2 pts)
+
+One last graph! It would be even more meaningful to compare the mean `weight` of each `Diet` over `Time`. Use `geom_point` to represent the mean weight over time and `geom_line` to connect the mean weights per diet across time. Change the shape of the points representing the means to be `x` symbols and make these points bigger. Also represent the weight of each chick over time in the background. To better distinguish between data values and mean values make the points representing the weight of each chick 20% transparent. *Hint: use some `stat` options in the geoms and define aesthetics wisely (overall or within a geom).*
+
+```{r}
+# your code goes below (replace this comment with something meaningful)
+mean_weights <- ChickWeight |>
+  group_by(Time, Diet) |>
+  summarise(
+    mean_weight = mean(weight), 
+    .groups = 'drop'
+  )
+
+
+ggplot(data = ChickWeight, aes(x = Time, y = weight, color = factor(Diet))) +
+  geom_point(aes(group = Chick), alpha = 0.2) +
+  geom_point(data = mean_weights, aes(x = Time, y = mean_weight, color = factor(Diet)), 
+             shape = "x", size = 5) +
+  geom_line(data = mean_weights, aes(x = Time, y = mean_weight, group = Diet, color = factor(Diet)), 
+            size = 1.2) +
+  labs(title = "Mean Chick Weight by Diet Over Time",
+       x = "Time (days)",
+       y = "Weight (grams)",
+       color = "Diet") +
+  theme_minimal()
+```
+
+Which diet has a constantly lower mean weight over time?
+
+**Diet 1 has had a lower mean weight over time when compared to the rest of the diets.**
+
+------------------------------------------------------------------------
+
+## Part 2
+
+Recall the context about the Internet clothing retailer Stitch Fix wanting to develop a new model for selling clothes to people online (see HW 1). Their basic approach is to send people a box of 5–6 items of clothing and allow them to try the clothes on. Customers keep (and pay for) what they like while mailing back the remaining clothes. Stitch Fix then sends customers a new box of clothes a month later.
+
+You built an intake survey distributed to customers when they first sign up for the service. The intake survey had about 20 questions and you will use this data later to help you develop an algorithm for choosing clothes to send to each customer. Here are some variables you collected for each customer: size (S, M, L, XL, XXL), height (in inches), hip size (in cm), and style (athletic, elegant, professional, casual).
+
+Suppose you are now in charge of producing a report to the department of Inventory Management at Stitch Fix so that clothes can be ordered to stock the inventory before starting to send clothes to each customer.
+
+------------------------------------------------------------------------
+
+### Question 8: (2 pts)
+
+You will make some visualizations for your report to the department of Inventory Management. Suggest one visualization that contains 1 of the variables above and suggest another visualization containing 2 of the variables above. Identify the types of graph you would make and what summary statistics you would report.
+
+**For the visualization for 1 variable, I would use a bar chart showing the different sizes. I would report the frequency and the percentage of customers in each category. For a 2 variable visualization, I would also make a box plot but this time comparing height and styles. This can tell us if there is a correlation between the height of a person and the type of style they might choose. I would report the median, quartiles, and the range of heights for each style.**
+
+------------------------------------------------------------------------
+
+### Question 9: (2 pts)
+
+After making some visualizations, you notice that some values reported for the height do not make sense (for example, 5.7, 305, 510). Why did that happen? Should you consider these values in the analysis? Or how could you deal with these values?
+
+**These data entries result from entries that don't specify what type of data the survey wants in open ended questions. It depends whether or not we should consider these values in the analysis but for values that are simply unit conversions, we can clean them up into a way that makes them consistent across the dataset. For values where there are no conversions that can be, those outliers can be tossed out.**
+
+------------------------------------------------------------------------
+
+## Formatting: (1 pt)
+
+Knit your file! You can knit into html and once it knits in html, click on `Open in Browser` at the top left of the window that pops out. **Print** your html file into pdf from your browser.
+
+Is it working? If not, try to decipher the error message: look up the error message, consult websites such as [stackoverflow](https://stackoverflow.com/) or [crossvalidated](https://stats.stackexchange.com/).
+
+Finally, remember to select pages for each question when submitting your pdf to Gradescope.

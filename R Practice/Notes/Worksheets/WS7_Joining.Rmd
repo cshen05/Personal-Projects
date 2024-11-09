@@ -1,0 +1,269 @@
+---
+title: "Worksheet 7: Joining"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r global_options, include=FALSE}
+# The following code is a basic setup of options for your document
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE, 
+                      warning = TRUE,
+                      message = FALSE,
+                      fig.align = "center", 
+                      R.options = list(max.print=50))
+
+# Edit the file starting below
+
+```
+
+In this worksheet, we will discuss how to join information that can be matched across multiple datasets.
+
+## 1. Datasets and Library
+
+We will discuss joining functions to combine datasets in different ways from the `tidyverse` package:
+
+```{r}
+# Load a package
+library(tidyverse)
+```
+
+Consider the following built-in datasets containing information about some band members of the Beatles and Rolling Stones:
+
+```{r}
+# Preview datasets
+band_members
+band_instruments
+band_instruments2
+```
+
+## 2. Joining datasets
+
+To join datasets, we first need to identify a **key variable** (a variable, or sometimes a set of variables, that defines a unique row in a dataset). What is the key variable to join the datasets above?
+
+**the name**
+
+### a. Inner join
+
+Join datasets using `inner_join()` to get the information they have in common:
+
+```{r}
+# Join 2 datasets with `inner_join()`
+inner_join(band_members, band_instruments, by = "name")
+```
+
+Why we only get 2 rows?
+
+**Write sentences here.**
+
+### b. Left join
+
+Join datasets using `left_join()` to keep information from the "left" dataset and add information from the "right" dataset:
+
+```{r}
+# Join 2 datasets with `left_join()` 
+left_join(band_members, band_instruments, by = "name")
+```
+
+There was one row in the left dataset that did not appear in the right dataset. How did R handle that?
+
+**Write sentences here.**
+
+#### **Try it! Swap the left and right datasets from above. How do the resulting joined dataset compare?**
+
+```{r}
+# Write and submit code here!
+left_join(band_instruments, band_members, by = "name")
+```
+
+**The order of the left and right datasets matter.**
+
+### c. Right join
+
+This function does the opposite of `left_join()` so it is not widely used.
+
+```{r}
+# Join 2 datasets with `right_join()`
+right_join(band_members, band_instruments, by = "name")
+```
+
+Which `left_join()` function above gave a similar result?
+
+**Write sentences here.**
+
+### d. Full join
+
+Join datasets using `full_join()` to keep information from both datasets:
+
+```{r}
+# Join 2 datasets with `full_join()`
+full_join(band_members, band_instruments, by = "name")
+```
+
+Note how R added missing values for the universities that were in only one of these two datasets.
+
+### e. Anti join
+
+We can use `anti_join()` to get information from the left dataset for which there is no information in the right dataset:
+
+```{r}
+# Find missing observations with `anti_join()`
+anti_join(band_members, band_instruments, by = "name")
+```
+
+Mick did not have an instrument in `band_instruments`.
+
+#### **Try it! Find if any musician did not have a band reported in `band_members`.**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+### f. Semi join
+
+What happens if we use `semi_join()`?
+
+```{r}
+# Using `semi_join()`
+semi_join(band_members, band_instruments, by = "name")
+```
+
+The `semi_join()` is like an `inner_join()` but only keeping the variables of the "left" dataset (not very commonly used).
+
+## 3. Considering other options when joining
+
+There are some options and common issues to consider when joining different datasets.
+
+### a. No matching key
+
+Some datasets may refer to the same variable with different names. Consider the following dataset:
+
+What happens if we are joining 2 datasets that have different names for the key variable?
+
+```{r, eval = FALSE}
+# Join the two datasets with different key variables
+left_join(band_members, band_instruments2, by = "name")
+```
+
+There is an error because R did not find any common variable (no key variable). We would need to specify the name of the key in each dataset:
+
+```{r}
+# Join the two datasets with different key variables
+left_join(band_members, band_instruments2,
+          # and specify which variables match across datasets with `c()`
+          by = c("name" = "artist"))
+```
+
+*Note: The order in which we specify the match for the key variable matters: specify the match from the left dataset to the right dataset. Also, note that only the first name of the key variable is kept in the joined dataset.*
+
+### b. Auto-suffixing
+
+Here is another dataset reporting instruments for each band member:
+
+```{r}
+# Consider this new dataset
+band_instruments3 <- data.frame(
+  name = c("John","Paul","Keith"),
+  plays = c("a Steinway upright piano his biggest solo hit Imagine ", 
+            "54 different instruments", 
+            "10 out of his 3,000 guitars regularly"))
+band_instruments3
+```
+
+What happens if we are joining 2 datasets with the same variable name that is *not a key* variable?
+
+```{r}
+# Join the two variables of instruments played
+left_join(band_instruments, band_instruments3, by = "name")
+```
+
+Any columns that have the same name in both datasets but are not used to join on will be given suffixes `.x` and `.y` to specify which original dataset they came from (left and right, respectively). You can modify the default suffix:
+
+```{r}
+# Join the two variables of instruments played
+left_join(band_instruments, band_instruments3, by = "name",
+          # To give names to the suffix, use `suffix =`
+          suffix = c(".instrument",".fun_fact"))
+```
+
+*Note: If the same variable appears in both dataset with the same meaning, it might be a key variable! See section e. below.*
+
+### c. Duplicates
+
+Some datasets may have duplicates for the key variable. Consider the resulting dataset from above:
+
+Here is another dataset reporting instruments for each band member:
+
+```{r}
+# Consider this new dataset
+band_members2 <- data.frame(
+  name = c("Mick","John","Paul","John"),
+  band = c("Stones", "Beatles", "Beatles", "Bluesbreakers"))
+band_members2
+```
+
+#### **Try it! Join the information from `band_members2` to the instruments they play. Is the information contained in the resulting dataset correct?**
+
+```{r}
+# Write and submit code here!
+left_join(band_members2, band_instruments, by="name")
+```
+
+**Not necessarily: be careful with duplicates.**
+
+*Note that it is sometimes useful to add repeating information for some rows that share the same key. We just need to be careful that it makes sense!*
+
+### d. Several key variables
+
+Sometimes one variable is not enough to identify a unique match. Consider these two datasets:
+
+```{r}
+# Consider these two new datasets
+band_members_last <- band_members2 |>
+  mutate(last_name = c("Jagger", "Lennon", "McCartney", "Mayall"))
+band_instruments_last <- band_instruments |> 
+  mutate(last_name = c("Lennon", "McCartney", "Richards"))
+
+# Take a look
+band_members_last
+band_instruments_last
+```
+
+What key variable(s) should be taken into account to identify a unique row?
+
+**Write sentences here.**
+
+```{r}
+# Join 2 datasets with 2 key variables
+left_join(band_members_last, band_instruments_last, 
+          # List the key variables with `c()`
+          by = c("name", "last_name"))
+```
+
+------------------------------------------------------------------------
+
+Through this worksheet, we created many datasets to play with, here's one last one!
+
+```{r}
+# Information about the bands
+band_information <- data.frame(
+  main_band = c("Beatles","Stones"),
+  plays = c("1960-1970", "1962-present"))
+band_information
+```
+
+#### **Try it! Join the information from `band_members`, `band_instuments`, `band_information` into one dataset. Does it matter which joining function you use?**
+
+```{r}
+# Write and submit code here!
+full_join(band_members, band_instruments, by="name") |>
+  full_join(band_information, by=c("band"="main_band"), suffix=c(".instrument", ".career"))
+```
+
+**Write sentences here.**

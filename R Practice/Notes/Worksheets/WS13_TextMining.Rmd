@@ -1,0 +1,276 @@
+---
+title: "Worksheet 13: Web Scraping and Text Mining"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r global_options, include=FALSE}
+# The following code is a basic setup of options for your document
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE, 
+                      warning = TRUE,
+                      message = FALSE,
+                      fig.align = "center", 
+                      R.options = list(max.print=50))
+
+# Edit the file starting below
+
+```
+
+In this worksheet, we will learn about web scraping and different text mining techniques: using lexicons, word clouds, and sentiment analysis.
+
+## 1. Libraries
+
+Let's first load `tidyverse`:
+
+```{r, message=FALSE}
+# Load packages 
+library(tidyverse)
+```
+
+We will also use many packages to explore cool text mining options! Some packages are not installed on the server (and if you are using RStudio from your computer, you will need to install these packages). *Note: using `eval=FALSE` when defining the code chunk will make sure not to run the code chunk when knitting the file.*
+
+```{r, eval=FALSE}
+# Install packages (only needed once!)
+install.packages("rvest")
+install.packages("tidytext")
+install.packages("ggwordcloud")
+```
+
+After installing the packages, let's load them:
+
+```{r}
+# Load packages
+library(rvest)
+library(tidytext)
+library(ggwordcloud)
+```
+
+We will use different sources for text data so let's just call them when we need them!
+
+## 2. Web scraping
+
+We will use the `rvest` package which make it easy to download, then manipulate, HTML and XML. We can data directly from webpages! Let's look at the webpage that lists all R packages on CRAN:
+
+```{r}
+# Webpage with all R packages
+all_pkgs_html <- read_html("https://cran.r-project.org/web/packages/available_packages_by_name.html")
+
+# This objects points to the raw html for this webpage
+all_pkgs_html
+```
+
+With HTML, formatting is done with elements, or tags. For example, `<p>` for paragraph text, `<a href=...>` for links, `<img>` for images, `<table>` for tables, etc. Grab some specific type of elements with `html_nodes()`:
+
+```{r}
+# Extract hyperlinks with "a"
+all_pkgs_html |>
+  html_nodes("a")
+```
+
+These are all hyperlinks! We can grab the hyperlinked text with `html_text()`:
+
+```{r}
+# Save the hyperlinked text
+ linked_text <- all_pkgs_html |>
+  html_nodes("a") |>
+  html_text()
+```
+
+The first 26 elements are referring to the alphabet used to look for packages. Let's get rid of those and keep the rest of the hyperlinked text (which corresponds to the list of packages available!):
+
+```{r}
+# Get rid of the first 26 elements
+all_pkgs_names <- as.data.frame(linked_text) |> filter(str_length(linked_text) > 1)
+
+# Find the number of packages
+nrow(all_pkgs_names)
+```
+
+There are currently `r length(all_pkgs_names)` packages. This number changes every semesters (and almost everyday)!
+
+#### **Try it! Find how many packages start with the letters `gg`. Hint: recall `str_detect()` and Regex anchors.**
+
+```{r}
+# Write and submit code here!
+all_pkgs_names |>
+  filter(str_detect(str_to_lower(linked_text), "^gg")) |>
+  nrow()
+```
+
+**224 packages start with gg of any variation.**
+
+Let's look at the first letter of each package and look at the distribution of each letter with a bar graph:
+
+```{r}
+# We need to convert our vector of names as a dataframe for mutate and ggplot
+all_pkgs_names |> 
+  # Find the first letter of each name with str_extract()
+  mutate(first_letter = str_extract(linked_text, "^."),
+         first_letter_upper = str_to_upper(first_letter)) |>
+  # Create a bar graph for each letter
+  ggplot(aes(x = first_letter_upper)) + geom_bar() +
+  labs(x = "first letter of package names", y = "frequency")
+```
+
+Most R packages start with the letter S!
+
+## 3. Text mining
+
+How to represent and summarize text data?
+
+### a. Text data
+
+At the beginning of the semester, you shared what they would like to learn in this course. Let's analyze that!
+
+```{r}
+# Upload data from GitHub
+text_survey <- read_csv("https://raw.githubusercontent.com/laylaguyot/datasets/main//text_survey.csv")
+
+# Take a look
+head(text_survey)
+```
+
+We need to do some clean up to investigate what students want to learn! For example:
+
+-   Get rid of the punctuation
+
+-   Put text in lowercase
+
+-   Split sentences into words
+
+To do all that, we will use a function from `tidytext` that put text data automatically into words: `unnest_tokens()`. *Note: This function has a lot of cool options.*
+
+```{r}
+learn_words <- text_survey |>
+  # Focus on one variable
+  select(learn) |> 
+  # Split each comment into words
+  unnest_tokens(input = learn, output = word)
+
+learn_words
+```
+
+We created a new object, `learn_words`, that contains all words separately.
+
+#### **Try it! Using `dplyr` functions, find the frequency of each word (call it `freq`). Take a look at the 10 most common words when students describe what they want to learn. What do you think about these top 10 words? Anything interesting? Not interesting?**
+
+```{r}
+# Write and submit code here!
+learn_words |>
+  count(word)|>
+  slice_max(n, n=10)
+```
+
+**Write sentences here.**
+
+### b. Lexicon
+
+To clean up data, we might want to omit some words that are not so relevant. Luckily, we can access a list of `stop_words` from the `tidytext` package. There are three lexicons available: `onix`, `SMART` or `snowball`:
+
+```{r}
+# Lexicons available with number of words contained in them
+table(stop_words$lexicon)
+```
+
+Let's first consider the `snowball` lexicon.
+
+```{r}
+# Create the list of stop words for the snowball lexicon
+snowball_stops <- stop_words |> filter(lexicon == "snowball")
+
+# Take a quick look
+head(snowball_stops)
+```
+
+Let's get rid of these `snowball_stops` with `anti_join()` (word in `learn_words` that are not in `snowball_stops`):
+
+```{r}
+learn_words |>
+  # For each word...
+  group_by(word) |>
+  # Find how many times that word was repeated
+  summarize(freq = n()) |>
+  # Only keep the words that DO NOT appear in snowball_stops
+  anti_join(snowball_stops, by = "word") -> learn_clean # Save
+
+# Take a quick look at most common words
+learn_clean |>
+  slice_max(freq, n = 10)
+```
+
+### c. Word Clouds
+
+A word cloud represents how frequent some words are. We have the information we need to put into our word cloud with `learn_words`! Let's use a new `geom_` function from the `ggwordcloud` package:
+
+```{r}
+# Using a ggplot
+ggplot(learn_clean, aes(label = word)) +
+  geom_text_wordcloud() + # a new geom!
+  # Control the size of the words
+  scale_size_area(max_size = 24) +
+  theme_minimal()
+```
+
+#### **Try it! Let's make that word cloud a little prettier... Use `dplyr` and `ggplot` functions to 1) Only keep the 20 most common words, 2) Make the most common words look bigger, 3) Use different colors if the words are more or less common.**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
+
+#### **Try it! Get rid of more `stop_words` by using the `SMART` lexicon instead of the `snowball` lexicon. Update the word cloud with the 20 most common words. Do you notice anything (pretty important) missing? Fix it!**
+
+```{r}
+# Write and submit code here!
+
+```
+
+More options for word clouds: <https://cran.r-project.org/web/packages/ggwordcloud/vignettes/ggwordcloud.html>
+
+### d. Sentiment analysis
+
+Sentiment analysis uses a scored lexicon of words, with emotion scores or labels (negative vs. positive) indicating each word's emotional content. Although this approach will miss context-dependent sentiments, such as sarcasm, when performed on large numbers of words, overall, it can provide some insights. We can use the `tidytext` function `get_sentiments()` to load a lexicon for sentiments of a large number of words. A few examples:
+
+```{r}
+# Get sentiments
+get_sentiments("bing") |> head()
+get_sentiments("afinn") |> head()
+get_sentiments("nrc") |> head()
+```
+
+We can now match the words from the text survey and their corresponding sentiments (if available):
+
+```{r}
+# Recall the object learn_words
+learn_words |> 
+  # Only keep the words with a corresponding sentiment with inner_join()
+  inner_join(get_sentiments("bing"), by = "word") |> 
+  head()
+```
+
+And we can estimate the overall sentiment about how students are learning comparing the number of positive words to the number of negative words:
+
+```{r}
+learn_words |> 
+  # Only keep the words with a corresponding sentiment with inner_join()
+  inner_join(get_sentiments("bing"), by = "word") |> 
+  group_by(sentiment) |>
+  summarize(freq = n())
+```
+
+Positivity wins!
+
+#### **Try it! How does the "sentiment" compare if we are using `afinn` or `nrc` lexicon instead?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here.**
