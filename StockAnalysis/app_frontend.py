@@ -1,12 +1,12 @@
 import sys
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel,
-    QPushButton, QWidget, QLineEdit, QTabWidget, QDateEdit, QTextEdit
+    QPushButton, QWidget, QLineEdit, QTabWidget, QDateEdit, QTextEdit, QScrollArea
 )
 from PyQt5.QtCore import QDate, QTimer
 from PyQt5.QtGui import QFont
 
-from core_backend import fetch_stock_data, add_features, rank_features, provide_insight
+from core_backend import fetch_stock_data, add_features, rank_features, provide_insight, train_and_evaluate_model
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
@@ -136,28 +136,82 @@ class StockAnalysisApp(QMainWindow):
 
     def init_feature_importance_tab(self):
         self.feature_tab = QWidget()
-        layout = QVBoxLayout()
+        main_layout = QVBoxLayout()
 
-        feature_explanation = QLabel("""
-        <h3><b>Feature Importance</b></h3>
-        <p>Key technical indicators and their impact on predictions:</p>
-        <ul>
-            <li><b>EMA10 and EMA50:</b> Short-term and long-term price trends.</li>
-            <li><b>ATR:</b> Market volatility measure.</li>
-            <li><b>Stochastic Oscillator:</b> Price momentum relative to highs/lows.</li>
-            <li><b>OBV:</b> Volume-driven prediction signal.</li>
-            <li><b>ADX:</b> Indicates trend strength.</li>
-        </ul>
+        # Fixed container for feature weights (non-scrollable)
+        feature_weights_container = QWidget()
+        feature_weights_layout = QVBoxLayout()
+        feature_weights_container.setLayout(feature_weights_layout)
+
+        # Explanation of Feature Importance
+        feature_importance_explanation = QLabel("""
+        <h3><b>Understanding Feature Importance</b></h3>
+        <p>Feature importance quantifies the contribution of each indicator to the machine learning model's predictions. 
+        It is calculated based on the decrease in model accuracy or variance when a feature is excluded or randomized. 
+        In this app, a Random Forest Classifier is used, which evaluates feature importance by measuring how much 
+        each feature splits data effectively across decision trees.</p>
         """)
-        feature_explanation.setStyleSheet("padding: 10px; font-size: 16px;")
-        layout.addWidget(feature_explanation)
+        feature_importance_explanation.setStyleSheet("padding: 10px; font-size: 16px;")
+        feature_importance_explanation.setWordWrap(True)
+        feature_weights_layout.addWidget(feature_importance_explanation)
 
+        # Feature Importance Display (non-scrollable)
         self.feature_text = QTextEdit()
         self.feature_text.setReadOnly(True)
         self.feature_text.setStyleSheet("background-color: #2e2e2e; border: none; padding: 10px; font-size: 16px;")
-        layout.addWidget(self.feature_text)
+        self.feature_text.setFixedHeight(245)  # Fixed height for feature weights display
+        feature_weights_layout.addWidget(self.feature_text)
 
-        self.feature_tab.setLayout(layout)
+        # Add fixed feature weights container to the main layout
+        main_layout.addWidget(feature_weights_container)
+
+        # Scrollable area for the rest of the content
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+
+        # Container widget for scrollable content
+        container_widget = QWidget()
+        container_layout = QVBoxLayout()
+
+        # Explanation of Indicators
+        indicator_explanation = QLabel("""
+        <h3><b>Explanation of Indicators</b></h3>
+        <p>Below are the key technical indicators used in stock analysis and their significance:</p>
+        <ul>
+            <li><b>EMA10 (10-Day Exponential Moving Average):</b> A moving average that gives more weight to recent prices, 
+            making it responsive to short-term trends.</li>
+            <li><b>EMA50 (50-Day Exponential Moving Average):</b> Similar to EMA10 but spans a longer period, helping 
+            to identify medium to long-term trends.</li>
+            <li><b>ATR (Average True Range):</b> A measure of market volatility, indicating the average price movement 
+            (high to low) over a specified period.</li>
+            <li><b>Stochastic Oscillator:</b> A momentum indicator comparing the closing price to a range of prices over 
+            a specific period. It helps identify overbought or oversold conditions.</li>
+            <li><b>OBV (On-Balance Volume):</b> A cumulative volume-based indicator that predicts price direction by 
+            analyzing whether volume flows in or out of a stock.</li>
+            <li><b>ADX (Average Directional Index):</b> Measures the strength of a trend without indicating its direction. 
+            Higher ADX values signify stronger trends.</li>
+            <li><b>Bollinger Bands (BB Upper and Lower):</b> Bands plotted two standard deviations above and below a 
+            moving average. They show volatility and potential reversal points when prices touch the bands.</li>
+            <li><b>RSI (Relative Strength Index):</b> A momentum oscillator that measures the speed and change of price 
+            movements to identify overbought or oversold conditions.</li>
+            <li><b>MA10 (10-Day Moving Average):</b> A simple moving average over the past 10 days, used to smooth out 
+            price fluctuations and identify trends.</li>
+            <li><b>MA50 (50-Day Moving Average):</b> Similar to MA10 but over a longer period, providing insights into 
+            longer-term trends.</li>
+        </ul>
+        """)
+        indicator_explanation.setStyleSheet("padding: 10px; font-size: 16px;")
+        indicator_explanation.setWordWrap(True)
+        container_layout.addWidget(indicator_explanation)
+
+        # Set container layout and add to scroll area
+        container_widget.setLayout(container_layout)
+        scroll_area.setWidget(container_widget)
+
+        # Add scroll area to main layout
+        main_layout.addWidget(scroll_area)
+
+        self.feature_tab.setLayout(main_layout)
         self.tabs.addTab(self.feature_tab, "Feature Importance")
 
     def init_recommendation_tab(self):
@@ -206,10 +260,13 @@ class StockAnalysisApp(QMainWindow):
             features = ['MA10', 'MA50', 'RSI', 'BB_upper', 'BB_lower', 'EMA10', 'EMA50', 'ATR', 'Stochastic', 'OBV', 'ADX']
             X = data[features]
             y = data['Target']
+            # Split the dataset
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-            model = RandomForestClassifier(random_state=42)
-            model.fit(X_train, y_train)
 
+            # Train and evaluate the model using the dedicated function
+            model, train_accuracy, test_accuracy, cross_val_mean, cross_val_std = train_and_evaluate_model(X_train, y_train, X_test, y_test)
+
+            # Display feature importance
             try:
                 ranked_features = rank_features(model, features)
                 formatted_features = "<br>".join(
@@ -219,11 +276,20 @@ class StockAnalysisApp(QMainWindow):
             except Exception as e:
                 self.feature_text.setHtml(f"<b>Error displaying feature importance:</b> {str(e)}")
 
+            # Generate recommendation
             try:
-                insight, confidence = provide_insight(model, X_test, y_test)
-                self.recommendation_text.setHtml(
-                    f"<b>{insight}</b><br>"
-                )
+                recommendation, confidence = provide_insight(model, X_train, y_train, X_test, y_test)
+                self.recommendation_text.setHtml(f"""
+                <h3><b>Recommendation:</b> {recommendation}</h3>
+                <p><b>Confidence:</b> {confidence:.2f}%</p>
+                <p><b>Training Accuracy:</b> {train_accuracy:.2f}%</p>
+                <p><b>Test Accuracy:</b> {test_accuracy:.2f}%</p>
+                <p><b>Cross-Validation Accuracy:</b> {cross_val_mean:.2f}% ± {cross_val_std:.2f}%</p>
+                <hr>
+                <p>The recommendation is based on the model's evaluation of probabilities for <b>BUY</b> and <b>SELL</b>. 
+                Confidence reflects the likelihood of this specific prediction being correct, while accuracy measures overall 
+                model performance.</p>
+                """)
             except Exception as e:
                 self.recommendation_text.setHtml(f"<b>Error generating recommendation:</b> {str(e)}")
 

@@ -2,9 +2,23 @@ import yfinance as yf
 import pandas as pd
 import heapq
 from sklearn.metrics import accuracy_score
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split, cross_val_score
+from imblearn.over_sampling import SMOTE
 
 # Fetch stock data
 def fetch_stock_data(ticker, start_date, end_date):
+    """
+    Fetch historical stock data using yfinance.
+
+    Args:
+        ticker: Stock ticker symbol.
+        start_date: Start date for fetching data.
+        end_date: End date for fetching data.
+
+    Returns:
+        DataFrame with stock data.
+    """
     data = yf.download(ticker, start=start_date, end=end_date)
     if isinstance(data.columns, pd.MultiIndex):
         data.columns = [col[0] for col in data.columns]
@@ -12,6 +26,15 @@ def fetch_stock_data(ticker, start_date, end_date):
 
 # Add features
 def add_features(data):
+    """
+    Add technical indicators to stock data.
+
+    Args:
+        data: DataFrame with stock data.
+
+    Returns:
+        DataFrame with added features and target variable.
+    """
     data['Close'] = pd.to_numeric(data['Close'], errors='coerce')
     data.dropna(subset=['Close'], inplace=True)
 
@@ -65,13 +88,85 @@ def add_features(data):
 
 # Rank features
 def rank_features(model, feature_names):
+    """
+    Rank features by their importance.
+
+    Args:
+        model: Trained Random Forest model.
+        feature_names: List of feature names.
+
+    Returns:
+        List of ranked features with their importance scores.
+    """
     feature_importance = model.feature_importances_
     feature_tuples = [(importance, feature) for importance, feature in zip(feature_importance, feature_names)]
     ranked_features = heapq.nlargest(len(feature_tuples), feature_tuples)
     return ranked_features
 
+# Train and evaluate Random Forest
+def train_and_evaluate_model(X_train, y_train, X_test, y_test):
+    """
+    Train and evaluate a Random Forest model with regularization and cross-validation.
+
+    Args:
+        X_train: Training dataset features.
+        y_train: Training dataset targets.
+        X_test: Test dataset features.
+        y_test: Test dataset targets.
+
+    Returns:
+        Trained Random Forest model and evaluation metrics.
+    """
+    # Initialize Random Forest with regularization
+    model = RandomForestClassifier(
+        n_estimators=100,         # Reduce number of trees
+        max_depth=10,             # Limit tree depth
+        min_samples_split=5,      # Require at least 5 samples to split
+        min_samples_leaf=2,       # Require at least 2 samples per leaf
+        random_state=42
+    )
+
+    # Oversample using SMOTE
+    smote = SMOTE(random_state=42)
+    X_train, y_train = smote.fit_resample(X_train, y_train)
+
+    # Train the model
+    model.fit(X_train, y_train)
+
+    # Cross-validation
+    cv_scores = cross_val_score(model, X_train, y_train, cv=5, scoring='accuracy')
+    print(f"Cross-Validation Accuracy: {cv_scores.mean():.2%} ± {cv_scores.std():.2%}")
+
+    # Training and Test Accuracy
+    train_predictions = model.predict(X_train)
+    test_predictions = model.predict(X_test)
+
+    train_accuracy = accuracy_score(y_train, train_predictions)
+    test_accuracy = accuracy_score(y_test, test_predictions)
+
+    print(f"Training Accuracy: {train_accuracy:.2%}")
+    print(f"Test Accuracy: {test_accuracy:.2%}")
+
+    return model, train_accuracy, test_accuracy, cv_scores.mean(), cv_scores.std()
+
 # Provide recommendation
-def provide_insight(model, X_test, y_test):
+def provide_insight(model, X_train, y_train, X_test, y_test):
+    """
+    Generate a recommendation based on the model's predictions and evaluate its performance.
+
+    Args:
+        model: Trained Random Forest model.
+        X_train: Training dataset features.
+        y_train: Training dataset targets.
+        X_test: Test dataset features.
+        y_test: Test dataset targets.
+
+    Returns:
+        A tuple (recommendation, confidence) where:
+        - recommendation: "BUY" or "SELL".
+        - confidence: Confidence of the prediction (percentage).
+    """
+    # Predictions for test data
     predictions = model.predict(X_test)
     probabilities = model.predict_proba(X_test)
 
@@ -85,11 +180,7 @@ def provide_insight(model, X_test, y_test):
     else:
         recommendation = "SELL - The model predicts a decline in stock price."
 
-    # Overall model accuracy
-    model_accuracy = accuracy_score(y_test, predictions)
-
     return (
-        f"{recommendation} Confidence level: {last_prediction_confidence:.2f}. "
-        f"Overall model accuracy: {model_accuracy:.2%}.",
+        f"{recommendation} Confidence level: {last_prediction_confidence:.2f}.",
         last_prediction_confidence,
     )
