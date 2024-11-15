@@ -1,19 +1,13 @@
-from datetime import datetime, timedelta
 import yfinance as yf
 import pandas as pd
 import heapq
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
 
-# Fetch stock data
 def fetch_stock_data(ticker, start_date, end_date):
     data = yf.download(ticker, start=start_date, end=end_date)
     if isinstance(data.columns, pd.MultiIndex):
         data.columns = [col[0] for col in data.columns]
     return data
 
-# Add features
 def add_features(data):
     data['Close'] = pd.to_numeric(data['Close'], errors='coerce')
     data.dropna(subset=['Close'], inplace=True)
@@ -31,39 +25,36 @@ def add_features(data):
     data.dropna(inplace=True)
     return data
 
-# Rank features
 def rank_features(model, feature_names):
     feature_importance = model.feature_importances_
     feature_tuples = [(importance, feature) for importance, feature in zip(feature_importance, feature_names)]
     ranked_features = heapq.nlargest(len(feature_tuples), feature_tuples)
     return ranked_features
 
-# Provide recommendation
-def provide_insight(data):
-    latest_rsi = data['RSI'].iloc[-1]
-    recommendation = ""
-    if latest_rsi < 30:
-        recommendation = "BUY - The stock appears oversold."
-    elif latest_rsi > 70:
-        recommendation = "SELL - The stock appears overbought."
-    else:
-        recommendation = "HOLD - The stock is in a neutral range."
-    return recommendation, latest_rsi
+def provide_insight(model, X_test, y_test):
+    """
+    Provide recommendation based on the model's prediction.
+    Returns a recommendation string and the numeric confidence level.
+    """
+    predictions = model.predict(X_test)
+    probabilities = model.predict_proba(X_test)
 
-# Plot graph
-def plot_trader_graph(data):
-    last_5_days = data.tail(5)
-    fig, ax = plt.subplots(figsize=(10, 6))
-    ax.plot(last_5_days.index, last_5_days['Close'], label="Close Price", marker="o", color="blue", linewidth=2)
-    ax.fill_between(last_5_days.index, last_5_days['BB_upper'], last_5_days['BB_lower'], color="orange", alpha=0.2, label="Bollinger Bands")
-    ax.plot(last_5_days.index, last_5_days['BB_upper'], linestyle="--", color="orange", linewidth=1)
-    ax.plot(last_5_days.index, last_5_days['BB_lower'], linestyle="--", color="orange", linewidth=1)
-    ax.plot(last_5_days.index, last_5_days['MA10'], label="10-Day MA", linestyle="-.", color="green", linewidth=2)
-    ax.plot(last_5_days.index, last_5_days['MA50'], label="50-Day MA", linestyle=":", color="purple", linewidth=2)
-    ax.set_title("Stock Price and Indicators (Last 5 Days)", fontsize=14)
-    ax.set_xlabel("Date", fontsize=12)
-    ax.set_ylabel("Price ($)", fontsize=12)
-    ax.legend()
-    ax.grid(True)
-    plt.xticks(rotation=45)
-    return fig
+    # Get the confidence level for the latest prediction
+    last_prediction_confidence = max(probabilities[-1])  # Confidence of the last prediction
+
+    # Determine recommendation based on the model's prediction
+    last_prediction = predictions[-1]
+    recommendation = ""
+    if last_prediction == 1:
+        recommendation = "BUY - The model predicts a rise in stock price."
+    else:
+        recommendation = "SELL - The model predicts a decline in stock price."
+
+    # Calculate model accuracy for overall context
+    model_accuracy = model.score(X_test, y_test) * 100
+
+    return (
+        f"{recommendation} Confidence level: {last_prediction_confidence:.2f}. "
+        f"Overall model accuracy: {model_accuracy:.2f}%.",
+        last_prediction_confidence,
+    )

@@ -3,17 +3,16 @@ from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QLabel,
     QPushButton, QWidget, QLineEdit, QTabWidget, QDateEdit, QTextEdit
 )
-from PyQt5.QtCore import QDate, Qt, QTimer
+from PyQt5.QtCore import QDate, QTimer
 from PyQt5.QtGui import QFont
 from core_backend import fetch_stock_data, add_features, rank_features, provide_insight
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split  # Fix: Added missing import
 from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
-
 def plot_trader_graph(data):
-    fig, ax = plt.subplots(figsize=(10, 5))  # Set a fixed figure size
+    fig, ax = plt.subplots(figsize=(10, 5))
     ax.plot(data.index[-5:], data['Close'][-5:], label="Close Price", marker='o', color='blue')
     ax.fill_between(data.index[-5:], data['BB_upper'][-5:], data['BB_lower'][-5:], color='orange', alpha=0.2, label="Bollinger Bands")
     ax.plot(data.index[-5:], data['MA10'][-5:], label="10-Day MA", linestyle='--', color='green')
@@ -24,11 +23,8 @@ def plot_trader_graph(data):
     ax.set_ylabel("Price ($)")
     ax.legend()
     plt.xticks(rotation=45)
-    plt.tight_layout()  # Automatically adjust layout to prevent clipping
-
+    plt.tight_layout()
     return fig
-
-
 class StockAnalysisApp(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -36,7 +32,6 @@ class StockAnalysisApp(QMainWindow):
         self.setGeometry(100, 100, 1200, 800)
         self.setStyleSheet("background-color: #1e1e1e; color: #ffffff;")
 
-        # Initialize the main layout
         self.layout = QVBoxLayout()
 
         # Header Section
@@ -51,7 +46,7 @@ class StockAnalysisApp(QMainWindow):
         header_layout.addWidget(header_subtitle)
         self.layout.addLayout(header_layout)
 
-        # Tab widget to hold different pages
+        # Tab widget
         self.tabs = QTabWidget()
         self.layout.addWidget(self.tabs)
 
@@ -70,7 +65,6 @@ class StockAnalysisApp(QMainWindow):
         intro_tab = QWidget()
         layout = QVBoxLayout()
 
-        # Introduction text
         intro_text = QTextEdit()
         intro_text.setReadOnly(True)
         intro_text.setStyleSheet("background-color: #2e2e2e; border: none; padding: 10px; font-size: 16px;")
@@ -92,45 +86,28 @@ class StockAnalysisApp(QMainWindow):
         """)
         layout.addWidget(intro_text)
 
-        # Input fields for stock ticker and dates
         input_layout = QHBoxLayout()
         self.ticker_input = QLineEdit()
         self.ticker_input.setPlaceholderText("Enter Stock Ticker (e.g., AAPL)")
         self.ticker_input.setStyleSheet("padding: 10px; background-color: #ffffff; color: #000000; border-radius: 5px;")
 
-        # Adjusting the start date input
         self.start_date_input = QDateEdit()
         self.start_date_input.setDate(QDate.currentDate().addYears(-5))
         self.start_date_input.setCalendarPopup(True)
-        self.start_date_input.setStyleSheet(
-            "padding: 10px; background-color: #ffffff; color: #000000; border-radius: 5px; "
-            "width: 140px; padding-right: 25px; margin-right: 5px; border: none;"
-        )
-        self.start_date_input.calendarWidget().setStyleSheet(
-            "QCalendarWidget { font-size: 10px; width: 200px; height: 200px; }"
-        )
+        self.start_date_input.setStyleSheet("padding: 10px;")
 
-        # Adjusting the end date input
         self.end_date_input = QDateEdit()
         self.end_date_input.setDate(QDate.currentDate())
         self.end_date_input.setCalendarPopup(True)
-        self.end_date_input.setStyleSheet(
-            "padding: 10px; background-color: #ffffff; color: #000000; border-radius: 5px; "
-            "width: 140px; padding-right: 25px; margin-right: 5px; border: none;"
-        )
-        self.end_date_input.calendarWidget().setStyleSheet(
-            "QCalendarWidget { font-size: 10px; width: 200px; height: 200px; }"
-        )
+        self.end_date_input.setStyleSheet("padding: 10px;")
 
         self.submit_button = QPushButton("Submit")
-        self.submit_button.setStyleSheet("padding: 10px; background-color: #ffa500; color: #000000; border-radius: 5px;")
+        self.submit_button.setStyleSheet("padding: 10px; background-color: #ffa500; color: #000000;")
         self.submit_button.clicked.connect(self.fetch_data)
 
-        # Status message for feedback
         self.status_label = QLabel("")
         self.status_label.setStyleSheet("color: #ffa500; font-size: 14px; padding: 5px;")
 
-        # Layout adjustments
         input_layout.addWidget(QLabel("<b>Stock Ticker:</b>"))
         input_layout.addWidget(self.ticker_input)
         input_layout.addWidget(QLabel("<b>Start Date:</b>"))
@@ -140,7 +117,7 @@ class StockAnalysisApp(QMainWindow):
         input_layout.addWidget(self.submit_button)
 
         layout.addLayout(input_layout)
-        layout.addWidget(self.status_label)  # Add status label below the inputs
+        layout.addWidget(self.status_label)
 
         intro_tab.setLayout(layout)
         self.tabs.addTab(intro_tab, "Introduction")
@@ -148,12 +125,8 @@ class StockAnalysisApp(QMainWindow):
     def init_graph_tab(self):
         self.graph_tab = QWidget()
         layout = QVBoxLayout()
-
-        # Placeholder for the graph
-        self.graph_canvas = FigureCanvas(plt.figure(figsize=(10, 5)))  # Match the figure size
-        self.graph_canvas.setStyleSheet("background-color: #2e2e2e; border: none;")  # Ensure clean design
+        self.graph_canvas = FigureCanvas(plt.figure(figsize=(10, 5)))
         layout.addWidget(self.graph_canvas)
-
         self.graph_tab.setLayout(layout)
         self.tabs.addTab(self.graph_tab, "Graph")
 
@@ -161,30 +134,18 @@ class StockAnalysisApp(QMainWindow):
         self.feature_tab = QWidget()
         layout = QVBoxLayout()
 
-        # Explanation and rankings section
         feature_explanation = QLabel("""
         <h3><b>Feature Importance</b></h3>
-        <p>This section provides insights into the key technical indicators used in the machine learning model and their impact on predictions.</p>
-        <h4><b>What the Technical Indicators Represent:</b></h4>
+        <p>Key technical indicators and their impact on predictions:</p>
         <ul>
-            <li><b>Moving Average (10-Day and 50-Day):</b> Averages the stock price over 10 or 50 days to smooth out price fluctuations and identify trends.</li>
-            <li><b>Relative Strength Index (RSI):</b> A momentum indicator measuring the magnitude of recent price changes to evaluate whether a stock is overbought or oversold.</li>
-            <li><b>Bollinger Bands (Upper and Lower):</b> A volatility indicator showing price levels relative to a moving average, indicating overbought or oversold conditions.</li>
+            <li><b>MA10 and MA50:</b> Indicate short-term and long-term price trends.</li>
+            <li><b>RSI:</b> Assesses stock momentum for overbought/oversold conditions.</li>
+            <li><b>Bollinger Bands:</b> Measure volatility and price extremes.</li>
         </ul>
-        <h4><b>How Feature Importance is Determined:</b></h4>
-        <p>The Random Forest model assigns feature importance based on how much each feature improves the prediction accuracy. Features that split data more effectively to reduce uncertainty are weighted higher.</p>
-        <p>For example:
-            <ul>
-                <li><b>RSI:</b> Highly influential if the stock exhibits clear overbought or oversold behavior.</li>
-                <li><b>Moving Averages:</b> Useful for identifying short- and long-term price trends, weighted more if trends are stable.</li>
-                <li><b>Bollinger Bands:</b> Significant when price volatility is high, as they provide context for price extremes.</li>
-            </ul>
-        </p>
         """)
-        feature_explanation.setStyleSheet("padding: 10px; font-size: 14px;")
+        feature_explanation.setStyleSheet("padding: 10px; font-size: 16px;")
         layout.addWidget(feature_explanation)
 
-        # Placeholder for feature importance text
         self.feature_text = QTextEdit()
         self.feature_text.setReadOnly(True)
         self.feature_text.setStyleSheet("background-color: #2e2e2e; border: none; padding: 10px; font-size: 16px;")
@@ -197,25 +158,21 @@ class StockAnalysisApp(QMainWindow):
         self.recommendation_tab = QWidget()
         layout = QVBoxLayout()
 
-        # Explanation and recommendation
         recommendation_label = QLabel("""
         <h3><b>Recommendation</b></h3>
-        <p>The recommendation is based on the <b>Relative Strength Index (RSI)</b>:</p>
+        <p>The recommendation is based on the machine learning model's prediction:</p>
         <ul>
-            <li><b>RSI < 30</b>: Oversold (BUY).</li>
-            <li><b>RSI > 70</b>: Overbought (SELL).</li>
-            <li><b>30 ≤ RSI ≤ 70</b>: Neutral range (HOLD).</li>
+            <li><b>BUY:</b> The stock is predicted to rise.</li>
+            <li><b>SELL:</b> The stock is predicted to fall.</li>
         </ul>
         """)
         recommendation_label.setStyleSheet("padding: 10px; font-size: 16px;")
         layout.addWidget(recommendation_label)
 
-        # Placeholder for recommendation text
         self.recommendation_text = QTextEdit()
         self.recommendation_text.setReadOnly(True)
         self.recommendation_text.setFont(QFont("Arial", 18, QFont.Bold))
         self.recommendation_text.setStyleSheet("background-color: #2e2e2e; border: none; padding: 20px;")
-        self.recommendation_text.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.recommendation_text)
 
         self.recommendation_tab.setLayout(layout)
@@ -236,52 +193,45 @@ class StockAnalysisApp(QMainWindow):
             data = fetch_stock_data(ticker, start_date, end_date)
             data = add_features(data)
 
-            # Update the Graph tab
             fig = plot_trader_graph(data)
             self.graph_canvas.figure = fig
             self.graph_canvas.draw()
 
-            # Update the Feature Importance tab
             features = ['MA10', 'MA50', 'RSI', 'BB_upper', 'BB_lower']
             X = data[features]
             y = data['Target']
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
             model = RandomForestClassifier(random_state=42)
             model.fit(X_train, y_train)
-            ranked_features = rank_features(model, features)
 
-            # Add detailed explanation of ranked features
-            feature_text = "<h4>Feature Importance Rankings:</h4>"
-            for rank, (importance, feature) in enumerate(ranked_features, start=1):
-                explanation = ""
-                if feature == 'MA10':
-                    explanation = "Indicates short-term trends by smoothing out daily price fluctuations."
-                elif feature == 'MA50':
-                    explanation = "Provides a longer-term view of price trends and market momentum."
-                elif feature == 'RSI':
-                    explanation = "Measures recent price changes to assess overbought/oversold conditions."
-                elif feature == 'BB_upper' or feature == 'BB_lower':
-                    explanation = "Highlights volatility by showing price levels relative to moving averages."
-                feature_text += f"<p><b>{rank}. {feature}</b>: {importance:.4f}<br><i>{explanation}</i></p>"
-            self.feature_text.setHtml(feature_text)
+            try:
+                ranked_features = rank_features(model, features)
+                formatted_features = "<br>".join(
+                    [f"<b>{feature}</b>: {float(importance):.4f}" for importance, feature in ranked_features]
+                )
+                self.feature_text.setHtml(formatted_features)
+            except Exception as e:
+                self.feature_text.setHtml(f"<b>Error displaying feature importance:</b> {str(e)}")
 
-            # Update the Recommendation tab
-            recommendation, rsi = provide_insight(data)
-            self.recommendation_text.setHtml(f"<b>{recommendation}</b><br><br>"
-                                             f"<b>Latest RSI:</b> {rsi:.2f}")
+            try:
+                insight, confidence = provide_insight(model, X_test, y_test)
+                self.recommendation_text.setHtml(
+                    f"<b>{insight}</b><br>"
+                )
+            except Exception as e:
+                self.recommendation_text.setHtml(f"<b>Error generating recommendation:</b> {str(e)}")
+
             self.status_label.setText("Data successfully loaded.")
-
-            # Start QTimer to clear the status label after 30 seconds
-            QTimer.singleShot(30000, self.clear_status_label)
+            QTimer.singleShot(1000, self.clear_status_label)
 
         except Exception as e:
+            print(e)
             self.status_label.setText(f"Error: {str(e)}")
+
 
     def clear_status_label(self):
         self.status_label.setText("")
 
-
-# Run the application
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = StockAnalysisApp()
