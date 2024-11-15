@@ -16,8 +16,8 @@ def plot_trader_graph(data):
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.plot(data.index[-5:], data['Close'][-5:], label="Close Price", marker='o', color='blue')
     ax.fill_between(data.index[-5:], data['BB_upper'][-5:], data['BB_lower'][-5:], color='orange', alpha=0.2, label="Bollinger Bands")
-    ax.plot(data.index[-5:], data['MA10'][-5:], label="10-Day MA", linestyle='--', color='green')
-    ax.plot(data.index[-5:], data['MA50'][-5:], label="50-Day MA", linestyle=':', color='purple')
+    ax.plot(data.index[-5:], data['EMA10'][-5:], label="10-Day EMA", linestyle='--', color='green')
+    ax.plot(data.index[-5:], data['EMA50'][-5:], label="50-Day EMA", linestyle=':', color='purple')
 
     ax.set_title("Stock Price and Indicators (Last 5 Days)")
     ax.set_xlabel("Date")
@@ -26,6 +26,7 @@ def plot_trader_graph(data):
     plt.xticks(rotation=45)
     plt.tight_layout()
     return fig
+
 class StockAnalysisApp(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -71,11 +72,13 @@ class StockAnalysisApp(QMainWindow):
         intro_text.setStyleSheet("background-color: #2e2e2e; border: none; padding: 10px; font-size: 16px;")
         intro_text.setHtml("""
         <h2><b>Welcome to the Stock Analysis App!</b></h2>
-        <p>This application helps you analyze stock price trends using advanced techniques, including:</p>
+        <p>This application analyzes stock price trends using advanced techniques, including:</p>
         <ul>
-            <li><b>Moving Averages (10-Day and 50-Day)</b>: Smooth price fluctuations to identify trends.</li>
-            <li><b>Relative Strength Index (RSI)</b>: Measures momentum to indicate overbought/oversold conditions.</li>
-            <li><b>Bollinger Bands</b>: Highlight volatility and typical price ranges.</li>
+            <li><b>Moving Averages (10-Day EMA and 50-Day EMA)</b>: React quickly to price trends.</li>
+            <li><b>Average True Range (ATR)</b>: Measures market volatility.</li>
+            <li><b>Stochastic Oscillator:</b> Indicates price momentum.</li>
+            <li><b>On-Balance Volume (OBV):</b> Tracks volume flow to predict price changes.</li>
+            <li><b>ADX:</b> Measures the strength of a trend.</li>
         </ul>
         <p><b>How to Use:</b></p>
         <ol>
@@ -139,9 +142,11 @@ class StockAnalysisApp(QMainWindow):
         <h3><b>Feature Importance</b></h3>
         <p>Key technical indicators and their impact on predictions:</p>
         <ul>
-            <li><b>MA10 and MA50:</b> Indicate short-term and long-term price trends.</li>
-            <li><b>RSI:</b> Assesses stock momentum for overbought/oversold conditions.</li>
-            <li><b>Bollinger Bands:</b> Measure volatility and price extremes.</li>
+            <li><b>EMA10 and EMA50:</b> Short-term and long-term price trends.</li>
+            <li><b>ATR:</b> Market volatility measure.</li>
+            <li><b>Stochastic Oscillator:</b> Price momentum relative to highs/lows.</li>
+            <li><b>OBV:</b> Volume-driven prediction signal.</li>
+            <li><b>ADX:</b> Indicates trend strength.</li>
         </ul>
         """)
         feature_explanation.setStyleSheet("padding: 10px; font-size: 16px;")
@@ -198,7 +203,7 @@ class StockAnalysisApp(QMainWindow):
             self.graph_canvas.figure = fig
             self.graph_canvas.draw()
 
-            features = ['MA10', 'MA50', 'RSI', 'BB_upper', 'BB_lower']
+            features = ['MA10', 'MA50', 'RSI', 'BB_upper', 'BB_lower', 'EMA10', 'EMA50', 'ATR', 'Stochastic', 'OBV', 'ADX']
             X = data[features]
             y = data['Target']
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -223,15 +228,15 @@ class StockAnalysisApp(QMainWindow):
                 self.recommendation_text.setHtml(f"<b>Error generating recommendation:</b> {str(e)}")
 
             self.status_label.setText("Data successfully loaded.")
-            QTimer.singleShot(1000, self.clear_status_label)
+            QTimer.singleShot(5000, self.clear_status_label)
 
         except Exception as e:
             print(e)
             self.status_label.setText(f"Error: {str(e)}")
 
-
     def clear_status_label(self):
         self.status_label.setText("")
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
