@@ -150,7 +150,7 @@ def train_and_evaluate_model(X_train, y_train, X_test, y_test):
     return model, train_accuracy, test_accuracy, cv_scores.mean(), cv_scores.std()
 
 # Provide recommendation
-def provide_insight(model, X_train, y_train, X_test, y_test):
+def provide_insight(model, X_test):
     """
     Generate a recommendation based on the model's predictions and evaluate its performance.
 
@@ -180,7 +180,4 @@ def provide_insight(model, X_train, y_train, X_test, y_test):
     else:
         recommendation = "SELL - The model predicts a decline in stock price."
 
-    return (
-        f"{recommendation} Confidence level: {last_prediction_confidence:.2f}.",
-        last_prediction_confidence,
-    )
+    return (recommendation, last_prediction_confidence,)

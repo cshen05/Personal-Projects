@@ -278,14 +278,13 @@ class StockAnalysisApp(QMainWindow):
 
             # Generate recommendation
             try:
-                recommendation, confidence = provide_insight(model, X_train, y_train, X_test, y_test)
+                recommendation, confidence = provide_insight(model, X_test)
                 self.recommendation_text.setHtml(f"""
-                <h3><b>Recommendation:</b> {recommendation}</h3>
-                <p><b>Confidence:</b> {confidence:.2f}%</p>
-                <p><b>Training Accuracy:</b> {train_accuracy:.2f}%</p>
-                <p><b>Test Accuracy:</b> {test_accuracy:.2f}%</p>
-                <p><b>Cross-Validation Accuracy:</b> {cross_val_mean:.2f}% ± {cross_val_std:.2f}%</p>
-                <hr>
+                <h3>Recommendation: {recommendation}</h3>
+                <p>Confidence: {confidence*100.0:.2f}%</p>
+                <p>Training Accuracy: {train_accuracy*100.0:.2f}%</p>
+                <p>Test Accuracy: {test_accuracy*100.0:.2f}%</p>
+                <p>Cross-Validation Accuracy: {cross_val_mean*100.0:.2f}% ± {cross_val_std*100.0:.2f}%</p>
                 <p>The recommendation is based on the model's evaluation of probabilities for <b>BUY</b> and <b>SELL</b>. 
                 Confidence reflects the likelihood of this specific prediction being correct, while accuracy measures overall 
                 model performance.</p>
