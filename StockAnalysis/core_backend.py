@@ -1,39 +1,59 @@
 import yfinance as yf
 import pandas as pd
-import heapq
+from sklearn.model_selection import GridSearchCV
+from xgboost import XGBClassifier
 from sklearn.metrics import accuracy_score
+import heapq
+from numba import jit
+from functools import lru_cache
 
-# Fetch stock data
-def fetch_stock_data(ticker, start_date, end_date):
-    data = yf.download(ticker, start=start_date, end=end_date)
+# Optimized fetch_stock_data with caching and interval support
+@lru_cache(maxsize=10)
+def fetch_stock_data(ticker, start_date, end_date, interval='1d'):
+    data = yf.download(ticker, start=start_date, end=end_date, interval=interval)
     if isinstance(data.columns, pd.MultiIndex):
         data.columns = [col[0] for col in data.columns]
     return data
 
-# Add features
+# JIT-optimized RSI calculation
+@jit(nopython=True)
+def calculate_rsi(close_prices, window=14):
+    delta = close_prices.diff().fillna(0).values
+    gain = (delta > 0) * delta
+    loss = (-delta > 0) * -delta
+
+    avg_gain = gain[:window].mean()
+    avg_loss = loss[:window].mean()
+
+    rs = avg_gain / avg_loss
+    rsi = [100 - (100 / (1 + rs))]
+
+    for i in range(window, len(delta)):
+        avg_gain = (avg_gain * (window - 1) + gain[i]) / window
+        avg_loss = (avg_loss * (window - 1) + loss[i]) / window
+        rs = avg_gain / avg_loss
+        rsi.append(100 - (100 / (1 + rs)))
+
+    return rsi
+
+# Add features with optimizations
 def add_features(data):
     data['Close'] = pd.to_numeric(data['Close'], errors='coerce')
     data.dropna(subset=['Close'], inplace=True)
 
-    # Moving Averages
-    data['MA10'] = data['Close'].rolling(window=10).mean()
+    # Exponential Moving Average (Short-Term Trend)
+    data['EMA10'] = data['Close'].ewm(span=10, adjust=False).mean()
+
+    # Moving Average (Long-Term Trend)
     data['MA50'] = data['Close'].rolling(window=50).mean()
 
-    # Exponential Moving Averages
-    data['EMA10'] = data['Close'].ewm(span=10, adjust=False).mean()
-    data['EMA50'] = data['Close'].ewm(span=50, adjust=False).mean()
-
-    # RSI
-    delta = data['Close'].diff()
-    gain = delta.where(delta > 0, 0).rolling(window=14).mean()
-    loss = -delta.where(delta < 0, 0).rolling(window=14).mean()
-    rs = gain / loss
-    data['RSI'] = 100 - (100 / (1 + rs))
+    # RSI with JIT optimization
+    data['RSI'] = calculate_rsi(data['Close'])
 
     # Bollinger Bands
     rolling_std = data['Close'].rolling(window=10).std()
-    data['BB_upper'] = data['MA10'] + 2 * rolling_std
-    data['BB_lower'] = data['MA10'] - 2 * rolling_std
+    data['BB_upper'] = data['EMA10'] + 2 * rolling_std
+    data['BB_lower'] = data['EMA10'] - 2 * rolling_std
 
     # Average True Range (ATR)
     data['TR'] = data[['High', 'Low', 'Close']].apply(
@@ -70,10 +90,15 @@ def rank_features(model, feature_names):
     ranked_features = heapq.nlargest(len(feature_tuples), feature_tuples)
     return ranked_features
 
-# Provide recommendation
+# Provide recommendation with batch processing
 def provide_insight(model, X_test, y_test):
-    predictions = model.predict(X_test)
-    probabilities = model.predict_proba(X_test)
+    predictions = []
+    probabilities = []
+    batch_size = 1000
+    for i in range(0, len(X_test), batch_size):
+        batch = X_test[i:i + batch_size]
+        probabilities.extend(model.predict_proba(batch))
+        predictions.extend(model.predict(batch))
 
     # Confidence level for the latest prediction
     last_prediction_confidence = max(probabilities[-1])
@@ -93,3 +118,20 @@ def provide_insight(model, X_test, y_test):
         f"Overall model accuracy: {model_accuracy:.2%}.",
         last_prediction_confidence,
     )
+
+# Train XGBoost with optimized GridSearch
+def train_xgboost(X_train, y_train):
+    param_grid = {
+        'n_estimators': [50, 100],
+        'max_depth': [3, 5],
+        'learning_rate': [0.1],
+    }
+    grid_search = GridSearchCV(
+        XGBClassifier(eval_metric='logloss', random_state=42),
+        param_grid,
+        cv=3,
+        scoring='accuracy',
+        n_jobs=-1  # Utilize all CPU cores
+    )
+    grid_search.fit(X_train, y_train)
+    return grid_search.best_estimator_

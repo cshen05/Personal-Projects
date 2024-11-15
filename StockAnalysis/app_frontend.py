@@ -5,19 +5,19 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import QDate, QTimer
 from PyQt5.QtGui import QFont
-
-from core_backend import fetch_stock_data, add_features, rank_features, provide_insight
+from core_backend import fetch_stock_data, add_features, rank_features, train_xgboost, provide_insight
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
+
+# Helper Function: Plot Stock Trends
 def plot_trader_graph(data):
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.plot(data.index[-5:], data['Close'][-5:], label="Close Price", marker='o', color='blue')
     ax.fill_between(data.index[-5:], data['BB_upper'][-5:], data['BB_lower'][-5:], color='orange', alpha=0.2, label="Bollinger Bands")
     ax.plot(data.index[-5:], data['EMA10'][-5:], label="10-Day EMA", linestyle='--', color='green')
-    ax.plot(data.index[-5:], data['EMA50'][-5:], label="50-Day EMA", linestyle=':', color='purple')
+    ax.plot(data.index[-5:], data['MA50'][-5:], label="50-Day MA", linestyle=':', color='purple')
 
     ax.set_title("Stock Price and Indicators (Last 5 Days)")
     ax.set_xlabel("Date")
@@ -26,6 +26,7 @@ def plot_trader_graph(data):
     plt.xticks(rotation=45)
     plt.tight_layout()
     return fig
+
 
 class StockAnalysisApp(QMainWindow):
     def __init__(self):
@@ -74,11 +75,14 @@ class StockAnalysisApp(QMainWindow):
         <h2><b>Welcome to the Stock Analysis App!</b></h2>
         <p>This application analyzes stock price trends using advanced techniques, including:</p>
         <ul>
-            <li><b>Moving Averages (10-Day EMA and 50-Day EMA)</b>: React quickly to price trends.</li>
-            <li><b>Average True Range (ATR)</b>: Measures market volatility.</li>
+            <li><b>10-Day EMA (Exponential Moving Average):</b> Reacts quickly to short-term price changes.</li>
+            <li><b>50-Day MA (Moving Average):</b> Identifies long-term market trends.</li>
+            <li><b>RSI:</b> Measures momentum for overbought/oversold conditions.</li>
+            <li><b>Bollinger Bands:</b> Highlights volatility and price ranges.</li>
+            <li><b>ATR:</b> Measures market volatility.</li>
             <li><b>Stochastic Oscillator:</b> Indicates price momentum.</li>
-            <li><b>On-Balance Volume (OBV):</b> Tracks volume flow to predict price changes.</li>
-            <li><b>ADX:</b> Measures the strength of a trend.</li>
+            <li><b>OBV:</b> Tracks volume flow to predict price changes.</li>
+            <li><b>ADX:</b> Measures trend strength.</li>
         </ul>
         <p><b>How to Use:</b></p>
         <ol>
@@ -142,10 +146,12 @@ class StockAnalysisApp(QMainWindow):
         <h3><b>Feature Importance</b></h3>
         <p>Key technical indicators and their impact on predictions:</p>
         <ul>
-            <li><b>EMA10 and EMA50:</b> Short-term and long-term price trends.</li>
-            <li><b>ATR:</b> Market volatility measure.</li>
-            <li><b>Stochastic Oscillator:</b> Price momentum relative to highs/lows.</li>
-            <li><b>OBV:</b> Volume-driven prediction signal.</li>
+            <li><b>EMA10 and MA50:</b> Short- and long-term trend indicators.</li>
+            <li><b>RSI:</b> Assesses stock momentum for overbought/oversold conditions.</li>
+            <li><b>Bollinger Bands:</b> Measure volatility and price extremes.</li>
+            <li><b>ATR:</b> Tracks market volatility.</li>
+            <li><b>Stochastic Oscillator:</b> Indicates price momentum.</li>
+            <li><b>OBV:</b> Volume-driven price prediction signal.</li>
             <li><b>ADX:</b> Indicates trend strength.</li>
         </ul>
         """)
@@ -203,35 +209,25 @@ class StockAnalysisApp(QMainWindow):
             self.graph_canvas.figure = fig
             self.graph_canvas.draw()
 
-            features = ['MA10', 'MA50', 'RSI', 'BB_upper', 'BB_lower', 'EMA10', 'EMA50', 'ATR', 'Stochastic', 'OBV', 'ADX']
+            features = ['EMA10', 'MA50', 'RSI', 'BB_upper', 'BB_lower', 'ATR', 'Stochastic', 'OBV', 'ADX']
             X = data[features]
             y = data['Target']
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-            model = RandomForestClassifier(random_state=42)
-            model.fit(X_train, y_train)
+            model = train_xgboost(X_train, y_train)
 
-            try:
-                ranked_features = rank_features(model, features)
-                formatted_features = "<br>".join(
-                    [f"<b>{feature}</b>: {float(importance):.4f}" for importance, feature in ranked_features]
-                )
-                self.feature_text.setHtml(formatted_features)
-            except Exception as e:
-                self.feature_text.setHtml(f"<b>Error displaying feature importance:</b> {str(e)}")
+            ranked_features = rank_features(model, features)
+            formatted_features = "<br>".join(
+                [f"<b>{feature}</b>: {importance:.4f}" for importance, feature in ranked_features]
+            )
+            self.feature_text.setHtml(formatted_features)
 
-            try:
-                insight, confidence = provide_insight(model, X_test, y_test)
-                self.recommendation_text.setHtml(
-                    f"<b>{insight}</b><br>"
-                )
-            except Exception as e:
-                self.recommendation_text.setHtml(f"<b>Error generating recommendation:</b> {str(e)}")
+            insight, confidence = provide_insight(model, X_test, y_test)
+            self.recommendation_text.setHtml(f"<b>{insight}</b>")
 
             self.status_label.setText("Data successfully loaded.")
-            QTimer.singleShot(5000, self.clear_status_label)
+            QTimer.singleShot(3000, self.clear_status_label)
 
         except Exception as e:
-            print(e)
             self.status_label.setText(f"Error: {str(e)}")
 
     def clear_status_label(self):
