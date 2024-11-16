@@ -5,6 +5,9 @@
 ## Overview
 The Stock Analysis software is a Python-based program designed to retrieve, analyze, and visualize stock data while providing a BUY/SELL recommendation using a Random Forest, a supervised machine learning model. 
 
+## Disclaimer
+This software is for informational purposes only, you should not construe such information or other material as financial, or any other advice.
+
 ---
 
 ## Features

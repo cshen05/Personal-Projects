@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 def plot_trader_graph(data):
-    fig, ax = plt.subplots(figsize=(10, 5))
+    fig, ax = plt.subplots(figsize=(8, 4))  # Adjust these values for better scaling
     ax.plot(data.index[-5:], data['Close'][-5:], label="Close Price", marker='o', color='blue')
     ax.fill_between(data.index[-5:], data['BB_upper'][-5:], data['BB_lower'][-5:], color='orange', alpha=0.2, label="Bollinger Bands")
     ax.plot(data.index[-5:], data['EMA10'][-5:], label="10-Day EMA", linestyle='--', color='green')
@@ -137,12 +137,11 @@ class StockAnalysisApp(QMainWindow):
         self.feature_tab = QWidget()
         main_layout = QVBoxLayout()
 
-        # Fixed container for feature weights (non-scrollable)
+        # fixed container for feature weights (non-scrollable)
         feature_weights_container = QWidget()
         feature_weights_layout = QVBoxLayout()
         feature_weights_container.setLayout(feature_weights_layout)
 
-        # Explanation of Feature Importance
         feature_importance_explanation = QLabel("""
         <h3><b>Understanding Feature Importance</b></h3>
         <p>Feature importance quantifies the contribution of each indicator to the machine learning model's predictions. 
@@ -154,25 +153,21 @@ class StockAnalysisApp(QMainWindow):
         feature_importance_explanation.setWordWrap(True)
         feature_weights_layout.addWidget(feature_importance_explanation)
 
-        # Feature Importance Display (non-scrollable)
         self.feature_text = QTextEdit()
         self.feature_text.setReadOnly(True)
         self.feature_text.setStyleSheet("background-color: #2e2e2e; border: none; padding: 10px; font-size: 16px;")
-        self.feature_text.setFixedHeight(245)  # Fixed height for feature weights display
+        self.feature_text.setFixedHeight(245)  # fixed height for feature weights display
         feature_weights_layout.addWidget(self.feature_text)
 
-        # Add fixed feature weights container to the main layout
+        # add fixed feature weights container to the main layout
         main_layout.addWidget(feature_weights_container)
 
-        # Scrollable area for the rest of the content
         scroll_area = QScrollArea()
         scroll_area.setWidgetResizable(True)
 
-        # Container widget for scrollable content
         container_widget = QWidget()
         container_layout = QVBoxLayout()
 
-        # Explanation of Indicators
         indicator_explanation = QLabel("""
         <h3><b>Explanation of Indicators</b></h3>
         <p>Below are the key technical indicators used in stock analysis and their significance:</p>
@@ -203,11 +198,9 @@ class StockAnalysisApp(QMainWindow):
         indicator_explanation.setWordWrap(True)
         container_layout.addWidget(indicator_explanation)
 
-        # Set container layout and add to scroll area
         container_widget.setLayout(container_layout)
         scroll_area.setWidget(container_widget)
 
-        # Add scroll area to main layout
         main_layout.addWidget(scroll_area)
 
         self.feature_tab.setLayout(main_layout)
@@ -259,13 +252,10 @@ class StockAnalysisApp(QMainWindow):
             features = ['MA10', 'MA50', 'RSI', 'BB_upper', 'BB_lower', 'EMA10', 'EMA50', 'ATR', 'Stochastic', 'OBV', 'ADX']
             X = data[features]
             y = data['Target']
-            # Split the dataset
+
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-            # Train and evaluate the model using the dedicated function
             model, train_accuracy, test_accuracy, cross_val_mean, cross_val_std = train_and_evaluate_model(X_train, y_train, X_test, y_test)
-
-            # Display feature importance
+            
             try:
                 ranked_features = rank_features(model, features)
                 formatted_features = "<br>".join(
@@ -274,8 +264,7 @@ class StockAnalysisApp(QMainWindow):
                 self.feature_text.setHtml(formatted_features)
             except Exception as e:
                 self.feature_text.setHtml(f"<b>Error displaying feature importance:</b> {str(e)}")
-
-            # Generate recommendation
+            
             try:
                 recommendation, confidence = provide_insight(model, X_test)
                 self.recommendation_text.setHtml(f"""
