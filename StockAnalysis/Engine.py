@@ -114,10 +114,13 @@ def train_and_evaluate_model(X_train, y_train, X_test, y_test):
         Trained Random Forest model and evaluation metrics.
     """
     model = RandomForestClassifier(
-        n_estimators=100,   
-        max_depth=10,            
-        min_samples_split=5,    
-        min_samples_leaf=2,   
+        n_estimators=300,            # Reduce number of trees for faster training
+        max_depth=5,                 # Restrict depth to avoid overfitting
+        max_features='sqrt',         # Use fewer features per split
+        min_samples_split=10,        # Require more samples to split a node
+        min_samples_leaf=5,          # Require more samples in leaf nodes
+        max_leaf_nodes=50,           # Limit number of leaf nodes
+        class_weight='balanced', 
         random_state=42
     )
 
