@@ -6,9 +6,8 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import QDate, QTimer
 from PyQt5.QtGui import QFont
 
-from core_backend import fetch_stock_data, add_features, rank_features, provide_insight, train_and_evaluate_model
+from Engine import fetch_stock_data, add_features, rank_features, provide_insight, train_and_evaluate_model
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
