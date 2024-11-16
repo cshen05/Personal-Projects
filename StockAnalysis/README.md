@@ -5,6 +5,8 @@
 ## Overview
 The Stock Analysis software is a Python-based program designed to retrieve, analyze, and visualize stock data while providing a BUY/SELL recommendation using a Random Forest, a supervised machine learning model. 
 
+---
+
 ## Disclaimer
 This software is for informational purposes only, you should not construe such information or other material as financial, or any other advice.
 
@@ -32,7 +34,6 @@ This software is for informational purposes only, you should not construe such i
 	- Provides BUY/SELL recommendations with confidence scores, train/test accuracy, and cross-validation accuracy based on predictions from the Random Forest model.
 
 ---
-
 
 ## Project Structure
 
@@ -115,6 +116,8 @@ python3 StockAnalysis.py
 	- Feature Importance: In the Feature Importance tab.
 	- Recommendations: In the Recommendation tab.
 
+---
+
 ## File Structure
 - StockAnalysis.py: Main GUI application script.
 - Engine.py: Backend logic for data retrieval, indicator calculation, model training, and prediction.
@@ -139,9 +142,9 @@ python3 StockAnalysis.py
 	- For retrieving historical stock data.
 	- URL: [Yahoo Finance API](https://pypi.org/project/yfinance/)
 2.	Scikit-learn Documentation:
-	•	For implementing logistic regression, feature scaling, and performance evaluation.
-	•	URL: [Scikit-learn Documentation](https://scikit-learn.org/stable/)
+	- For implementing logistic regression, feature scaling, and performance evaluation.
+	- URL: [Scikit-learn Documentation](https://scikit-learn.org/stable/)
 5.	Python Libraries:
-	•	PyQt5 for GUI: [PyQt5 Documentation](https://www.riverbankcomputing.com/static/Docs/PyQt5/)
-	•	Pandas for data manipulation: [Pandas Documentation](https://pandas.pydata.org/docs/)
-	•	Matplotlib for plotting: [Matplotlib Documentation](https://matplotlib.org/stable/index.html)
+	- PyQt5 for GUI: [PyQt5 Documentation](https://www.riverbankcomputing.com/static/Docs/PyQt5/)
+	- Pandas for data manipulation: [Pandas Documentation](https://pandas.pydata.org/docs/)
+	- Matplotlib for plotting: [Matplotlib Documentation](https://matplotlib.org/stable/index.html)
