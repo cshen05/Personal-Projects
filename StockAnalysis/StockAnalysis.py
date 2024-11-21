@@ -254,7 +254,7 @@ class StockAnalysisApp(QMainWindow):
             y = data['Target']
 
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-            model, train_accuracy, test_accuracy, cross_val_mean, cross_val_std = train_and_evaluate_model(X_train, y_train, X_test, y_test)
+            model, train_accuracy, test_accuracy, test_auc, precision, recall, f1 = train_and_evaluate_model(X_train, y_train, X_test, y_test)
             
             try:
                 ranked_features = rank_features(model, features)
@@ -272,7 +272,10 @@ class StockAnalysisApp(QMainWindow):
                 <p>Confidence: {confidence*100.0:.2f}%</p>
                 <p>Training Accuracy: {train_accuracy*100.0:.2f}%</p>
                 <p>Test Accuracy: {test_accuracy*100.0:.2f}%</p>
-                <p>Cross-Validation Accuracy: {cross_val_mean*100.0:.2f}% ± {cross_val_std*100.0:.2f}%</p>
+                <p>Test AUC: {test_auc:.2f}</p>
+                <p>Precision: {precision:.2f}</p>
+                <p>Recall: {recall:.2f}</p>
+                <p>F1 Score: {f1:.2f}</p>
                 <p>The recommendation is based on the model's evaluation of probabilities for <b>BUY</b> and <b>SELL</b>. 
                 Confidence reflects the likelihood of this specific prediction being correct, while accuracy measures overall 
                 model performance.</p>
