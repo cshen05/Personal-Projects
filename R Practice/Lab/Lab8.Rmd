@@ -1,0 +1,206 @@
+---
+title: "Lab 8"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE,  
+                      warning = TRUE, message = FALSE, 
+                      fig.align = "center",
+                      R.options = list(max.print=100))
+
+# Edit the file starting below
+```
+
+### Enter the names of the group members here: Connor Shen, Benjamin Zodak, Nathan Goetten
+
+**This assignment is due by the end of the lab. Only one student in the group submits a pdf file on Gradescope.**
+
+*For all questions, include the R commands/functions that you used to find your answer (show R chunk). Answers without supporting code will not receive credit. Write full sentences to describe your findings.*
+
+In this lab, you will continue exploring data originally collected by researchers at the Johns Hopkins Bloomberg School of Public Health. Let's first load the appropriate packages for today:
+
+```{r, message=FALSE}
+library(tidyverse)
+library(plotROC)
+library(caret)
+```
+
+Let's re-upload the data from Github and take a quick look again:
+
+```{r}
+pollution <- read_csv("https://raw.githubusercontent.com/laylaguyot/datasets/main//pm25.csv") |>
+  mutate(violation = ifelse(value > 12, 1, 0))
+
+# Take a quick look!
+head(pollution)
+```
+
+The goal of the lab is to make predictions for the PM2.5 levels with 2 different models and perform cross-validation.
+
+------------------------------------------------------------------------
+
+### Question 1 (6 pts)
+
+In this report, you will predict whether a given location is in `violation` of the national ambient air quality standards (with a `value` greater than 12 $\mu$g/m$^3$) or not based on `lat`, `lon`, `pov`, and `zcta_pop`.
+
+Which outcome variable should you consider?
+
+**The outcome variable is the 'violation', based on whether the PM2.5 levels exceed 12** $\mu$g/m$^3$**.**
+
+Which corresponding measure of performance should be reported to assess the model with this type of outcome?
+
+**The AUC or area under the curve should be reported to assess the model.**
+
+To assess the performance of the models, we will perform cross-validation. More specifically, we will perform a 10-fold cross-validation. What's the idea behind the following code? Add comments!
+
+```{r}
+# setting a seed ensures that by running the code again, the same random value remains
+set.seed(322)
+
+# the number of folds ran
+k = 10 
+
+# randomly order rows in the dataset
+data <- pollution[sample(nrow(pollution)), ] 
+
+# create k folds in the dataset
+folds <- cut(seq(1:nrow(data)), breaks = k, labels = FALSE)
+```
+
+**The code prepares for the 10-fold cross validation by setting a seed to ensure that the same randomized rows in the dataset is kept between runs and creates the number of k folds in the dataset .**
+
+------------------------------------------------------------------------
+
+### Question 2 (7 pts)
+
+Choose the appropriate regression model for the type of outcome. How does this model perform on the entire dataset?
+
+```{r, warning=FALSE}
+# creating a logistic regression model and calculating its AUC on the entire dataset
+fit_log <- glm(violation ~ lat + lon + pov + zcta_pop, data = pollution, family = "binomial")
+
+calc_auc(
+    ggplot(pollution) + 
+      geom_roc(aes(
+        d = violation,
+        m = predict(fit_log, newdata = pollution, type = "response")
+      ))
+  )$AUC
+```
+
+**The logistics regression model performs decently well. The AUC is 0.62, indicating that the model performs moderately well.**
+
+Complete the following code to perform cross-validation for this regression model:
+
+```{r, warning=FALSE}
+# Initialize a vector to keep track of the performance for each k-fold
+perf_k <- NULL
+
+# Use a for-loop to get performance for each k-fold
+for(i in 1:k){
+  # Split data into train and test data
+  train_not_i <- data[folds != i, ] # train data = all observations except in fold i
+  test_i <- data[folds == i, ]  # test data = observations in fold i
+  
+  # Train model on train data (all but fold i)
+  model <- glm(violation ~ lat + lon + pov + zcta_pop, 
+               data = train_not_i, 
+               family = "binomial")
+  
+  perf_k[i] <- calc_auc(
+    ggplot(test_i) + 
+      geom_roc(aes(
+        d = violation,
+        m = predict(model, newdata = test_i, type = "response")
+      ))
+  )$AUC
+}
+perf_k
+```
+
+Report the average performance and how the performance varies from fold to fold. Round both measures to 0.01. Write a sentence to interpret those in context.
+
+```{r}
+# calcualting the mean and standard deviation of perf_k
+round(mean(perf_k), 2)
+round(sd(perf_k), 2)
+```
+
+**With a mean AUC of 0.61 and a standard deviation of 0.06, the logistic regression model performed moderately well and has some variability but is mostly consistent.**
+
+------------------------------------------------------------------------
+
+### Question 3 (7 pts)
+
+Choose the appropriate k-nearest-neighbors model for the type of outcome. How does this model perform on the entire dataset?
+
+```{r, warning=FALSE}
+# creating a k-nearest-neighbors model and calculating its AUC on the entire dataset
+fit_knn <- knn3(violation ~ lat + lon + pov + zcta_pop, data = pollution, k=5)
+
+calc_auc(
+  ggplot(pollution) + 
+    geom_roc(aes(
+      d = violation,
+      m = predict(fit_knn, pollution)[,2]))
+  )$AUC
+```
+
+**The model performs pretty well on the entire dataset. With an AUC of 0.80, this indicates the k-nearest-neighbors model performs really well.**
+
+Complete the following code to perform cross-validation with 5 nearest neighbors:
+
+```{r, warning=FALSE}
+# Initialize a vector to keep track of the performance for each k-fold
+perf_k <- NULL
+
+# Use a for-loop to get performance for each k-fold
+for(i in 1:k){
+  # Split data into train and test data
+  train_not_i <- data[folds != i, ] # train data = all observations except in fold i
+  test_i <- data[folds == i, ]  # test data = observations in fold i
+  
+  train_model <- knn3(violation ~ lat + lon + pov + zcta_pop,
+                     data = train_not_i,
+                     k=5)
+  
+  perf_k[i] <- calc_auc(
+  ggplot(test_i) + 
+    geom_roc(aes(
+      d = violation,
+      m = predict(train_model, test_i)[,2]))
+  )$AUC
+}
+perf_k
+```
+
+Report the average performance and how the performance varies from fold to fold. Round both measures to 0.01. Write a sentence to interpret those in context.
+
+```{r}
+# calcualting the mean and standard deviation of perf_k
+round(mean(perf_k), 2)
+round(sd(perf_k), 2)
+```
+
+**With a mean AUC of 0.54 and a standard deviation of 0.06, the model performed pretty poorly, barely being better than randomly assigning violation. The model has some variability but is mostly consistent.**
+
+------------------------------------------------------------------------
+
+### Question 4 (4 pts)
+
+Comparing the cross-validation results for each model, which model appears to perform better? Why?
+
+**The logistic regression performed better. The mean AUC of the logistic regression was higher than the k-nearest-neighbors while the standard deviation was the same between both. Additionally, the knn model was overfitted since when ran on the entire dataset, the model performed really well (0.80) but as soon as given a new dataset, the model performed poorly (0.54).**
+
+------------------------------------------------------------------------
+
+### Formatting: (1 pt)
+
+Make sure the names of all group members are included at the beginning of the document.
+
+Knit your file! You can knit into pdf directly or into html. Once it knits in html, click on `Open in Browser` at the top left of the window pops out. Print your html file into pdf from your browser.
+
+Any issue? Ask other classmates or TA!
+
+Finally, remember to select pages for each question when submitting your pdf to Gradescope and to identify your group members.

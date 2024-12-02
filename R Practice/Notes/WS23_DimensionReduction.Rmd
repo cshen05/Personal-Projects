@@ -1,0 +1,238 @@
+---
+title: "Dimension Reduction"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r global_options, include=FALSE}
+# The following code is a basic setup of options for your document
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE, 
+                      warning = TRUE,
+                      message = FALSE,
+                      fig.align = "center", 
+                      R.options = list(max.print=50))
+
+# Edit the file starting below
+
+```
+
+In this worksheet, we will introduce a technique to reduce the number of variables in our dataset.
+
+## 1. Dataset and Libraries
+
+We will use the `tidyverse` package as usual but also `ade4` to access a built-in dataset, `ggcorrplot` to visualize a correlation matrix, and `factoextra` to provide information about the algorithm for dimension reduction using `ggplot` functions.
+
+```{r, eval=FALSE}
+# Install new packages (only needed once!)
+# install.packages("factoextra")
+```
+
+Then load the packages:
+
+```{r, message=FALSE}
+# Load packages
+library(tidyverse)
+library(ade4)
+library(ggcorrplot)
+library(factoextra)
+```
+
+Let's consider the built-in database `olympic` which gives the performances of 33 men in the decathlon (10 disciplines) at the Olympic Games in 1988. We will focus on the dataset `tab`.
+
+```{r}
+# Save the database into your environment, then the dataset
+data("olympic")
+athletes <- olympic$tab
+
+# Take a quick look at the dataset
+head(athletes)
+```
+
+The names of the variables might not be very intuitive so let's rename them:
+
+```{r}
+# Quick cleanup
+athletes <- athletes |>
+  # Translate the variable names (from French!) and reorder
+  select(time_100 = `100`, time_110 = `110`,
+         time_400 = `400`, time_1500 = `1500`,
+         disc = disq, weight = poid, high_jump = haut,
+         long_jump = long, javelin = jave, perch = perc)
+head(athletes)
+```
+
+We will compare the athletes based on their performance in the 10 disciplines/variables.
+
+In the last worksheet, we talked about the correlation matrix, representing the correlation between each pair of variables:
+
+```{r}
+# Correlation matrix
+ggcorrplot(cor(athletes),
+           type = "upper", # upper diagonal only
+           lab = TRUE, # print values
+           method = "circle") # use circles with different sizes
+```
+
+Now we would like to combine some of these variables together to visualize our data in 2 dimensions.
+
+## 2. Principal Component Analysis
+
+The 4 steps in PCA are to:
+
+1.  Prepare the data: Scale the data (subtract mean, divide by standard deviation).
+
+2.  Perform PCA: Using `prcomp()` on your prepared variables.
+
+3.  Choose the number of principal components: Make a scree plot (or choose based on interpretability).
+
+4.  Consider PC scores (the new coordinates for each observation on PCs of interest) and visualize and interpret (if possible) retained PCs and scores.
+
+### a. Prepare the dataset and explore correlations
+
+We would like to group variables that give similar information. It is a good practice to scale our variables so they are all in the same unit (how many standard deviations away a value is from the mean) with `scale()`
+
+```{r}
+# Prepare the dataset
+athletes_scaled <- athletes |> 
+  # Scale the variables
+  scale() |>
+  # Save as a data frame
+  as.data.frame()
+
+# Take a look at the scaled data
+head(athletes_scaled)
+```
+
+Recall: What does a negative value indicate in the scaled data? What does a positive value indicate?
+
+**The negative values indicate the data is below the mean. A positive value indicates the data is above the mean.**
+
+### b. Perform PCA
+
+Let's perform PCA on our 10 variables using `prcomp()`.
+
+```{r}
+# PCA performed with the function prcomp()
+pca <- athletes_scaled |>
+  prcomp()
+
+# The output creates 5 different objects
+names(pca)
+```
+
+Without going into too much detail, let's describe the element `x`. Instead of having the performances of the 33 athletes for each 10 disciplines, we have new values according to the new variables PC1, PC2, ..., PC10. The first few principal components (PC), also called dimensions, try to maximize the variation explained by all variables.
+
+```{r}
+# New perspective on our data
+pca$x |> as.data.frame()
+```
+
+#### **Try it! The procedure for PCA also assume that the components/dimensions are not correlated. Make the correlation matrix to check the correlation between the components/dimensions. What do you notice?**
+
+```{r}
+# Write and submit code here!
+ggcorrplot(cor(pca$x),
+           type = "upper",
+           lab = TRUE,
+           method = "circle")
+```
+
+**There are no correlations between any of the PCs/dimensions**
+
+Let's use the new dimensions (PC1 and PC2, also called Dim1 and Dim2 respectively) to represent the athletes:
+
+```{r}
+# Visualize the individuals according to PC1 and PC2
+pca$x |> as.data.frame() |>
+  ggplot() +
+  geom_point(aes(x = PC1, y = PC2))
+```
+
+Or using the functions from the `factoextra` package:
+
+```{r}
+# Visualize the individuals according to PC1 and PC2
+fviz_pca_ind(pca, repel = TRUE) # Avoid text overlapping for the row number
+```
+
+*Note that the numbers shown on the scatterplot represent the rank of each athlete.*
+
+The scatterplot above is a new perspective on our data: it shows how the 33 athletes compare to each other, taking into account the 10 disciplines which are summarized with Dim1 and Dim2, the first two principal components. Since we reduced the amount of variables, we lost some information about how the 33 athletes vary from each other: Dim1 takes into account 34.2% of the total variation and Dim2 takes into account another 26.1% of the total variation.
+
+### c. Choose the number of principal components/dimensions
+
+The idea is to reduce the number of variables so we would like to keep only a few of the principal components (also called dimensions). A scree plot displays the amount of variance explained by each principal component. The more we explain the total variation, the better!
+
+```{r}
+# Visualize percentage of variance explained for each PC in a scree plot
+fviz_eig(pca, addlabels = TRUE)
+```
+
+We are usually looking to keep about 80% of the variance with the few first principal components/dimensions.
+
+#### **Try it! Reading the plot above, how many dimensions should we consider to keep about 80% of the variance?**
+
+```{r}
+# Write and submit code here!
+34.2 + 26.1 + 9.4 + 8.8 + 5.6
+```
+
+**We need 5 components to recover at least 80% of the variation.**
+
+### d. Interpret components/dimensions
+
+Each component/dimension is actually a linear combination of the old variables (each of the 10 disciplines). We can take a look at the contribution of each variable to each component/dimension:
+
+```{r}
+# Visualize the contributions of the variables to the PCs in a table
+get_pca_var(pca)$coord |> as.data.frame()
+```
+
+For example, the first principal component (`Dim.1`) is:
+
+$$
+Dim.1 = -0.7689031 * dist\_100 + 0.7285412*long\_jump + ... -0.3145678*dist\_1500
+$$
+
+#### **Try it! Use `dplyr` functions to find the variable that contributes the most positively to the first principal component and the variable that contributes the most negatively as well.**
+
+```{r}
+# Write and submit code here!
+get_pca_var(pca)$coord |> as.data.frame() |>
+  filter(`Dim.1` == max(`Dim.1`) | `Dim.1` == min(`Dim.1`)) |>
+  select(`Dim.1`)
+```
+
+**time_110 contributes the most negatively while long_jump contributes the most positively.**
+
+We can visualize the contributions of the variables with what we call a correlation circle:
+
+```{r}
+# Correlation circle
+fviz_pca_var(pca, col.var = "black", 
+             repel = TRUE) # Avoid text overlapping of the variable names
+```
+
+Based on this visualization, we can see that some disciplines contribute positively to the first component and some contribute negatively to that same dimension. What do you notice when comparing the nature of those disciplines opposing each other on the first dimension?
+
+**All the disciplines involving time are pointing to the left while all the disciplines involving distance is pointing to the right.**
+
+Finally, we can visualize both the individuals and the variables' contributions in a single plot called a biplot:
+
+```{r}
+# Visualize both variables and individuals in the same graph
+fviz_pca_biplot(pca, 
+             repel = TRUE) # Avoid text overlapping of the names
+```
+
+The labels for the athletes show their overall decathlon rank. What do you notice about were the best ranked athletes are located? the worst ranked athletes?
+
+**The best ranked athletes are on the right, "worse" are on the left.**
+
+What does it mean for an athlete to have a high value for the first dimension?
+
+**It means they performed well.**

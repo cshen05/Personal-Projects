@@ -53,7 +53,6 @@ This dataset contains information about 9 different features of tumors that we w
 
 **Write sentences here!**
 
-
 ## 2. Predicting a binary response with a numeric predictor
 
 First, let's predict the `outcome` based on `clump_thickness`.
@@ -114,7 +113,6 @@ Let's use the expression of the model to calculate predicted values.
 
 **Write sentences here!**
 
-
 Much more convenient to calculate probability values (especially when we will have more predictors with a longer expression for the model) is the `predict(model_name, type = "response")` function:
 
 ```{r}
@@ -159,7 +157,6 @@ Sometimes our predicted values are correct, sometimes they're not! Recall the co
 ```
 
 **Write sentences here!**
-
 
 ### e. Performance
 

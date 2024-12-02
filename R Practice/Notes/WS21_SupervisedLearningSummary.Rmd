@@ -1,0 +1,147 @@
+---
+title: "Supervised Learning Summary"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r global_options, include=FALSE}
+# The following code is a basic setup of options for your document
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE, 
+                      warning = TRUE,
+                      message = FALSE,
+                      fig.align = "center", 
+                      R.options = list(max.print=50))
+
+# Edit the file starting below
+
+```
+
+In this worksheet, we will summarize the different models that we looked at for the past few weeks.
+
+## 1. Dataset and Libraries
+
+We will use the `tidyverse` package as always:
+
+```{r, message = FALSE}
+# Load packages
+library(tidyverse)
+library(caret)
+```
+
+We will practice the models that we have learned so far (linear regression, logistic regression, k-nearest-neighbors) on the following dataset:
+
+```{r, message=FALSE}
+# Hours of sleep for some mammals
+msleep <- as.data.frame(ggplot2::msleep)
+head(msleep)
+```
+
+## 2. Building a model
+
+### a. Choosing outcomes and predictors
+
+We would like to predict the hours of REM sleep, especially because some mammals do not have a recorded value of REM sleep!
+
+#### **Try it! What would the outcome be in that scenario? What are some potential predictors?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Outcome variable: sleep_rem; Predictors: genus, sleep_total, sleep_cycle, awake, brain_wt, body_wt**
+
+Note that there are a lot of missing values in this dataset:
+
+```{r}
+msleep |>
+  # Check for missing values
+  mutate_all(is.na) |>
+  summarize_all(sum)
+```
+
+Would it make sense to include a predictor with many missing values in a model? Why/Why not?
+
+**No, missing values cannot help predict the outcome.**
+
+Also check the values of total sleep and awake time:
+
+```{r}
+msleep |>
+  mutate(sum_sleep_awake = sleep_total + awake) |>
+  select(sleep_total, awake, sum_sleep_awake)
+```
+
+Would it make sense to include both `sleep_total` and `awake` in a model? Why/Why not?
+
+**No need to add redundant information: only need one to explain the outcome.**
+
+### b. Choosing a model
+
+We only introduced a few models in this course but there are many different models to choose from! However, the type of model we choose depends on what type of outcome we want to predict. What model can we use to predict hours of REM sleep?
+
+**Write sentences here!**
+
+#### **Try it! Fit the two appropriate types of models we have learned to predict the hours of REM sleep based on the total hours of sleep and the body weight. Then add the predictions to the `msleep` datasets and only keep the variables involved with the name of the mammals. Could we use the predictions from these models to replace the NA values for REM sleep? Why/Why not?**
+
+```{r}
+# Write and submit code here!
+fit_lin <- lm(sleep_rem ~ sleep_total + bodywt, data = msleep)
+fit_knn <- knn3(sleep_rem ~ sleep_total + bodywt, data = msleep, k=5)
+
+msleep |>
+  mutate(pred_lin = predict(fit_lin, newdata= msleep),
+         pred_knn = predict(fit_knn, newdata= msleep)) |>
+  select(name, sleep_rem, sleep_total, bodywt, pred_lin, pred_knn)
+```
+
+**Some predictions are really different, especially African Elephant.**
+
+### c. Using the model
+
+If we do want to estimate missing values with our model, we would like to use the best model possible!
+
+#### **Try it! Check the performance of each model on the entire dataset. Then conduct cross-validation and decide which model would be best here!**
+
+```{r}
+# Write and submit code here!
+sqrt(mean((msleep$sleep_rem - predict(fit_lin, msleep))^2))
+sqrt(mean((msleep$sleep_rem - predict(fit_knn, msleep))^2))
+```
+
+**Write sentences here!**
+
+As discussed in the last worksheet, we should also check how our model would perform on "new data" with cross-validation. To do so, we split our data into folds:
+
+```{r}
+# Choose number of folds
+k = 5 
+
+# To have the same random sample, use set.seed
+set.seed(322)
+
+# Randomly order rows in the dataset
+data <- msleep[sample(nrow(msleep)), ] 
+
+# Create k folds from the dataset
+folds <- cut(seq(1:nrow(data)), breaks = k, labels = FALSE)
+```
+
+#### **Try it! Conduct cross-validation and decide which model would be best to make predictions here! Hint: We got you started.**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here!**
+
+## 3. Summary
+
+![](https://i.pinimg.com/originals/b8/35/03/b83503bf39a38cded4f532fe538c02a8.png)
+
+Depending on our data, some models might perform better than others. There is not a single best algorithm.

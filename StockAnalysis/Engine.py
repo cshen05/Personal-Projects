@@ -4,7 +4,7 @@ import numpy as np
 import heapq
 from sklearn.metrics import roc_auc_score, accuracy_score, precision_score, recall_score, f1_score
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import cross_val_score, GridSearchCV, TimeSeriesSplit, train_test_split
+from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 from sklearn.preprocessing import StandardScaler
 from imblearn.over_sampling import SMOTE
 
@@ -86,12 +86,18 @@ def add_features(data):
     data.dropna(inplace=True)
     return data
 
-def rank_features(model, feature_names):
+def rank_features(model, feature_names, top_n=10):
     """
-    Rank features based on their importance in the trained Random Forest model.
+    Rank the top features based on their importance using a min-heap.
     """
     feature_importances = model.feature_importances_
-    ranked_features = sorted(zip(feature_importances, feature_names), reverse=True)
+    
+    # Create a min-heap for the top_n features
+    top_features = heapq.nlargest(top_n, zip(feature_importances, feature_names))
+    
+    # Sort the top features by importance in descending order
+    ranked_features = sorted(top_features, reverse=True)
+    
     return ranked_features
 
 def train_and_evaluate_model(X_train, y_train, X_test, y_test):

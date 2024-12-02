@@ -1,0 +1,265 @@
+---
+title: "k-nearest neighbors"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r global_options, include=FALSE}
+# The following code is a basic setup of options for your document
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE, 
+                      warning = TRUE,
+                      message = FALSE,
+                      fig.align = "center", 
+                      R.options = list(max.print=50))
+
+# Edit the file starting below
+
+```
+
+In this worksheet, we will introduce another approach to predict an outcome that can be either numeric or categorical.
+
+## 1. Dataset and Libraries
+
+We will use a new package today called `caret` to use two functions to fit a k-nearest neighbor model:
+
+Install `caret`:
+
+```{r, eval=FALSE}
+# Install new packages (only needed once!)
+install.packages("caret")
+```
+
+Then load the necessary packages for this worksheet:
+
+```{r, message=FALSE}
+# Load packages
+library(tidyverse)
+library(plotROC)
+library(caret)
+```
+
+We will explore a new dataset, `titanic_dataset`, which contains information about passengers of the Titanic, that sank on 15 April 1912 after colliding with an iceberg.
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/RMS_Titanic_3.jpg/1280px-RMS_Titanic_3.jpg){width="240"}
+
+```{r}
+# Upload the data from GitHub
+titanic_dataset <- read_csv("https://raw.githubusercontent.com/laylaguyot/datasets/main//titanic_dataset.csv")
+
+# Take a quick look
+head(titanic_dataset)
+```
+
+Here are some details about how some of the variables were coded:
+
+-   if a passenger `Survived` the sinking (Yes = `1`, No = `0`)
+
+-   the passenger class, `Pclass` (First Class = `1`, Second Class = `2`, Third Class = `3`)
+
+-   the number of siblings or spouses, `SibSp`, that a passenger had on board and the number of parents or children, `Parch`, the passenger had on board
+
+-   the port of embarkation for the passenger, `Embarked` (Cherbourg = `C`, Queenstown = `Q`, Southampton = `S`).
+
+If we wanted to predict the value of the fare that a passenger paid for the trip based on their class, which variable would be the outcome? the predictor? Which model would be more appropriate: linear regression or logistic regression?
+
+**The outcome variable is the price, the predictor is what class they are. The best model for this would be a linear regression because the outcome is numeric.**
+
+If we wanted to classify if a passenger survived or not based on their class, which variable would be the outcome? the predictor? Which model would be more appropriate: linear regression or logistic regression?
+
+**The outcome variable is whether or not the passenger survived. The predictor variable is the class. A logistic regression would be the best model for this because the outcome is categorical.**
+
+Which variables in the `titanic_dataset` would not be appropriate to include in the models described above?
+
+**Passenger id, name, ticket, and cabin would not be useful. Fare would not be useful as a predictor.**
+
+Let's consider the algorithm of the k-Nearest Neighbor to make either type of predictions.
+
+## 2. k-Nearest Neighbors for a numeric outcome
+
+Let's first consider the kNN-algorithm to predict the `Fare` paid by a passenger.
+
+### a. Visualizing the relationship
+
+Is there a relationship between the `Fare` a passenger paid and their class?
+
+#### **Try it! Create a visualization to answer the question above.**
+
+```{r}
+# Write and submit code here!
+ggplot(titanic_dataset, aes(x=as.factor(Pclass), y=Fare)) +
+  geom_boxplot() +
+  labs(title="Fare by Class",
+       x="Class",
+       y="Fare") +
+  theme_minimal()
+```
+
+**There seems to be a positive relationship between the class and the fare.**
+
+How do we estimate the `Fare` based on the nearest neighbors?
+
+### b. Fitting a model
+
+For a numeric outcome, the prediction is calculated as the average outcome among the nearest neighbors (we usually consider the 5 nearest neighbors). We can use the function `knnreg(outcome ~ predictor, data = ..., k = 5)` from the `caret` package to fit this model:
+
+```{r}
+# Consider the kNN model with k = 5
+fit_knnreg <- knnreg(Fare ~ Pclass,
+                     data = titanic_dataset,
+                     k = 5) # Number of Neighbors
+```
+
+What to do with this model?
+
+### c. Predicting values
+
+We can use the model to find the average fare for a passenger based on their class with the `predict(model, data)` function:
+
+```{r}
+# Find the average fare among the nearest neighbors
+titanic_dataset |>
+  mutate(predictions = predict(fit_knnreg, titanic_dataset)) |>
+  select(Pclass, Fare, predictions)
+```
+
+#### **Try it! How many distinct values are they for the average fare? Why does it make sense?**
+
+```{r}
+# Write and submit code here!
+titanic_dataset |>
+  mutate(predictions = predict(fit_knnreg, titanic_dataset)) |>
+  select(predictions) |>
+  n_distinct()
+```
+
+**This makes sense because the prediction is based off of the class. So 3 different classes only result in 3 unique fares. The fares are just the average of the fares in the class.**
+
+### d. Performance
+
+Let's evaluate the performance of this model using RMSE:
+
+```{r}
+# Evaluate performance with RMSE
+sqrt(mean((titanic_dataset$Fare - predict(fit_knnreg, titanic_dataset))^2))
+```
+
+The RMSE indicates how far away the observations are from our predictions (called residuals), on average: the predictions are off by approximately \$39.95 on average.
+
+### e. Comparison with linear regression
+
+What about if we tried linear regression instead of k-nearest neighbors?
+
+#### **Try it! Predict the `Fare` based on `Pclass` using linear regression. Does this model seem to perform better than the model with k-nearest neighbor?**
+
+```{r}
+# Write and submit code here!
+fare_linreg <- lm(Fare ~ Pclass, data=titanic_dataset)
+sqrt(mean((titanic_dataset$Fare - predict(fare_linreg, titanic_dataset))^2))
+```
+
+**The model appears to perform worse than the kNN model.**
+
+## 3. k-Nearest Neighbors for a categorical outcome
+
+Now let's consider the kNN-algorithm to predict if a passenger `Survived`.
+
+### a. Visualizing the relationship
+
+Is there a relationship between the fact that a passenger `Survived` and their class?
+
+#### **Try it! Create a visualization to answer the question above.**
+
+```{r}
+# Write and submit code here!
+ggplot(titanic_dataset, aes(x=as.factor(Pclass))) +
+  geom_bar(aes(fill = as.factor(Survived)), position = "fill") +
+  labs(title="Survival by Class",
+       x="Class",
+       y="Survival") +
+  theme_minimal()
+```
+
+**Write sentences here!**
+
+How do we estimate if a passenger `Survived` based on the nearest neighbors?
+
+### b. Fitting a model
+
+For a categorical outcome, the prediction is calculated according to the majority outcome among the nearest neighbors. We can use the function `knn3(outcome ~ predictor, data = ..., k = 5)` from the `caret` package to fit this model:
+
+```{r}
+# Consider the kNN classifier with k = 5
+fit_knn <- knn3(Survived ~ Pclass,
+                  data = titanic_dataset,
+                  k = 5) # Number of Neighbors
+```
+
+What to do with this model?
+
+### c. Predicting values
+
+We can use the model to find the probability of a passenger to have survived based on their class with the `predict(model, data)` function:
+
+```{r}
+# Find the proportion of nearest neighbors that have survived
+predict(fit_knn, titanic_dataset) |> as.data.frame() |> head()
+```
+
+The output shows two columns. Indeed, the `predict()` function provides the proportions of each "outcome" in the 5 nearest neighbors: 0 or 1. Note that the sum of the values on each row is 1. If we add more categories, we would have more columns, with each row still adding up to 1. In our context, we are particularly interested in the second column which indicates the probability of surviving: the predictions can be calculated with `predict(model, data)[ ,2]`.
+
+```{r}
+# Find the average fare among the nearest neighbors
+titanic_dataset |>
+  mutate(probability = predict(fit_knn, titanic_dataset)[,2]) |>
+  select(Pclass, Survived, probability)
+```
+
+#### **Try it! How many distinct values are they for the probability of survival? Why does it make sense?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here!**
+
+### d. Performance
+
+Let's evaluate the performance of this model using AUC:
+
+```{r, warning=FALSE}
+# Make a ROC curve
+ROC <- ggplot(titanic_dataset) +
+  geom_roc(aes(
+    # Outcome is Survived
+    d = Survived,
+    # Probability of surviving based on the kNN model
+    m = predict(fit_knn, titanic_dataset)[ ,2]))
+ROC
+
+# Calculate the area under the curve
+calc_auc(ROC)$AUC
+```
+
+This model is not great...
+
+### e. Comparison with logistic regression
+
+What about if we tried logistic regression instead of k-nearest neighbors?
+
+#### **Try it! Predict if a passenger `Survived` based on `Pclass` using logistic regression. Does this model seem to perform better than the model with k-nearest neighbor?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here!**
+
+How could we improve our models?
+
+**Write sentences here!**

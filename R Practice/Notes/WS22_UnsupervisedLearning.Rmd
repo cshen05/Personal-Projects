@@ -1,0 +1,218 @@
+---
+title: "Unsupervised Learning"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r global_options, include=FALSE}
+# The following code is a basic setup of options for your document
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE, 
+                      warning = TRUE,
+                      message = FALSE,
+                      fig.align = "center", 
+                      R.options = list(max.print=50))
+
+# Edit the file starting below
+
+```
+
+In this worksheet, we will start discussing concepts for exploring unsupervised learning methods such as clustering and PCA.
+
+## 1. Dataset and Libraries
+
+We will use the `tidyverse` package as usual but also `ade4` to access a built-in dataset and `ggcorrplot` to visualize a correlation matrix:
+
+```{r, eval=FALSE}
+# Install new packages (only needed once!)
+#install.packages("ade4")
+#install.packages("ggcorrplot")
+```
+
+Then load the packages:
+
+```{r, message=FALSE}
+# Load packages
+library(tidyverse)
+library(ade4)
+library(ggcorrplot)
+```
+
+Let's consider the built-in database `olympic` which gives the performances of 33 men in the decathlon (10 disciplines) at the Olympic Games in 1988 (Seoul). We will focus on the dataset `tab`.
+
+```{r}
+# Save the database into your environment, then the dataset
+data("olympic")
+athletes <- olympic$tab
+
+# Take a quick look at the dataset
+head(athletes)
+```
+
+The names of the variables might not be very intuitive so let's rename them:
+
+```{r}
+# Quick cleanup
+athletes <- athletes |>
+  # Translate the variable names (from French!) and reorder
+  select(time_100 = `100`, time_110 = `110`,
+         time_400 = `400`, time_1500 = `1500`,
+         disc = disq, weight = poid, high_jump = haut,
+         long_jump = long, javelin = jave, perch = perc)
+head(athletes)
+```
+
+We will compare the athletes based on their performance in the 10 disciplines/variables.
+
+## 2. Distances
+
+One important concept for clustering is finding distances between observations: measure how "far" observations are from each other.
+
+### a. Euclidean distance
+
+We can consider the Euclidean distance (the most typical distance):
+
+$$
+d(x, y) = \sqrt{\sum_{i=1}^{n} (x_i - y_i)^2}
+$$
+
+Let's compare the athlete that ranked first (first row) and the one that ranked last (last row) in terms of their performance in running 100 meters:
+
+```{r}
+# Calculate distance by hand
+athletes |>
+  # Only keep the first and last athlete
+  filter(row_number() == 1 | row_number() == 33) |>
+  # Find the Euclidean distance = sqrt of the squared differences
+  summarize(euclidean = sqrt(diff(time_100)^2))
+```
+
+The two athletes are at a distance of 0.32 seconds from each other. What if we wanted to also consider their performance in throwing a disc?
+
+#### **Try it! Calculate the Euclidean distance between the first and last athletes taking into account their performance in all the disciplines. Why is the distance much bigger now? Compare this distance between the first and second athletes.**
+
+```{r}
+# Write and submit code here!
+athletes |>
+    filter(row_number() == 1 | row_number() == 2) |>
+    summarize(euclidean = sqrt(diff(time_100)^2 + 
+                                 diff(time_110)^2 + 
+                                 diff(time_400)^2 + 
+                                 diff(time_1500)^2 + 
+                                 diff(disc)^2 + 
+                                 diff(weight)^2 + 
+                                 diff(high_jump)^2 + 
+                                 diff(long_jump)^2 + 
+                                 diff(javelin)^2 + 
+                                 diff(perch)^2))
+```
+
+**First and second are "closer" than first and last athletes.**
+
+### b. Scaling
+
+To ensure all variables contribute equally, we usually scale them: we compare an individual value to all the values of the variable (a measure of position).
+
+Let's scale the performance of the athletes for each discipline by subtracting the mean and divide by the standard deviation (this is called a z-score):
+
+```{r}
+# Scale all variables
+athletes_scaled <- athletes |>
+  scale() |>
+  as.data.frame() 
+
+head(athletes_scaled)
+```
+
+#### **Try it! Calculate the mean and standard deviation of the scaled values for the time to run 100 meters. Why does it make sense to get what we get? What does a positive scaled value indicate? a negative value?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here!**
+
+## 3. Correlation
+
+### a. Correlation Coefficient
+
+Another important concept in unsupervised learning is correlation which describes the (linear) relationship between two variables. For example, let's look at the relationship between time to run 100 meters and length of a long jump:
+
+```{r message=FALSE}
+# Visualize the relationship between time_100 and long_jump
+ggplot(athletes, aes(x = time_100, y = long_jump)) +
+  geom_point() + geom_smooth(method = "lm", se =  FALSE) +
+  labs(x = "Time to run 100 meters (in seconds)",
+       y = "Distance for long jump (in meters)")
+```
+
+We can use the correlation coefficient to describe the strength and direction of the relationship between those two variables:
+
+```{r}
+# Find the correlation between two variables
+cor(athletes$time_100, athletes$long_jump, 
+    use = "pairwise.complete.obs") # ignore missing values
+```
+
+What if we would like to find the correlation coefficients between all pairs of numeric variables? That's a lot of calculations of the correlation coefficients...
+
+### b. Correlation Matrix
+
+We can actually find the correlation between all pairs of variables by not specifying the variables:
+
+```{r}
+# Find pairwise correlations
+cor(athletes, use = "pairwise.complete.obs")
+
+# Find pairwise correlations with scaled data
+cor(athletes_scaled, use = "pairwise.complete.obs")
+```
+
+How does the correlation coefficients compare for the original vs scaled data?
+
+**Write sentences here!**
+
+The output is a matrix representing correlations so it is called a correlation matrix! It is pretty ugly though... let's make it pretty with `ggcorrplot(correlation_matrix)`!
+
+```{r}
+# Use the ggcorrplot to visualize the correlation matrix
+ggcorrplot(cor(athletes_scaled))
+```
+
+We can add some options to make the correlation matrix even prettier:
+
+```{r}
+# We can add some options
+ggcorrplot(cor(athletes),
+           type = "upper", # upper diagonal only
+           lab = TRUE, # print values
+           method = "circle") # use circles with different sizes
+```
+
+It is now easier to spot the variables that are the most correlated.
+
+#### **Try it! Create a graph to display the relationship between the pair of variables that has the strongest correlation coefficient. Describe the relationship.**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here!**
+
+### c. Combining variables
+
+Next, we will talk about combinning variables that are highly correlated together to reduce the number of variables in our data.
+
+#### **Try it! In the scaled data, add all of the variables representing times together and all the variables representing distances together. Then create a graph to display the relationship between the two sums and find the correlation coefficient between these two variables. Where should the winners be?**
+
+```{r}
+# Write and submit code here!
+
+```
+
+**Write sentences here!**

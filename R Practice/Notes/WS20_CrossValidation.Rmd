@@ -1,0 +1,323 @@
+---
+title: "Cross-validation"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r global_options, include=FALSE}
+# The following code is a basic setup of options for your document
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE, 
+                      warning = TRUE,
+                      message = FALSE,
+                      fig.align = "center", 
+                      R.options = list(max.print=50))
+
+# Edit the file starting below
+
+```
+
+In this worksheet, we will discuss the technique of cross-validation to check the performance of our model on "new data".
+
+## 1. Dataset and Libraries
+
+We will use the packages `tidyverse`, `plotROC`, and `caret`.
+
+```{r, message = FALSE}
+# Load packages
+library(tidyverse)
+library(plotROC)
+library(caret)
+```
+
+Recall the `titanic_dataset`, which contains information about passengers of the Titanic.
+
+```{r}
+# Upload the data from GitHub
+titanic_dataset <- read_csv("https://raw.githubusercontent.com/laylaguyot/datasets/main//titanic_dataset.csv")
+
+# Take a quick look
+head(titanic_dataset)
+```
+
+We will continue looking at two potential outcomes in this dataset: predicting the `Fare` paid or predicting if a passenger `Survived`. Some variables cannot be used in the model because they are too specific to each passenger: `PassengerId`, `Name`, `Ticket`, and `Cabin`. Let's keep `PassengerId` to identify unique rows but remove other variables from the dataset. Also, let's ignore missing values for now because they could not be included in the model:
+
+```{r}
+# Prepare the dataset for modeling
+titanic_modeling <- titanic_dataset |>
+  select(-Name, -Ticket, -Cabin) |>
+  na.omit()
+```
+
+## 2. Fit a model on an entire dataset
+
+In the last worksheet, we considered a model to predict if a passenger survived based solely on the passenger's class. Let's take a look at these models again:
+
+```{r warning=FALSE}
+# Fit a logistic regression model
+fit_log <- glm(Survived ~ Pclass, data = titanic_modeling, family = "binomial")
+# Calculate performance with AUC
+calc_auc(
+  # Make a ROC curve
+  ggplot(titanic_modeling) + 
+    geom_roc(aes(
+      # Outcome is Survived
+      d = Survived,
+      # Probability of surviving based on the logistic model
+      m = predict(fit_log, type = "response")))
+  )$AUC
+
+# Fit a kNN model
+fit_knn <- knn3(Survived ~ Pclass, data = titanic_modeling, k = 5)
+# Calculate performance with AUC
+calc_auc(
+  # Make a ROC curve
+  ggplot(titanic_modeling) + 
+    geom_roc(aes(
+      # Outcome is Survived
+      d = Survived,
+      # Probability of surviving based on the logistic model
+      m = predict(fit_knn, titanic_modeling)[,2]))
+  )$AUC
+```
+
+Both models perform equally bad... What if we add more predictors?
+
+#### \***Try it! During the sinking of the Titanic, the code of conduct "women and children first" was invoked. Include the predictors that make sense to include in this context. Has the performance of each model improved?**
+
+```{r warning=FALSE}
+# Write and submit code here!
+fit_log <- glm(Survived ~ Sex + Age, data = titanic_modeling, family = "binomial")
+calc_auc(
+  ggplot(titanic_modeling) + 
+    geom_roc(aes(
+      d = Survived,
+      m = predict(fit_log, type = "response")))
+  )$AUC
+
+fit_knn <- knn3(Survived ~ Sex + Age, data = titanic_modeling, k = 5)
+calc_auc(
+  ggplot(titanic_modeling) + 
+    geom_roc(aes(
+      d = Survived,
+      m = predict(fit_knn, titanic_modeling)[,2]))
+  )$AUC
+```
+
+**The K-nearest neighbors is better than the logistic regression because its AUC (area under the curve) is larger.**
+
+Adding many predictors could overspecify the model: if the model is too specific to the particular data, it would not be able to make appropriate predictions on new data. That's why we want to test the performance of our model with cross-validation. The principle of cross-validation is to train a model on some data and test the model's performance on "new" data. Since we can't reproduce the sinking of the Titanic, we will use the data available and split it as a *train* set and a *test* set.
+
+## 3. Train and Test a model
+
+Let's separate our entire dataset into a `train` dataset and a `test` dataset (representing 70% and 30% of the entire dataset, respectively):
+
+```{r}
+# Sample 70% of the dataset into the train set
+train_data <- sample_frac(titanic_modeling, 0.7)
+
+# Get the rest of the dataset into the test set
+test_data <- anti_join(titanic_modeling, train_data, by = "PassengerId")
+```
+
+### a. Train the model on the train set
+
+Let's consider the linear regression model to predict the fare paid by a passenger based on multiple predictors:
+
+```{r}
+# Fit a logistic regression model on train data
+train_model <- glm(Survived ~ Pclass + Sex + Age + SibSp + Parch + Embarked, data = train_data, family = "binomial")
+```
+
+Since the train model is fitted on the train data, `train_model` is the best model to fit the train data. But how does this model works on "new" data? We will compare the performance of `train_model` on the train data with the performance on the test data.
+
+### b. Test the model on the test set
+
+Let's compare the performance of the model on the train data vs the performance on the test data for predicting if a passenger survived or not:
+
+```{r warning = FALSE}
+# Calculate performance with AUC on train data
+calc_auc(
+  # Make a ROC curve
+  ggplot(train_data) + 
+    geom_roc(aes(
+      # Outcome is Survived
+      d = Survived,
+      # Probability of surviving based on the logistic model
+      m = predict(train_model, type= "response")))
+  )$AUC
+
+# Calculate performance with AUC on test data
+calc_auc(
+  # Make a ROC curve
+  ggplot(test_data) + 
+    geom_roc(aes(
+      # Outcome is Survived
+      d = Survived,
+      # Probability of surviving based on the logistic model
+      m = predict(train_model, test_data, type= "response")))
+  )$AUC
+```
+
+Did we all get the exact same AUC values? Why/Why not?
+
+**We got different AUC values because the train and test data was split by random.**
+
+How does the performance of the model compare between the train data and the test data?
+
+**The model performed better on the test data compared to the train data.**
+
+#### **Try it! What about the kNN model? How does it perform on new data?**
+
+```{r warning=FALSE}
+# Write and submit code here!
+train_model <- knn3(Survived ~ Pclass + Sex + Age + SibSp + Parch + Embarked, 
+                  data = train_data, 
+                  k = 5)
+
+calc_auc(
+  # Make a ROC curve
+  ggplot(train_data) + 
+    geom_roc(aes(
+      # Outcome is Survived
+      d = Survived,
+      # Probability of surviving based on the logistic model
+      m = predict(train_model, train_data)[,2]))
+  )$AUC
+
+# Calculate performance with AUC on test data
+calc_auc(
+  # Make a ROC curve
+  ggplot(test_data) + 
+    geom_roc(aes(
+      # Outcome is Survived
+      d = Survived,
+      # Probability of surviving based on the logistic model
+      m = predict(train_model, test_data)[,2]))
+  )$AUC
+```
+
+**The model performed better on the train data.**
+
+Our results for comparing the performance might differ based on which `train` data and `test` data we considered. Let's try the k-fold cross-validation.
+
+## 4. k-fold cross-validation
+
+Algorithm for k-fold cross-validation:
+
+-   Divide datasets into *k* equal parts (usually 5 or 10)
+
+-   Use *k*−1 parts as the `train` data
+
+-   Test the model on the remaining part, the `test` data
+
+-   Repeat *k* times, so each part has been used once as a test data
+
+-   Average performance over *k* performances
+
+First, we will create the different *folds*:
+
+```{r}
+# Choose number of folds
+k = 5 
+
+# To have the same random sample, use set.seed
+set.seed(322)
+
+# Randomly order rows in the dataset
+data <- titanic_modeling[sample(nrow(titanic_modeling)), ] 
+
+# Create k folds from the dataset
+folds <- cut(seq(1:nrow(data)), breaks = k, labels = FALSE)
+```
+
+Then we fit our model and repeat the process for each *k*-fold (using a for-loop):
+
+```{r, warning = FALSE}
+# Initialize a vector to keep track of the performance for each k-fold
+perf_k <- NULL
+
+# Use a for-loop to get performance for each k-fold
+for(i in 1:k){
+  # Split data into train and test data
+  train_not_i <- data[folds != i, ] # train data = all observations except in fold i
+  test_i <- data[folds == i, ]  # test data = observations in fold i
+  
+  # Train model on train data (all but fold i)
+  # CHANGE: what model/predictors should be included
+  train_model <- glm(Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked,
+                     data = train_not_i,
+                     family = "binomial")
+  
+  # Performance listed for each test data = fold i
+  # CHANGE: how the performance is calculated
+  perf_k[i] <- calc_auc(
+  # Make a ROC curve
+  ggplot(test_i) + 
+    geom_roc(aes(
+      # Outcome is Survived
+      d = Survived,
+      # Probability of surviving based on the logistic model
+      m = predict(train_model, newdata = test_i, type = "response")))
+  )$AUC
+}
+
+# Performance for each fold 
+perf_k
+
+# Average performance over all k folds
+mean(perf_k)
+sd(perf_k)
+```
+
+What does the comparison of performances across *k* folds tell us?
+
+-   if the performance is consistently good (low mean, low sd), the model is likely to generalize well to "new" data.
+
+-   if the performance is consistently bad (high mean, low sd), the model might be underfitting.
+
+-   if the performance varies a lot across the cross-validation folds (high sd), the model might be overfitting.
+
+#### **Try it! Evaluate the performance of the kNN model with cross-validation, adding all predictors that make sense to predict if a passenger survived or not. How is the average performance? does it vary much from fold to fold?**
+
+```{r warning=FALSE}
+# Write and submit code here!
+perf_k <- NULL
+
+# Use a for-loop to get performance for each k-fold
+for(i in 1:k){
+  # Split data into train and test data
+  train_not_i <- data[folds != i, ] # train data = all observations except in fold i
+  test_i <- data[folds == i, ]  # test data = observations in fold i
+  
+  # Train model on train data (all but fold i)
+  # CHANGE: what model/predictors should be included
+  train_model <- knn3(Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked,
+                     data = train_not_i,
+                     k=5)
+  
+  # Performance listed for each test data = fold i
+  # CHANGE: how the performance is calculated
+  perf_k[i] <- calc_auc(
+  # Make a ROC curve
+  ggplot(test_i) + 
+    geom_roc(aes(
+      # Outcome is Survived
+      d = Survived,
+      # Probability of surviving based on the logistic model
+      m = predict(train_model, test_i)[,2]))
+  )$AUC
+}
+
+# Performance for each fold 
+perf_k
+
+# Average performance over all k folds
+mean(perf_k)
+sd(perf_k)
+```
+
+**Performs less well than logistic regression.**
