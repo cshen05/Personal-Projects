@@ -24,54 +24,52 @@ def add_features(data):
     data['Close'] = pd.to_numeric(data['Close'], errors='coerce')
     data.dropna(subset=['Close'], inplace=True)
 
-    # Moving averages
+    # calculate features
     data['MA10'] = data['Close'].rolling(window=10).mean()
     data['MA50'] = data['Close'].rolling(window=50).mean()
-
-    # Exponential moving averages
+    
     data['EMA10'] = data['Close'].ewm(span=10, adjust=False).mean()
     data['EMA50'] = data['Close'].ewm(span=50, adjust=False).mean()
-
-    # RSI
+    
     delta = data['Close'].diff()
     gain = delta.where(delta > 0, 0).rolling(window=14).mean()
     loss = -delta.where(delta < 0, 0).rolling(window=14).mean()
     rs = gain / loss
     data['RSI'] = 100 - (100 / (1 + rs))
-
-    # Bollinger Bands
+    
     rolling_std = data['Close'].rolling(window=10).std()
     data['BB_upper'] = data['MA10'] + 2 * rolling_std
     data['BB_lower'] = data['MA10'] - 2 * rolling_std
-
-    # ATR
+    
     data['TR'] = data[['High', 'Low', 'Close']].apply(
         lambda row: max(row['High'] - row['Low'], abs(row['High'] - row['Close']), abs(row['Low'] - row['Close'])),
         axis=1
     )
+    
     data['ATR'] = data['TR'].rolling(window=14).mean()
-
-    # Stochastic Oscillator
+    
     data['Stochastic'] = (
         (data['Close'] - data['Low'].rolling(14).min()) /
         (data['High'].rolling(14).max() - data['Low'].rolling(14).min())
     ) * 100
-
-    # OBV
+    
     data['OBV'] = (data['Volume'] * (data['Close'] - data['Close'].shift(1)).apply(lambda x: 1 if x > 0 else -1)).cumsum()
-
-    # ADX
+    
     data['DM_plus'] = (data['High'] - data['High'].shift(1)).apply(lambda x: x if x > 0 else 0)
     data['DM_minus'] = (data['Low'].shift(1) - data['Low']).apply(lambda x: x if x > 0 else 0)
+    
     data['ADX'] = (
         (data['DM_plus'] - data['DM_minus']).abs().rolling(window=14).mean() / data['TR'].rolling(window=14).mean()
     )
-
-    # New Features
+    
     data['Log_Close'] = np.log1p(data['Close'])
+    
     data['RSI_x_OBV'] = data['RSI'] * data['OBV']
+    
     data['MA50_minus_MA10'] = data['MA50'] - data['MA10']
+    
     data['DayOfWeek'] = data.index.dayofweek
+    
     data['Month'] = data.index.month
 
     # Lagging features
@@ -80,7 +78,7 @@ def add_features(data):
         data[f'Volume_Lag_{lag}'] = data['Volume'].shift(lag)
 
     # Target with threshold
-    threshold = 0.01  # Meaningful price movement threshold
+    threshold = 0.01
     data['Target'] = ((data['Close'].shift(-1) / data['Close'] - 1) > threshold).astype(int)
 
     data.dropna(inplace=True)
@@ -92,10 +90,10 @@ def rank_features(model, feature_names, top_n=10):
     """
     feature_importances = model.feature_importances_
     
-    # Create a min-heap for the top_n features
+    # create a min-heap for the top_n features
     top_features = heapq.nlargest(top_n, zip(feature_importances, feature_names))
     
-    # Sort the top features by importance in descending order
+    # sort the top features by importance in descending order
     ranked_features = sorted(top_features, reverse=True)
     
     return ranked_features
@@ -118,7 +116,6 @@ def train_and_evaluate_model(X_train, y_train, X_test, y_test):
         scaler.transform(X_test),
         columns=X_test.columns
     )
-
 
     # Define hyperparameter grid
     param_grid = {
@@ -155,8 +152,6 @@ def train_and_evaluate_model(X_train, y_train, X_test, y_test):
     test_accuracy = accuracy_score(y_test, test_predictions)
     test_probabilities = best_model.predict_proba(X_test_scaled)[:, 1]
     test_auc = roc_auc_score(y_test, test_probabilities)
-
-    # Additional metrics
     precision = precision_score(y_test, test_predictions)
     recall = recall_score(y_test, test_predictions)
     f1 = f1_score(y_test, test_predictions)
