@@ -64,6 +64,7 @@ Welcome to my **Personal Projects** repository! This collection showcases a vari
   - Data Analysis: pandas, NumPy
   - Data Visualization: Matplotlib, Seaborn
   - Machine Learning: scikit-learn
+  - Front-end: PyQt
   - Development: Jupyter Notebook, RStudio
 
 ---
