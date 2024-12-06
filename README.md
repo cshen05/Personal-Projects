@@ -40,6 +40,14 @@ Welcome to my **Personal Projects** repository! This collection showcases a vari
   - Backtesting of the strategy against historical data.
   - Performance evaluation and optimization of the trading strategy.
 
+### 5. Stock Analysis App
+- **Description**: An interactive web application for analyzing and visualizing stock performance.
+- **Key Features**:
+  - Streamlined UI for viewing stock trends and key performance indicators.
+  - Integrated predictive analytics for forecasting price trends.
+  - Customizable visualizations with interactive charts for better insights.
+  - Built with yfinance and PyQt, incorporating real-time data processing capabilities.
+
 ### 5. Vending Machine Simulation
 - **Description**: A Python program simulating the operations of a vending machine, including item selection, payment processing, and inventory management.
 - **Key Features**:
