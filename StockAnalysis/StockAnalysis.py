@@ -6,7 +6,8 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import QDate, QTimer
 from PyQt5.QtGui import QFont
 
-from Engine import fetch_stock_data, add_features, rank_features, provide_insight, train_and_evaluate_model
+import pandas as pd
+from Engine import fetch_stock_data, check_class_distribution, add_features, rank_features, provide_insight, train_and_evaluate_model
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -253,7 +254,9 @@ class StockAnalysisApp(QMainWindow):
             X = data[features]
             y = data['Target']
 
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
+            check_class_distribution(pd.Series(y_train, name="Training Set"))
+            check_class_distribution(pd.Series(y_test, name="Test Set"))
             model, train_accuracy, test_accuracy, test_auc, precision, recall, f1 = train_and_evaluate_model(X_train, y_train, X_test, y_test)
             
             try:

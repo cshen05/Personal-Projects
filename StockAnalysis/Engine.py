@@ -1,12 +1,16 @@
+import warnings
+warnings.filterwarnings("ignore")
+
 import yfinance as yf
 import pandas as pd
 import numpy as np
 import heapq
-from sklearn.metrics import roc_auc_score, accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import roc_auc_score, accuracy_score, precision_score, recall_score, f1_score, make_scorer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 from sklearn.preprocessing import StandardScaler
 from imblearn.over_sampling import SMOTE
+
 
 def fetch_stock_data(ticker, start_date, end_date):
     """
@@ -17,6 +21,15 @@ def fetch_stock_data(ticker, start_date, end_date):
         data.columns = [col[0] for col in data.columns]
     return data
 
+
+def check_class_distribution(y):
+    """
+    Check and print the class distribution.
+    """
+    print("Class distribution:")
+    print(y.value_counts())
+
+
 def add_features(data):
     """
     Add technical indicators and enhanced features to stock data.
@@ -24,7 +37,7 @@ def add_features(data):
     data['Close'] = pd.to_numeric(data['Close'], errors='coerce')
     data.dropna(subset=['Close'], inplace=True)
 
-    # calculate features
+    # Calculate features
     data['MA10'] = data['Close'].rolling(window=10).mean()
     data['MA50'] = data['Close'].rolling(window=50).mean()
     
@@ -78,25 +91,31 @@ def add_features(data):
         data[f'Volume_Lag_{lag}'] = data['Volume'].shift(lag)
 
     # Target with threshold
-    threshold = 0.01
+    threshold = 0.03
     data['Target'] = ((data['Close'].shift(-1) / data['Close'] - 1) > threshold).astype(int)
+    print(data['Target'].value_counts())
 
     data.dropna(inplace=True)
     return data
+
 
 def rank_features(model, feature_names, top_n=10):
     """
     Rank the top features based on their importance using a min-heap.
     """
     feature_importances = model.feature_importances_
-    
-    # create a min-heap for the top_n features
     top_features = heapq.nlargest(top_n, zip(feature_importances, feature_names))
-    
-    # sort the top features by importance in descending order
-    ranked_features = sorted(top_features, reverse=True)
-    
-    return ranked_features
+    return sorted(top_features, reverse=True)
+
+
+def custom_roc_auc_scorer(estimator, X, y):
+    """
+    Custom scorer for roc_auc_score to handle single-class scenarios.
+    """
+    if len(np.unique(y)) < 2:
+        return np.nan  # Return NaN if only one class is present
+    probabilities = estimator.predict_proba(X)[:, 1]  # Get probabilities for the positive class
+    return roc_auc_score(y, probabilities)
 
 def train_and_evaluate_model(X_train, y_train, X_test, y_test):
     """
@@ -124,7 +143,7 @@ def train_and_evaluate_model(X_train, y_train, X_test, y_test):
         'min_samples_split': [10, 20],
         'min_samples_leaf': [10, 20],
         'max_features': ['sqrt', 0.2],
-        'bootstrap': [True]
+        'bootstrap': [True, False]
     }
 
     # Initialize model
@@ -135,7 +154,7 @@ def train_and_evaluate_model(X_train, y_train, X_test, y_test):
     grid_search = GridSearchCV(
         estimator=model,
         param_grid=param_grid,
-        scoring='roc_auc',
+        scoring=make_scorer(custom_roc_auc_scorer, needs_proba=True),
         cv=tscv,
         n_jobs=-1
     )
@@ -143,6 +162,8 @@ def train_and_evaluate_model(X_train, y_train, X_test, y_test):
 
     best_model = grid_search.best_estimator_
     print("Best Parameters:", grid_search.best_params_)
+    important_features = rank_features(best_model, X_train.columns)
+    print(important_features)
 
     # Evaluate the model
     train_predictions = best_model.predict(X_train_scaled)
@@ -151,14 +172,21 @@ def train_and_evaluate_model(X_train, y_train, X_test, y_test):
     train_accuracy = accuracy_score(y_train_balanced, train_predictions)
     test_accuracy = accuracy_score(y_test, test_predictions)
     test_probabilities = best_model.predict_proba(X_test_scaled)[:, 1]
-    test_auc = roc_auc_score(y_test, test_probabilities)
-    precision = precision_score(y_test, test_predictions)
-    recall = recall_score(y_test, test_predictions)
-    f1 = f1_score(y_test, test_predictions)
 
     print(f"Training Accuracy: {train_accuracy:.2%}")
     print(f"Test Accuracy: {test_accuracy:.2%}")
-    print(f"Test AUC: {test_auc:.2f}")
+
+    if len(np.unique(y_test)) > 1:
+        test_auc = roc_auc_score(y_test, test_probabilities)
+        print(f"Test AUC: {test_auc:.2f}")
+    else:
+        test_auc = None
+        print("Test AUC is undefined as only one class is present in y_test.")
+
+    precision = precision_score(y_test, test_predictions, zero_division=0)
+    recall = recall_score(y_test, test_predictions, zero_division=0)
+    f1 = f1_score(y_test, test_predictions, zero_division=0)
+
     print(f"Precision: {precision:.2%}")
     print(f"Recall: {recall:.2%}")
     print(f"F1-Score: {f1:.2%}")
