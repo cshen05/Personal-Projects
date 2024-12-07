@@ -57,6 +57,7 @@ CrimeReport <- read_csv("~/322E/Project/CrimeReports.csv")
 
 # create a local copy of data
 crime_data <- CrimeReport
+crime_data
 ```
 
 ### Methods
@@ -164,7 +165,7 @@ crime_data <- crime_data |>
 crime_data
 ```
 
-### Results
+### Exploratory Data Analysis
 
 #### **1. Distribution of Crime Types**
 
@@ -361,54 +362,314 @@ monthly_crime_type_summary <- crime_data |>
 monthly_crime_type_summary
 ```
 
-### **Discussion**
+### Machine Learning Model
 
--   **Answering the Research Question**:
+```{r, warning=FALSE}
+library(pROC)
+library(caret)
 
-    -   This analysis aimed to uncover the time and location patterns of crime in Austin and examine variations by crime type. The analysis revealed significant insights: **Theft** and **Disturbance** were the most common crime types, and crime rates showed clear peaks in **late evening hours/early mornings** and generally increases in **summer**. These trends are likely influenced by increased public activity and nightlife, which aligns with existing research on the impact of social behaviors on crime. Location-wise, certain districts reported higher crime incidents, particularly **Districts 5 and 9**. This distribution may reflect underlying socio-economic or environmental factors, such as district population density, economic conditions, or the presence of nightlife venues, which often attract specific types of crime.
+# Clean up the columns
+crime_data <- crime_data |>
+  mutate(
+    location = as.character(location),
+    crime = as.character(crime)
+  ) |>
+  mutate(
+    location = as.factor(location),
+    crime = as.factor(crime)
+  )
 
--   **Unexpected Findings**:
+# Normalize numeric columns because kNN is a distance metric
+crime_data <- crime_data |>
+  mutate(
+    hour_scaled = scale(hour),
+    district_scaled = scale(council_district)
+  )
 
-    -   The data analysis revealed some unexpected results. For instance, while **Theft** was anticipated to be high in commercial zones, the distribution of **Disturbance** and **Assault** incidents was higher in residential areas. This suggests that addressing domestic and neighborhood conflicts could have a significant impact on reducing these crime types. Another interesting observation was the seasonal peak in **October** for theft, which could correlate with specific events, holidays, or increased retail activity. Additionally, weekly crime spikes around holidays like the Fourth of July suggest that public events may contribute to increased crime, underscoring the need for event-specific policing strategies.
+# Creating the model
+fit_knn <- knn3(
+  crime ~ hour_scaled + district_scaled + location,
+  data = crime_data,
+  k = 5  # Number of neighbors
+)
 
--   **Key Takeaways for Austin’s Law Enforcement**:
+predictions <- predict(fit_knn, crime_data) |> as.data.frame()
+predictions
+```
 
-    -   The findings point to clear areas for targeted interventions:
+```{r}
+# Convert predictions to probabilities for AUC calculation
+# (One-vs-All approach: Calculate AUC for each crime type)
 
-        -   **Time-Based Policing**: Increased police presence in commercial areas during the evenings, especially from **8 PM to midnight**, could help mitigate crime during high-risk times.
+# Get all unique crime types
+crime_types <- levels(crime_data$crime)  
 
-        -   **Location-Based Interventions**: Addressing theft in **Districts 3 and 9** through community surveillance or enhanced security measures in high-risk locations, such as shopping centers, could help reduce theft incidents.
+auc_results <- lapply(crime_types, function(type) {
+  roc_response <- as.numeric(crime_data$crime == type)
+  roc_predict <- predictions[, type]
+  auc(roc(roc_response, roc_predict))
+})
 
-        -   **Seasonal Preparedness**: Preparing for peak crime months (March, October, and December) with additional patrols or community initiatives could help manage seasonal crime increases.
+# Combine AUC results into a data frame
+auc_df <- data.frame(
+  Crime_Type = crime_types,
+  AUC = unlist(auc_results)
+)
 
--   **Dataset Observations**:
+auc_df
+print(paste("Mean AUC: ",mean(auc_df$AUC)))
+```
 
-    -   The dataset required extensive cleaning due to inconsistent location coding and missing values in certain fields. For example, similar locations were categorized differently (e.g., "Restaurant" vs. "Bar"), leading to initial inconsistencies in location-based analysis. Addressing these discrepancies in future data collection efforts would enhance analysis accuracy and yield more reliable insights.
+### Cross-Validation
 
-### **Reflection, Acknowledgments, and References**
+```{r, warning=FALSE}
+# Set number of folds
+k <- 5
 
--   **Reflection**:
+# Set a seed for reproducibility
+set.seed(322)
 
-    -   **Challenges Faced**: The most challenging aspect of the project was consolidating the data into a tidy format due to the varied descriptions in the `Location Type` and `Highest Offense Description` field and the need for custom categorizations in both crime types and locations. This required special consideration to ensure accurate and meaningful groupings.
+# Randomly shuffle the rows of the dataset
+crime_data <- crime_data[sample(nrow(crime_data)), ]
 
-    -   **Lessons Learned**: Through this project, I developed a deeper understanding of data cleaning and categorization, as well as data visualization techniques. Handling real-world data also highlighted the importance of structured, consistent data entry, as small inconsistencies can significantly affect analyses.
+# Create k folds
+folds <- cut(seq(1, nrow(crime_data)), breaks = k, labels = FALSE)
+```
 
--   **Acknowledgments**:
+```{r}
+# Initialize a list to track performance for each crime type across folds
+perf_k_all_types <- list()
 
-    I would like to express my appreciation to Professor Guyot and the teaching assistants for their guidance and feedback throughout the project. Their insights helped refine my approach to data analysis and interpretation. Special thanks to the City of Austin’s Open Data Portal for providing public access to crime data, which allowed for this study.
+# Get unique crime types
+crime_types <- unique(crime_data$crime)
 
--   **References**:
+for (i in 1:k) {
+  
+  # Split data into train and test data
+  train_not_i <- crime_data[folds != i, ]
+  test_i <- crime_data[folds == i, ]
+  
+  # Normalize numeric predictors
+  preproc <- preProcess(train_not_i[, c("hour", "council_district")], method = c("center", "scale"))
+  train_not_i[, c("hour_scaled", "district_scaled")] <- predict(preproc, train_not_i[, c("hour", "council_district")])
+  test_i[, c("hour_scaled", "district_scaled")] <- predict(preproc, test_i[, c("hour", "council_district")])
+  
+  # Train the model
+  train_model <- knn3(
+    crime ~ hour_scaled + district_scaled + location,
+    data = train_not_i,
+    k = 5  # Number of neighbors
+  )
+  
+  # Calculate performance for all crime types
+  auc_per_type <- sapply(crime_types, function(type) {
+    roc_response <- as.numeric(test_i$crime == type)
+    roc_predict <- predict(train_model, test_i)[, type]
+    
+    # Calculate AUC
+    auc(roc(roc_response, roc_predict))
+  })
+  perf_k_all_types[[i]] <- auc_per_type
+}
 
-    -   **Dataset**: Austin Crime Reports, available from the [City of Austin’s Open Data Portal](https://data.austintexas.gov/Public-Safety/Crime-Reports/fdj4-gpfu/about_data).
+# Combine AUC results into a data frame
+perf_k_df <- do.call(rbind, perf_k_all_types)
 
-        -   <https://data.austintexas.gov/Public-Safety/Crime-Reports/fdj4-gpfu/about_data>
+# Calculate average and standard deviation of AUC for each crime type
+perf_summary <- data.frame(
+  Crime_Type = crime_types,
+  Mean_AUC = colMeans(perf_k_df, na.rm = TRUE),
+  SD_AUC = apply(perf_k_df, 2, sd, na.rm = TRUE)
+)
+perf_summary
+print(paste("Mean AUC: ", mean(perf_summary$Mean_AUC)))
+print(paste("Mean SD: ", sd(perf_summary$SD_AUC)))
+```
 
-    -   **Background Research**:
+### Results
 
-        -   Author links open overlay panelPei-Fen Kuo a, et al. “A Promising Example of Smart Policing: A Cross-National Study of the Effectiveness of a Data-Driven Approach to Crime and Traffic Safety.” *Case Studies on Transport Policy*, Elsevier, 5 Sept. 2019, www.sciencedirect.com/science/article/pii/S2213624X19301336.
+#### Comparison Between Average Cross-Validation Performance and Overall Model Performance
 
-        -   Whitworth, Adam. “Local inequality and crime: Exploring how variation in the scale of inequality measures affects relationships between inequality and crime.” *Urban Studies*, vol. 50, no. 4, 29 Aug. 2012, pp. 725–741, <https://doi.org/10.1177/0042098012455716>.
+**Overall Model Performance:** fitting the model to the entire dataset shows reasonably high AUC values for several crime types, such as:
 
-    -   **External Resources**:
+-   Traffic Violation: 0.94
 
-        -   Documentation for R packages `dplyr` and `ggplot2` was essential for data manipulation and visualization, ensuring the data was transformed and presented effectively.
+-   Weapons: 0.931
+
+-   Drug-Related: 0.876
+
+-   Fraud: 0.848
+
+However, for some types like "Other" (0.630), "Property Damage" (0.679), and "Assault" (0.670), the performance is lower, indicating difficulties in separating these classes effectively. That said, the model as a whole is fairly good at determining crime types as its average AUC is 0.78.
+
+**Cross-Validation Performance:** The cross-validation results reveal slightly lower AUC values on average, which I expected because cross-validation evaluates the model’s ability to generalize to unseen data:
+
+The highest-performing categories still show strong AUCs:
+
+-   Traffic Violation: 0.882
+
+-   Weapons: 0.798
+
+-   Drug-Related: 0.791
+
+However, the same categories as before – "Property Damage" (0.599), "Assault" (0.612), "Other" (0.572) – underperform. The average AUC for the entire model also follows the same trend (0.72).
+
+**Takeaway**
+
+The average AUC values from cross-validation are slightly lower than the overall model performance, which is expected. The overall performance reflects how well the model fits the dataset it was trained on, whereas cross-validation assesses generalization. Categories like "Traffic Violation" and "Weapons" are being accurately predicted, while others like "Assault" and "Other" remain challenging to model effectively.
+
+#### **How Well Does the Model Predict New Data?**
+
+**Strong Prediction for Some Crime Types:** For categories like "Traffic Violation," "Weapons," and "Drug-Related," the high cross-validated AUCs indicate that the model can effectively predict these crimes on new data, as it consistently distinguishes these classes across folds.
+
+**Weaker Prediction for Others:** The low cross-validated AUCs for "Other," "Property Damage," and "Assault" suggest difficulty in predicting these categories. This may result from:
+
+-   Overlap in the predictors (e.g., similar patterns of occurrence for these crime types).
+
+-   Insufficient distinguishing features in the dataset for these categories.
+
+**Takeaway**
+
+The model is well-suited to predicting specific crime types with clear patterns in the data, such as "Traffic Violation" and "Weapons." However, it struggles with more ambiguous or overlapping classes like "Other" and "Assault," indicating the need for additional predictors or feature engineering to improve performance for these categories. The overall ability for the model to predict what crime happened is good, with an AUC of 0.72.
+
+### Discussion
+
+**Key Patterns in Time and Location:**
+
+-   **Theft**: The most frequent crime type and often concentrated in commercial areas and peaking during late-night hours (8 PM–12 AM). This makes sense since this period has reduced business activity and public oversight.
+
+-   **Traffic Violations**: Very consistent in both location and time, often occurring during peak commuting hours in districts with high traffic density.
+
+-   **Districts 3 and 9:** Consistently reported the highest crime rates, suggesting these are potential hotspots for targeted interventions.
+
+**Modeling Performance:**
+
+-   **High Predictability:** Crimes like traffic violations (AUC: 0.88) and weapons offenses (AUC: 0.80) show strong predictive performance due to clear temporal and spatial patterns.
+
+-   **Low Predictability:** Crimes such as assault (AUC: 0.61) and property damage (AUC: 0.60) are harder to model, likely due to overlapping causes or the lack of specific predictors.
+
+-   **Cross-Validation Results:** Slightly lower average AUCs compared to the overall model fit, reflecting generalization ability. Predictability is consistent for high-performing crime types but remains a challenge for less-defined categories like "other."
+
+-   **Overall: The model performs pretty well with an AUC of 0.78 for the entire dataset and 0.72 when generalizing new data. This means the model is not overfitting or underfitting and is good at generalizing on new data.**
+
+**Implications for Austin:**
+
+-   **District-Specific Interventions:**
+
+    -   **Focus resources in Districts 3 and 9, especially during theft-prone late-night hours.**
+
+-   **Traffic Monitoring:**
+
+    -   **Deploy traffic enforcement during peak hours to reduce violations and related offenses.**
+
+-   **Enhanced Security in Commercial Areas:**
+
+    -   **Strengthen preventive measures, such as surveillance and patrols, to deter theft.**
+
+**Predictive Modeling as a Tool:**
+
+While the model effectively predicts crimes with strong patterns, its limitations for more ambiguous categories really exposes the need for further refinement and feature engineering, requiring more data which is very costly to obtain.
+
+**Ethical Considerations**
+
+Bias in Data Collection:
+
+-   The dataset may overrepresent certain areas, such as Districts 3 and 9, due to systemic biases in policing practices, which could inflate crime statistics.
+
+-   Underreporting in less-policed districts might hide underlying issues. These biases could lead to disproportionate interventions of specific communities.
+
+Community Impact:
+
+-   Predictive policing models must balance the need for proactive interventions with fairness. Transparent use and communication of these tools are important to maintaining trust and preventing potential harm.
+
+-   Poorly implemented models can also very easily lead to false positives, which might alienate the population
+
+Data Collection Practices:
+
+-   Standardize crime type categories and improve consistency in location data to ensure reliable insights.
+
+-   Address gaps in socioeconomic and demographic data, as these are critical for understanding broader crime dynamics.
+
+**Unexpected Insights and Challenges**
+
+Theft Being the Most Common Crime Committed:
+
+-   Theft being the most common crime committed was very surprising because I didn’t expect it to be that common in a city. I had thought that that theft would be more common in suburban areas or areas with a smaller concentration of people.
+
+Weaker Patterns in Certain Crimes:
+
+-   Low AUC values for crimes like assault and property damage highlight the need for additional predictors, such as socioeconomic factors, weather, or real-time incident reporting.
+
+-   There could also be a lot of overlap in their predictors, making it very hard to distinguish between crimes accurately.
+
+Data Limitations:
+
+-   Inconsistencies in location and crime type coding required significant preprocessing, potentially affecting model accuracy as information was lost when putting crimes in buckets.
+
+**Future Directions**
+
+Enhance Data Integration:
+
+-   Use socioeconomic data, weather patterns, and event schedules to provide deeper context for predictions.
+
+-   Transition from council district-level data to more granular neighborhood or hotspot-specific insights.
+
+Expand Analytical Scope:
+
+-   Conduct time-series analyses to evaluate long-term trends in crime rates and assess the impact of past interventions.
+
+-   Investigate patterns within more specific crime categories to find deeper, underlying patterns.
+
+### Reflection, Acknowledgments, and References
+
+**Reflection:**
+
+Challenges Faced:
+
+-   Data Preparation: Consolidating the dataset into a tidy format was one of the most demanding aspects because of inconsistencies in the Location Type and Highest Offense Description fields. Custom categorizations for crime types and locations required me to carefully create groupings.
+
+-   Modeling Complexities: Certain crime categories, such as "Other" or "Property Damage," were harder to model due to overlapping patterns or insufficient distinguishing features in the dataset. These challenges really revealed the limitations of working with real-world, imperfect data.
+
+-   Feature Engineering: The lack of contextual variables, such as socioeconomic factors, weather, or real-time events, limited the model’s ability to improve predictions for less structured crime types.
+
+Lessons Learned:
+
+-   Data Cleaning and Categorization: Handling real-world data showed the importance of structured and consistent data entry, as small inconsistencies can significantly affect analyses. Developing efficient cleaning pipelines using R improved data accuracy and interpretability.
+
+-   Model Evaluation: Cross-validation is a robust framework to evaluate a model’s ability to  generalize, revealing strengths for predictable crime types and limitations for ambiguous categories.
+
+**Acknowledgments:**
+
+I would like to express my gratitude to Professor Guyot and the teaching assistants for their valuable guidance throughout the project. Their feedback greatly enhanced the rigor of my data analysis and interpretation. Special thanks to the City of Austin’s Open Data Portal for making crime data publicly accessible, enabling this study to contribute actionable insights.
+
+**References:**
+
+Dataset:
+
+Austin Crime Reports, available from the City of Austin’s Open Data Portal:
+
+<https://data.austintexas.gov/Public-Safety/Crime-Reports/fdj4-gpfu/about_data>
+
+Background Research:
+
+Kuo, Pei-Fen, et al. “A Promising Example of Smart Policing: A Cross-National Study of the Effectiveness of a Data-Driven Approach to Crime and Traffic Safety.” Case Studies on Transport Policy, Elsevier, 5 Sept. 2019. <https://www.sciencedirect.com/science/article/pii/S2213624X19301336.>
+
+Whitworth, Adam. “Local Inequality and Crime: Exploring How Variation in the Scale of Inequality Measures Affects Relationships Between Inequality and Crime.” Urban Studies, vol. 50, no. 4, 29 Aug. 2012, pp. 725–741. <https://doi.org/10.1177/0042098012455716>.
+
+**External Resources:**
+
+-   dplyr: Documentation for data manipulation functions.
+
+    -   <https://dplyr.tidyverse.org/>
+
+-   ggplot2: Documentation for data visualization functions.
+
+    -   <https://ggplot2.tidyverse.org/>
+
+-   caret: Comprehensive guide for training and evaluating machine learning models.
+
+    -   <https://topepo.github.io/caret/>
+
+-   pROC: Documentation for Receiver Operating Characteristic (ROC) curve analysis and AUC calculation.
+
+    -   <https://cran.r-project.org/web/packages/pROC/index.html>
