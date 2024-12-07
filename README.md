@@ -13,12 +13,13 @@ Welcome to my **Personal Projects** repository! This collection showcases a vari
 
 ## Projects
 
-### 1. Austin Crime Analysis
+### 1. Austin Crime Report
 - **Description**: An in-depth analysis of crime data in Austin, Texas, utilizing R for data manipulation and visualization.
 - **Key Features**:
   - Data cleaning and preprocessing of crime datasets.
   - Visualization of crime trends over time and across different neighborhoods.
   - Statistical analysis to identify significant patterns and correlations.
+  - K-Nearest Neighbors model to predict crime types
 
 ### 2. BFS and DFS Implementations
 - **Description**: Python implementations of Breadth-First Search (BFS) and Depth-First Search (DFS) algorithms for graph traversal.
