@@ -28,6 +28,7 @@ a:hover {
   background-color: #664229; /* Matches Footer */
   padding: 10px 20px;
   z-index: 1000;
+  box-sizing: border-box;
   opacity: 0; /* Start invisible */
   transition: opacity 0.3s ease, background-color 0.3s ease;
 }
@@ -40,6 +41,7 @@ a:hover {
   font-weight: 700;
   font-size: 1.5rem;
   color: white; /* Matches Footer Text */
+  white-space: nowrap;
 }
 
 .nav-links {
