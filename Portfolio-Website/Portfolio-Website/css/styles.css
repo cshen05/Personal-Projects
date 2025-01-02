@@ -9,7 +9,7 @@ body {
 
 a {
   text-decoration: none;
-  color: white;
+  color: black;
   transition: transform 0.3s ease, background-color 0.2s ease;
 }
 
@@ -74,7 +74,7 @@ a:active {
 /* About Section */
 .about {
   padding: 50px 20px;
-  text-align: center;
+  text-align: left;
   background-color: #FAF9F6; /* Off-white */
 }
 
