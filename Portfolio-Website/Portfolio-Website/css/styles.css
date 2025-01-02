@@ -23,17 +23,11 @@ a:hover {
   top: 0;
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Align name to the left and links to the right */
   align-items: center;
   background-color: #664229; /* Matches Footer */
-  padding: 10px 20px;
+  padding: 10px 30px; /* Add padding for spacing */
   z-index: 1000;
-  opacity: 0; /* Start invisible */
-  transition: opacity 0.3s ease, background-color 0.3s ease;
-}
-
-.sticky-header.active {
-  opacity: 1; /* Become visible on scroll */
 }
 
 .logo {
@@ -44,13 +38,21 @@ a:hover {
 
 .nav-links {
   list-style: none;
-  display: flex;
-  gap: 20px;
+  display: flex; /* Horizontal alignment of links */
+  gap: 30px; /* Spacing between links */
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
 }
 
 .nav-links a {
   font-weight: 500;
   color: white; /* Matches Footer Text */
+  text-decoration: none; /* Remove underline */
+  transition: color 0.3s ease; /* Add smooth hover transition */
+}
+
+.nav-links a:hover {
+  color: #FAF9F6; /* Lighter Accent Color */
 }
 
 /* Hero Section */
