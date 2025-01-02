@@ -3,7 +3,7 @@ body {
   margin: 0;
   font-family: 'Lexend', sans-serif;
   background-color: #FAF9F6; /* Off-white */
-  color: #FFFFFF; /* Dark Brown for text */
+  color: #000000; /* Dark Brown for text */
   scroll-behavior: smooth;
 }
 
@@ -84,19 +84,20 @@ a:active {
 .about {
   padding: 50px 20px;
   text-align: left;
-  background-color: #D2B48C; /* Tan */
+  background-color: #E8DCC3; /* Lighter Tan */
+  color: #5C4433; /* Darker Brown Text */
 }
 
 .section-title {
   font-size: 2.5rem;
-  color: #987554; /* Medium Brown */
+  color: #664229; /* Dark Brown for Section Titles */
   margin-bottom: 20px;
 }
 
 .about-highlight {
   font-size: 1.5rem;
   font-weight: 500;
-  color: #B99976; /* Lighter Brown */
+  color: #5C4433; /* Match the Text Color */
   margin-bottom: 20px;
 }
 
