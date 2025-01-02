@@ -23,11 +23,17 @@ a:hover {
   top: 0;
   width: 100%;
   display: flex;
-  justify-content: space-between; /* Align name to the left and links to the right */
+  justify-content: space-between;
   align-items: center;
   background-color: #664229; /* Matches Footer */
-  padding: 10px 30px; /* Add padding for spacing */
+  padding: 10px 20px;
   z-index: 1000;
+  opacity: 0; /* Start invisible */
+  transition: opacity 0.3s ease, background-color 0.3s ease;
+}
+
+.sticky-header.active {
+  opacity: 1; /* Become visible on scroll */
 }
 
 .logo {
