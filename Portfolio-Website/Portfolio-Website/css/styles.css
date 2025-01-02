@@ -26,7 +26,7 @@ a:hover {
   justify-content: space-between;
   align-items: center;
   background-color: #664229; /* Matches Footer */
-  padding: 10px 20px;
+  padding: 10px 30px;
   z-index: 1000;
   box-sizing: border-box;
   opacity: 0; /* Start invisible */
@@ -50,6 +50,10 @@ a:hover {
   gap: 30px; /* Spacing between links */
   margin: 0; /* Remove default margin */
   padding: 0; /* Remove default padding */
+}
+
+.nav-links li {
+  display: inline-block; /* Ensures each link is treated as a block for spacing */
 }
 
 .nav-links a {
