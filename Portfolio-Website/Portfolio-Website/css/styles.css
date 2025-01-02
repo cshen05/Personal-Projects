@@ -9,7 +9,7 @@ body {
 
 a {
   text-decoration: none;
-  color: black;
+  color: white;
   transition: transform 0.3s ease, background-color 0.2s ease;
 }
 
@@ -27,7 +27,7 @@ a:active {
   position: sticky;
   top: 0;
   background-color: #D2B48C; /* Tan */
-  color: white;
+  color: black;
   padding: 10px 20px;
   z-index: 1000;
 }
