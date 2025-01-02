@@ -1,35 +1,31 @@
-// Smooth scrolling for navigation links
-document.querySelectorAll('nav a').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-
-        // Scroll to the target section smoothly
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-            behavior: 'smooth'
-        });
-    });
+// Change Navigation Background on Scroll
+window.addEventListener('scroll', () => {
+    const header = document.querySelector('.sticky-header');
+    if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+    }
 });
 
-// Intersection Observer for fade-in animations
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('fade-in-visible'); // Add the fade-in-visible class
-            observer.unobserve(entry.target); // Stop observing once the animation is applied
-        }
-    });
-});
+// Gradual Color Transition Between Sections
+window.addEventListener('scroll', () => {
+    const hero = document.querySelector('.hero');
+    const about = document.querySelector('.about');
+    const scrollPosition = window.scrollY;
+    const heroHeight = hero.offsetHeight;
 
-// Apply observer to elements with the fade-in class
-document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
+    if (scrollPosition <= heroHeight) {
+        const ratio = scrollPosition / heroHeight; // Calculate scroll percentage
+        const heroColor = [250, 249, 246]; // RGB for #FAF9F6 (Hero Section Color)
+        const aboutColor = [210, 180, 140]; // RGB for #D2B48C (About Section Color)
 
-// Parallax scrolling effect
-document.addEventListener("scroll", () => {
-    const sections = document.querySelectorAll("section");
-    sections.forEach((section) => {
-        const rect = section.getBoundingClientRect();
-        if (rect.top >= 0 && rect.top <= window.innerHeight) {
-            section.style.transform = `translateY(${rect.top / 10}px)`;
-        }
-    });
+        // Calculate interpolated color
+        const interpolatedColor = heroColor.map((start, index) =>
+            Math.round(start + ratio * (aboutColor[index] - start))
+        );
+
+        // Apply interpolated color to hero section background
+        hero.style.backgroundColor = `rgb(${interpolatedColor.join(',')})`;
+    }
 });
