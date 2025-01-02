@@ -34,7 +34,7 @@ a:hover {
 }
 
 .sticky-header.active {
-  background-color: #D2B48C; /* Tan */
+  background-color: #E8DCC3; /* Lighter Tan */
   opacity: 1; /* Become visible */
   pointer-events: all; /* Enable interaction */
 }
@@ -90,6 +90,20 @@ a:hover {
   text-align: left;
   background-color: #E8DCC3; /* Lighter Tan */
   color: #5C4433; /* Darker Brown Text */
+}
+
+/* Photo Section */
+.photo-section {
+  padding: 20px 0;
+  text-align: center;
+  background-color: #FAF9F6; /* Matches main background */
+}
+
+.profile-photo {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 5px solid #E8DCC3; /* Accent Border */
 }
 
 /* Animations */

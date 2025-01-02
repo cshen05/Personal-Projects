@@ -20,7 +20,7 @@ window.addEventListener('scroll', () => {
     if (scrollPosition <= heroHeight) {
         const ratio = scrollPosition / heroHeight; // Calculate scroll percentage
         const heroColor = [250, 249, 246]; // RGB for #FAF9F6 (Hero Section Color)
-        const aboutColor = [210, 180, 140]; // RGB for #D2B48C (About Section Color)
+        const aboutColor = [232, 220, 195]; // RGB for #E8DCC3 (About Section Color)
 
         // Calculate interpolated color
         const interpolatedColor = heroColor.map((start, index) =>
