@@ -25,11 +25,11 @@ a:active {
 .sticky-header {
   position: sticky;
   top: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: transparent; /* Transparent initially */
-  color: #664229;
+  display: flex; /* Align logo and links on the same row */
+  justify-content: space-between; /* Space out the logo and links */
+  align-items: center; /* Vertically center items */
+  background-color: transparent; /* Transparent background initially */
+  color: #664229; /* Matches hero text color */
   padding: 10px 20px;
   z-index: 1000;
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -42,19 +42,27 @@ a:active {
 
 .nav-links {
   list-style: none;
-  display: flex;
-  gap: 15px;
+  display: flex; /* Align links horizontally */
+  gap: 20px;
+  margin: 0;
+  padding: 0;
 }
 
 .nav-links a {
-  padding: 0; /* Remove box-like padding */
+  color: inherit; /* Matches current text color of the header */
   font-weight: 500;
+  text-decoration: none; /* Removes underline */
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #987554; /* Medium Brown on hover */
 }
 
 .logo {
   font-weight: 700;
   font-size: 1.5rem;
-  color: inherit; /* Matches text color */
+  color: inherit; /* Matches current header color */
 }
 
 /* Hero Section */
