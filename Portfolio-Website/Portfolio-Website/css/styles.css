@@ -2,7 +2,7 @@
 body {
   margin: 0;
   font-family: 'Lexend', sans-serif;
-  background-color: #FAF9F6; /* Off-white */
+  background-color: #E8DCC3; /* Lighter Tan (Main Background) */
   color: #664229; /* Dark Brown for text */
   scroll-behavior: smooth;
 }
@@ -25,23 +25,21 @@ a:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: transparent; /* Transparent initially */
+  background-color: #664229; /* Matches Footer */
   padding: 10px 20px;
   z-index: 1000;
   opacity: 0; /* Start invisible */
-  pointer-events: none; /* Disable interaction initially */
-  transition: background-color 0.3s ease, opacity 0.3s ease;
+  transition: opacity 0.3s ease, background-color 0.3s ease;
 }
 
 .sticky-header.active {
-  background-color: #E8DCC3; /* Lighter Tan */
-  opacity: 1; /* Become visible */
-  pointer-events: all; /* Enable interaction */
+  opacity: 1; /* Become visible on scroll */
 }
 
 .logo {
   font-weight: 700;
   font-size: 1.5rem;
+  color: white; /* Matches Footer Text */
 }
 
 .nav-links {
@@ -52,6 +50,7 @@ a:hover {
 
 .nav-links a {
   font-weight: 500;
+  color: white; /* Matches Footer Text */
 }
 
 /* Hero Section */
@@ -62,9 +61,8 @@ a:hover {
   justify-content: center;
   align-items: center;
   text-align: center;
-  background-color: #FAF9F6; /* Off-white */
+  background-color: #E8DCC3; /* Matches Main Background */
   color: #664229;
-  transition: background-color 1s ease; /* Gradual color transition */
 }
 
 .hero h1 {
@@ -88,22 +86,39 @@ a:hover {
 .about {
   padding: 50px 20px;
   text-align: left;
-  background-color: #E8DCC3; /* Lighter Tan */
+  background-color: #E8DCC3; /* Matches Main Background */
   color: #5C4433; /* Darker Brown Text */
+}
+
+.section-title {
+  font-size: 2.5rem;
+  color: #664229; /* Dark Brown for Section Titles */
+  margin-bottom: 20px;
+}
+
+.about-highlight {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #5C4433; /* Matches Text Color */
+  margin-bottom: 20px;
+}
+
+.about-description {
+  font-size: 1.2rem;
+  line-height: 1.8;
 }
 
 /* Photo Section */
 .photo-section {
   padding: 20px 0;
   text-align: center;
-  background-color: #FAF9F6; /* Matches main background */
 }
 
 .profile-photo {
   width: 200px;
   height: 200px;
   border-radius: 50%;
-  border: 5px solid #E8DCC3; /* Accent Border */
+  border: 5px solid #FAF9F6; /* Accent Border */
 }
 
 /* Animations */
@@ -137,5 +152,5 @@ a:hover {
 }
 
 .footer-links a:hover {
-  color: #E8DCC3; /* Lighter Tan */
+  color: #FAF9F6; /* Lighter Accent */
 }
