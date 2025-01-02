@@ -33,6 +33,7 @@ a:hover {
   box-sizing: border-box;
   opacity: 0; /* Start invisible */
   transition: opacity 0.3s ease, background-color 0.3s ease;
+  border: 2px solid red;
 }
 
 .sticky-header.active {
@@ -44,6 +45,7 @@ a:hover {
   font-size: 1.5rem;
   color: white; /* Matches Footer Text */
   white-space: nowrap;
+  border: 2px solid blue;
 }
 
 .nav-links {
@@ -52,6 +54,7 @@ a:hover {
   gap: 30px; /* Spacing between links */
   margin: 0; /* Remove default margin */
   padding: 0; /* Remove default padding */
+  border: 2px solid green;
 }
 
 .nav-links li {
