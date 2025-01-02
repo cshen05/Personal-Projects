@@ -3,13 +3,13 @@ body {
   margin: 0;
   font-family: 'Lexend', sans-serif;
   background-color: #FAF9F6; /* Off-white */
-  color: #000000; /* Dark Brown for text */
+  color: #664229; /* Dark Brown for text */
   scroll-behavior: smooth;
 }
 
 a {
   text-decoration: none;
-  color: black;
+  color: inherit; /* Matches parent color */
   transition: color 0.3s ease;
 }
 
@@ -17,58 +17,48 @@ a:hover {
   color: #987554; /* Medium Brown */
 }
 
-a:active {
-  color: #664229; /* Dark Brown */
-}
-
-/* Navigation */
+/* Sticky Navigation */
 .sticky-header {
-  position: sticky;
+  position: fixed;
   top: 0;
-  display: flex; /* Align logo and links on the same row */
-  justify-content: space-between; /* Space out the logo and links */
-  align-items: center; /* Vertically center items */
-  background-color: transparent; /* Transparent background initially */
-  color: #664229; /* Matches hero text color */
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: transparent; /* Transparent initially */
   padding: 10px 20px;
   z-index: 1000;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  opacity: 0; /* Start invisible */
+  pointer-events: none; /* Disable interaction initially */
+  transition: background-color 0.3s ease, opacity 0.3s ease;
 }
 
-.sticky-header.scrolled {
+.sticky-header.active {
   background-color: #D2B48C; /* Tan */
-  color: white;
-}
-
-.nav-links {
-  list-style: none;
-  display: flex; /* Align links horizontally */
-  gap: 20px;
-  margin: 0;
-  padding: 0;
-}
-
-.nav-links a {
-  color: inherit; /* Matches current text color of the header */
-  font-weight: 500;
-  text-decoration: none; /* Removes underline */
-  transition: color 0.3s ease;
-}
-
-.nav-links a:hover {
-  color: #987554; /* Medium Brown on hover */
+  opacity: 1; /* Become visible */
+  pointer-events: all; /* Enable interaction */
 }
 
 .logo {
   font-weight: 700;
   font-size: 1.5rem;
-  color: inherit; /* Matches current header color */
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links a {
+  font-weight: 500;
 }
 
 /* Hero Section */
 .hero {
   height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
@@ -82,10 +72,16 @@ a:active {
   font-weight: 700;
 }
 
-.hero h2 {
-  font-size: 1.5rem;
-  font-weight: 400;
-  margin-top: 10px;
+.hero-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.hero-links a {
+  font-weight: 500;
+  font-size: 1.2rem;
 }
 
 /* About Section */
@@ -96,22 +92,16 @@ a:active {
   color: #5C4433; /* Darker Brown Text */
 }
 
-.section-title {
-  font-size: 2.5rem;
-  color: #664229; /* Dark Brown for Section Titles */
-  margin-bottom: 20px;
+/* Animations */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s ease, transform 1s ease;
 }
 
-.about-highlight {
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: #5C4433; /* Match the Text Color */
-  margin-bottom: 20px;
-}
-
-.about-description {
-  font-size: 1.2rem;
-  line-height: 1.8;
+.fade-in-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* Footer */
@@ -132,14 +122,6 @@ a:active {
   color: white;
 }
 
-/* Animation */
-.fade-in {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 1s ease, transform 1s ease;
-}
-
-.fade-in-visible {
-  opacity: 1;
-  transform: translateY(0);
+.footer-links a:hover {
+  color: #E8DCC3; /* Lighter Tan */
 }

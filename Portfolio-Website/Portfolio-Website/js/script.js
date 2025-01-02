@@ -1,20 +1,12 @@
-// Change Navigation Background on Scroll
+// Transition Hero into Sticky Navigation
 window.addEventListener('scroll', () => {
     const header = document.querySelector('.sticky-header');
-    const navLinks = document.querySelectorAll('.nav-links a');
     const hero = document.querySelector('.hero');
 
-    if (window.scrollY > 50) {
-        // Add scrolled class for tan background and white text
-        header.classList.add('scrolled');
-        navLinks.forEach(link => link.style.color = 'white'); // Set link color to white
+    if (window.scrollY > hero.offsetHeight - header.offsetHeight) {
+        header.classList.add('active');
     } else {
-        // Remove scrolled class for transparent background
-        header.classList.remove('scrolled');
-
-        // Get hero section text color dynamically
-        const heroTextColor = getComputedStyle(hero).color; 
-        navLinks.forEach(link => link.style.color = heroTextColor); // Set link color to hero text color
+        header.classList.remove('active');
     }
 });
 
@@ -40,13 +32,13 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// Smooth Scrolling for Navigation Links
-document.querySelectorAll('nav a').forEach(anchor => {
+// Smooth Scrolling for Links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
 
-        // Scroll to the target section smoothly
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
+        const target = document.querySelector(this.getAttribute('href'));
+        target.scrollIntoView({
             behavior: 'smooth'
         });
     });
