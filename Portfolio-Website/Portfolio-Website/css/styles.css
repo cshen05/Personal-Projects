@@ -1,6 +1,8 @@
 /* General Reset */
 body {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   font-family: 'Lexend', sans-serif;
   background-color: #E8DCC3; /* Lighter Tan (Main Background) */
   color: #664229; /* Dark Brown for text */
