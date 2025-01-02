@@ -28,7 +28,7 @@ a:active {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: transparent; /* Matches background initially */
+  background-color: transparent; /* Transparent initially */
   color: black;
   padding: 10px 20px;
   z-index: 1000;
