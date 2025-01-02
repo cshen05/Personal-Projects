@@ -2,8 +2,8 @@
 body {
     margin: 0;
     font-family: 'Lexend', sans-serif;
-    background-color: #f5f5dc; /* Light Beige */
-    color: black;
+    background-color: #E5D3B3; /* Light Beige from palette */
+    color: #664229; /* Dark Brown for text */
     scroll-behavior: smooth;
   }
   
@@ -15,18 +15,18 @@ body {
   
   a:hover {
     transform: scale(1.1);
-    background-color: brown; /* Flash effect */
+    background-color: #987554; /* Medium Brown from palette */
   }
   
   a:active {
-    background-color: #5c4033; /* Darker brown */
+    background-color: #664229; /* Dark Brown */
   }
   
   /* Navigation */
   .sticky-header {
     position: sticky;
     top: 0;
-    background-color: brown;
+    background-color: #D2B48C; /* Tan */
     color: white;
     padding: 10px 20px;
     z-index: 1000;
@@ -56,8 +56,8 @@ body {
     justify-content: center;
     align-items: center;
     text-align: center;
-    background: linear-gradient(to bottom, #f5f5dc, #e3d9c6);
-    color: black;
+    background: linear-gradient(to bottom, #E5D3B3, #D2B48C); /* Light to Tan Gradient */
+    color: #664229;
   }
   
   .hero h1 {
@@ -79,14 +79,14 @@ body {
   
   .section-title {
     font-size: 2.5rem;
-    color: brown;
+    color: #987554; /* Medium Brown */
     margin-bottom: 20px;
   }
   
   .about-highlight {
     font-size: 1.5rem;
     font-weight: 500;
-    color: #5c4033;
+    color: #B99976; /* Lighter Brown */
     margin-bottom: 20px;
   }
   
@@ -97,7 +97,7 @@ body {
   
   /* Footer */
   .footer {
-    background-color: black;
+    background-color: #664229; /* Dark Brown */
     color: white;
     padding: 20px 0;
   }
@@ -111,4 +111,16 @@ body {
   
   .footer-links a {
     color: white;
+  }
+  
+  /* Animation */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+  
+  .fade-in-visible {
+    opacity: 1;
+    transform: translateY(0);
   }

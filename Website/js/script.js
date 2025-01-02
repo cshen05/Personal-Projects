@@ -10,20 +10,20 @@ document.querySelectorAll('nav a').forEach(anchor => {
     });
 });
 
-// Intersection Observer for scroll animations
+// Intersection Observer for fade-in animations
 const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
         if (entry.isIntersecting) {
-            entry.target.classList.add('animate__animated', 'animate__fadeIn');
-            observer.unobserve(entry.target); // Stop observing once animation is applied
+            entry.target.classList.add('fade-in-visible'); // Add the fade-in-visible class
+            observer.unobserve(entry.target); // Stop observing once the animation is applied
         }
     });
 });
 
-// Apply observer to animated sections
-document.querySelectorAll('.animate__animated').forEach((el) => observer.observe(el));
+// Apply observer to elements with the fade-in class
+document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
 
-// Parallax Scrolling Effect
+// Parallax scrolling effect
 document.addEventListener("scroll", () => {
     const sections = document.querySelectorAll("section");
     sections.forEach((section) => {
