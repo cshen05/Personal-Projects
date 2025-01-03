@@ -33,7 +33,7 @@ window.addEventListener('scroll', () => {
     // Define RGB colors for transitions
     const heroColor = [24, 39, 71]; // Navy (#182747)
     const aboutColor = [216, 216, 216]; // Light Gray (#D8D8D8)
-    const experienceColor = [100, 126, 104]; // Muted Green (#647E68)
+    const experienceColor = [245, 245, 245]; // Muted Green (#647E68)
 
     const heroHeight = hero.offsetHeight;
     const aboutHeight = about.offsetHeight;

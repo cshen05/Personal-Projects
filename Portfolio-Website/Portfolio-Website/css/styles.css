@@ -124,6 +124,7 @@ a:hover {
   transform: scale(1.1);
   transition: transform 0.3s ease, color 0.3s ease, background-color 0.3s ease;
 }
+
 /* Scroll Indicator */
 .scroll-indicator {
   position: absolute;
@@ -131,7 +132,7 @@ a:hover {
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
-  cursor: pointer;
+  z-index: 10;
   animation: fadeInOut 2s infinite; /* Subtle fade in/out animation */
 }
 
@@ -142,7 +143,6 @@ a:hover {
   border-width: 0 2px 2px 0; /* Create the arrow shape */
   transform: rotate(45deg);
   animation: bounce 1.5s infinite; /* Arrow bounces */
-  transition: all 0.3s ease;
 }
 
 .scroll-indicator:hover .scroll-arrow {
