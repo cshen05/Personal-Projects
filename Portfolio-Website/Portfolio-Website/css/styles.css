@@ -214,13 +214,6 @@ a:hover {
   overflow: hidden; /* Hide content when closed */
 }
 
-.fun-facts-banner.open {
-  width: 300px; /* Expand to rectangle */
-  height: 200px;
-  border-radius: 10px; /* Change to rectangle */
-  background-color: #182747; /* Navy background for the card */
-}
-
 /* Fun Facts Icon (Emoji) */
 .fun-facts-icon {
   font-size: 1.5rem;
@@ -228,6 +221,14 @@ a:hover {
   pointer-events: none; /* Make the emoji non-clickable */
   transition: opacity 0.5s ease;
 }
+
+.fun-facts-banner.open {
+  width: 300px; /* Expand to rectangle */
+  height: 200px;
+  border-radius: 10px; /* Change to rectangle */
+  background-color: #182747; /* Navy background for the card */
+}
+
 
 .fun-facts-banner.open .fun-facts-icon {
   opacity: 0; /* Hide emoji when the card expands */

@@ -106,10 +106,19 @@ const funFacts = [
   "I can cook 2-minute instant noodles in 1.5 minutes (Personal Record)"
 ];
 
-// Toggle banner open/close
+// Toggle the banner open/close
 document.querySelector('.fun-facts-icon').addEventListener('click', () => {
   const banner = document.querySelector('.fun-facts-banner');
-  banner.classList.toggle('open'); // Toggle the banner open/close
+  banner.classList.toggle('open'); // Toggle the banner state
+
+  const funFactText = document.getElementById('fun-fact');
+  if (banner.classList.contains('open')) {
+    // Show the first fun fact when opening
+    funFactText.textContent = funFacts[currentFactIndex];
+  } else {
+    // Clear the text when closing
+    funFactText.textContent = "Click to reveal a fun fact!";
+  }
 });
 
 // Flip the card to show the next fun fact
@@ -117,10 +126,11 @@ document.querySelector('.fun-facts-card').addEventListener('click', () => {
   const card = document.querySelector('.fun-facts-card');
   const funFactText = document.getElementById('fun-fact');
 
-  card.classList.add('flip'); // Add flip animation
+  card.classList.add('flip'); // Add the flip animation
 
+  // Wait for the flip animation to complete before showing the next fact
   setTimeout(() => {
-    currentFactIndex = (currentFactIndex + 1) % funFacts.length;
+    currentFactIndex = (currentFactIndex + 1) % funFacts.length; // Loop through facts
     funFactText.textContent = funFacts[currentFactIndex];
     card.classList.remove('flip'); // Reset flip for the next click
   }, 600); // Match the CSS transition duration
@@ -133,8 +143,8 @@ window.addEventListener('scroll', () => {
   const sectionTop = section.getBoundingClientRect().top;
   const sectionBottom = section.getBoundingClientRect().bottom;
 
-  // Check if the section is out of view
+  // Close the banner if the section is out of view
   if (sectionBottom < 0 || sectionTop > window.innerHeight) {
-    banner.classList.remove('open'); // Close the banner
+    banner.classList.remove('open');
   }
 });
