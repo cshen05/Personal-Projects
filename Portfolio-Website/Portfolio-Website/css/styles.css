@@ -197,66 +197,6 @@ a:hover {
   margin-bottom: 20px;
 }
 
-/* Fun Facts Banner */
-.fun-facts-banner {
-  position: fixed;
-  top: 100px;
-  right: 200px;
-  width: 60px;
-  height: 60px;
-  background-color: #647e68; /* Muted green */
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: all 0.5s ease;
-  overflow: hidden;
-  z-index: 1000;
-}
-
-/* Fun Facts Icon (Emoji) */
-.fun-facts-icon {
-  font-size: 1.5rem;
-  color: #fff; /* White emoji */
-  pointer-events: none; /* Make the emoji non-clickable */
-  transition: opacity 0.5s ease;
-}
-
-.fun-facts-banner.open {
-  width: 300px; /* Expand to rectangle */
-  height: 200px;
-  border-radius: 10px; /* Change to rectangle */
-  background-color: #182747; /* Navy background for the card */
-}
-
-
-.fun-facts-banner.open .fun-facts-icon {
-  opacity: 0; /* Hide emoji when the card expands */
-}
-
-/* Fun Facts Card */
-.fun-facts-card {
-  width: 100%;
-  height: 100%;
-  background-color: #182747; /* Navy */
-  color: #d8d8d8; /* Light gray text */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  font-size: 1.2rem;
-  font-weight: 500;
-  border-radius: 8px;
-  backface-visibility: hidden; /* Hide back side when flipped */
-  transform: rotateX(0deg); /* Initial position */
-  transition: transform 0.6s ease; /* Smooth flip animation */
-}
-
-.fun-facts-card.flip {
-  transform: rotateX(-180deg); /* Flip animation for the card */
-}
-
 /* Experience */
 .experience {
   padding: 50px 20px;
