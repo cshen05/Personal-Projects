@@ -96,20 +96,29 @@ a:hover {
 }
 
 .hero-links {
-  list-style: none;
   display: flex;
-  gap: 20px;
-  margin-top: 20px;
+  justify-content: center; /* Center links horizontally */
+  align-items: center; /* Center links vertically */
+  flex-wrap: wrap; /* Allow wrapping if there are many links */
+  gap: 20px; /* Add spacing between links */
+  margin: 20px 0 0; /* Add some space above links */
+  padding: 0; /* Ensure no extra padding is applied */
+  list-style: none; /* Remove bullet points */
 }
 
 .hero-links a {
-  color: #d8d8d8;
+  color: #d8d8d8; /* Matches hero text color */
   font-weight: 500;
   font-size: 1.2rem;
+  text-decoration: none; /* Remove underline */
+  padding: 10px 15px; /* Add padding for better clickability */
+  border-radius: 5px; /* Rounded corners for aesthetic */
+  transition: color 0.3s ease, background-color 0.3s ease; /* Smooth hover transition */
 }
 
 .hero-links a:hover {
-  color: #647e68; /* Muted Green */
+  color: #182747; /* Navy text on hover */
+  background-color: #647e68; /* Muted green background */
 }
 
 /* About Section */
