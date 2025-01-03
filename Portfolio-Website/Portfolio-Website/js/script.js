@@ -100,11 +100,11 @@ let currentFactIndex = 0;
 
 const funFacts = [
     "Huge Arsenal FC supporter, UT Football is an obligation, and sometimes the Houston Dynamo",
-    "My go to comfort game is Clash of Clans",
+    "My go-to comfort game is Clash of Clans",
     "I was originally a swimmer :) Was my high school's varsity captain too",
     "I can read Korean but I don't understand what I'm reading",
     "My end goal in life is to travel the world",
-    "I can cook 2 minute instant noodles in 1.5 minutes (Personal Record)"
+    "I can cook 2-minute instant noodles in 1.5 minutes (Personal Record)"
 ];
 
 const funFactsBanner = document.querySelector('.fun-facts-banner');
@@ -124,10 +124,10 @@ function showNextFact() {
     }, 600); // Match CSS transition duration
 }
 
-// Open the fun fact card
+// Open the fun fact card when clicking the emoji
 document.querySelector('.fun-facts-icon').addEventListener('click', () => {
     funFactsBanner.classList.add('open');
-    funFactText.textContent = funFacts[currentFactIndex]; // Show the current fact
+    funFactText.textContent = funFacts[currentFactIndex]; // Show the first fun fact
 });
 
 // Flip the card to the next fun fact
@@ -137,9 +137,9 @@ funFactsCard.addEventListener('click', showNextFact);
 const observer = new IntersectionObserver(
     (entries) => {
         entries.forEach((entry) => {
-        if (!entry.isIntersecting) {
-            funFactsBanner.classList.remove('open'); // Close the fun fact card
-        }
+            if (!entry.isIntersecting) {
+                funFactsBanner.classList.remove('open'); // Close the fun fact card
+            }
         });
     },
     {

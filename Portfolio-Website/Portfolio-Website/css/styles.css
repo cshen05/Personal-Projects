@@ -200,52 +200,55 @@ a:hover {
 /* Fun Facts Banner */
 .fun-facts-banner {
   position: absolute;
-  top: 50px;
-  right: 75px;
-  width: 60px;
+  top: 100px;
+  right: 200px;
+  width: 60px; /* Circle size */
   height: 60px;
   background-color: #647e68; /* Muted green */
-  border-radius: 50%;
+  border-radius: 50%; /* Circular icon */
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  transition: all 0.5s ease;
-  overflow: hidden;
-}
-
-.fun-facts-icon {
-  font-size: 1.5rem;
-  color: #fff;
-  pointer-events: none;
-  transition: opacity 0.5s ease;
+  transition: all 0.5s ease; /* Smooth transition for expansion */
+  overflow: hidden; /* Hide content when closed */
 }
 
 .fun-facts-banner.open {
-  width: 300px; /* Expand into a rectangle */
+  width: 300px; /* Expand to rectangle */
   height: 200px;
-  border-radius: 10px;
-  background-color: #182747; /* Navy */
-  overflow: visible;
+  border-radius: 10px; /* Remove circle shape */
+  background-color: #182747; /* Navy background for the card */
+  overflow: visible; /* Allow content to expand fully */
+}
+
+/* Fun Facts Icon (Emoji) */
+.fun-facts-icon {
+  font-size: 1.5rem;
+  color: #fff; /* White emoji */
+  pointer-events: none; /* Make the emoji non-clickable */
+  transition: opacity 0.5s ease;
 }
 
 .fun-facts-banner.open .fun-facts-icon {
-  opacity: 0; /* Hide emoji when expanded */
+  opacity: 0; /* Hide emoji when the card expands */
 }
 
+/* Fun Facts Container */
 .fun-facts-container {
-  position: relative;
+  position: relative; /* Position container relative to banner */
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
-  height: 100%;
 }
 
+/* Fun Facts Card */
 .fun-facts-card {
-  width: 90%;
-  height: 90%;
-  background-color: #182747; /* Navy */
+  width: 90%; /* Fit inside the expanded banner */
+  height: 90%; /* Fit inside the expanded banner */
+  background-color: #182747; /* Navy background */
   color: #d8d8d8; /* Light gray text */
   display: flex;
   justify-content: center;
@@ -254,15 +257,21 @@ a:hover {
   font-size: 1.2rem;
   font-weight: 500;
   border-radius: 8px;
-  backface-visibility: hidden; /* Hide back side */
-  transform: rotateX(0deg);
-  transition: transform 0.6s ease;
+  backface-visibility: hidden; /* Hide the back side when flipped */
+  transform: rotateX(0deg); /* Initial position */
+  transition: transform 0.6s ease; /* Smooth flip animation */
 }
 
 .fun-facts-card.flip {
-  transform: rotateX(-180deg); /* Flip animation */
+  transform: rotateX(-180deg); /* Flip animation for the card */
 }
 
+/* Add Hover Effects for Fun Facts Card (Optional) */
+.fun-facts-card:hover {
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2); /* Add subtle shadow on hover */
+}
+
+/* Experience */
 .experience {
   padding: 50px 20px;
   background-color: #f5f5f5; /* Slightly lighter gray */
