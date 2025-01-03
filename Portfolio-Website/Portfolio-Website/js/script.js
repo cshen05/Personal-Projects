@@ -57,15 +57,22 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Fade-In Animations on Scroll
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('fade-in-visible'); // Add fade-in-visible class
-            observer.unobserve(entry.target); // Stop observing after animation
-        }
-    });
-});
 
-// Apply observer to all elements with the fade-in class
-document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
+// Fade-In and Zoom-In Animations on Scroll
+document.addEventListener('DOMContentLoaded', () => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Add fade-in and zoom-in classes dynamically
+            entry.target.classList.add('fade-in', 'zoom-in');
+            observer.unobserve(entry.target); // Stop observing once animation is applied
+          }
+        });
+      },
+      { threshold: 0.1 } // Trigger when 10% of the element is visible
+    );
+  
+    // Apply observer to all elements with 'fade-in' or 'zoom-in' classes
+    document.querySelectorAll('.fade-in, .zoom-in').forEach((el) => observer.observe(el));
+  });

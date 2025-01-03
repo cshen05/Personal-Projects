@@ -152,6 +152,49 @@ a:hover {
   margin-bottom: 20px;
 }
 
+/* Custom Fade-In Animation */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(50px); /* Start below */
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateY(25px); /* Intermediate step */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0); /* Final position */
+  }
+}
+
+/* Custom Zoom-In Animation */
+@keyframes zoomIn {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Apply Animations Dynamically */
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 1s ease-out forwards;
+}
+
+.zoom-in {
+  opacity: 0;
+  animation: zoomIn 1.5s ease-out forwards;
+}
+
 /* Footer */
 .footer {
   background-color: #182747; /* Navy */
