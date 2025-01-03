@@ -40,7 +40,9 @@ a:hover {
 
 .sticky-header.hidden {
   opacity: 0;
+  visibility: hidden;
   pointer-events: none; /* Disable interaction when hidden */
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .logo {
@@ -119,6 +121,8 @@ a:hover {
 .hero-links a:hover {
   color: #182747; /* Navy text on hover */
   background-color: #647e68; /* Muted green background */
+  transform: scale(1.1);
+  transition: transform 0.3s ease, color 0.3s ease, background-color 0.3s ease;
 }
 
 /* About Section */
@@ -144,19 +148,8 @@ a:hover {
 
 .about-description {
   font-size: 1.2rem;
-  line-height: 1.8;
-}
-
-/* Animations */
-.fade-in {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 1s ease, transform 1s ease;
-}
-
-.fade-in-visible {
-  opacity: 1;
-  transform: translateY(0);
+  line-height: 2;
+  margin-bottom: 20px;
 }
 
 /* Footer */
@@ -218,4 +211,19 @@ a:hover {
 
 .footer-links a:hover {
   color: #647e68; /* Muted Green for hover */
+}
+
+@media (max-width: 768px) {
+  .footer-logo {
+    font-size: 3rem; /* Reduce size for smaller screens */
+  }
+
+  .footer-contact {
+    font-size: 1rem; /* Adjust text size */
+  }
+
+  .footer-links {
+    flex-direction: column; /* Stack links vertically */
+    gap: 20px; /* Reduce gap */
+  }
 }

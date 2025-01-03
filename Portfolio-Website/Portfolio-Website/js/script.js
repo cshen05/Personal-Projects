@@ -26,7 +26,6 @@ window.addEventListener('scroll', () => {
 // Gradual Background Color Transition Between Sections
 window.addEventListener('scroll', () => {
     const hero = document.querySelector('.hero');
-    const about = document.querySelector('.about');
     const scrollPosition = window.scrollY;
     const heroHeight = hero.offsetHeight;
 
@@ -43,7 +42,6 @@ window.addEventListener('scroll', () => {
 
         // Apply interpolated background color to hero section
         hero.style.backgroundColor = `rgb(${interpolatedColor.join(',')})`;
-        about.style.backgroundColor = `rgb(${interpolatedColor.join(',')})`;
     }
 });
 
