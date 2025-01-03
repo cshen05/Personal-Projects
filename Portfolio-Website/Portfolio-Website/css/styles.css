@@ -200,8 +200,8 @@ a:hover {
 /* Fun Facts Banner */
 .fun-facts-banner {
   position: absolute;
-  top: 100px;
-  right: 200px;
+  top: 50px;
+  right: 75px;
   width: 60px;
   height: 60px;
   background-color: #647e68; /* Muted green */
@@ -226,6 +226,7 @@ a:hover {
   height: 200px;
   border-radius: 10px;
   background-color: #182747; /* Navy */
+  overflow: visible;
 }
 
 .fun-facts-banner.open .fun-facts-icon {
@@ -233,6 +234,7 @@ a:hover {
 }
 
 .fun-facts-container {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -241,8 +243,8 @@ a:hover {
 }
 
 .fun-facts-card {
-  width: 100%;
-  height: 100%;
+  width: 90%;
+  height: 90%;
   background-color: #182747; /* Navy */
   color: #d8d8d8; /* Light gray text */
   display: flex;
