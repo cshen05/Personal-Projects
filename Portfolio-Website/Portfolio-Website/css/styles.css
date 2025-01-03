@@ -153,10 +153,10 @@ a:hover {
 /* Animations */
 @keyframes bounce {
   0%, 100% {
-    transform: rotate(45deg) translateY(0); /* Original position */
+    transform: translateY(0) rotate(45deg); /* Original position */
   }
   50% {
-    transform: rotate(45deg) translateY(10px); /* Move slightly down */
+    transform: translateY(10px) rotate(45deg); /* Move slightly down */
   }
 }
 
