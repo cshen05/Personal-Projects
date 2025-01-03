@@ -26,22 +26,37 @@ window.addEventListener('scroll', () => {
 // Gradual Background Color Transition Between Sections
 window.addEventListener('scroll', () => {
     const hero = document.querySelector('.hero');
+    const about = document.querySelector('#about');
+    const experience = document.querySelector('#experience');
     const scrollPosition = window.scrollY;
-    const heroHeight = hero.offsetHeight;
 
     // Define RGB colors for transitions
     const heroColor = [24, 39, 71]; // Navy (#182747)
     const aboutColor = [216, 216, 216]; // Light Gray (#D8D8D8)
+    const experienceColor = [100, 126, 104]; // Muted Green (#647E68)
 
-    // Ensure transition occurs smoothly within the hero height
+    const heroHeight = hero.offsetHeight;
+    const aboutHeight = about.offsetHeight;
+
+    // Transition from Hero to About
     if (scrollPosition <= heroHeight) {
         const ratio = scrollPosition / heroHeight; // Calculate scroll percentage
         const interpolatedColor = heroColor.map((start, index) =>
             Math.round(start + ratio * (aboutColor[index] - start))
         );
-
-        // Apply interpolated background color to hero section
         hero.style.backgroundColor = `rgb(${interpolatedColor.join(',')})`;
+        about.style.backgroundColor = `rgb(${aboutColor.join(',')})`;
+    }
+
+    // Transition from About to Experience
+    const aboutTop = about.getBoundingClientRect().top;
+    if (aboutTop <= window.innerHeight && aboutTop > -aboutHeight) {
+        const ratio = Math.min(1, Math.abs(aboutTop / aboutHeight)); // Ensure ratio stays between 0 and 1
+        const interpolatedColor = aboutColor.map((start, index) =>
+            Math.round(start + ratio * (experienceColor[index] - start))
+        );
+        about.style.backgroundColor = `rgb(${interpolatedColor.join(',')})`;
+        experience.style.backgroundColor = `rgb(${experienceColor.join(',')})`;
     }
 });
 
@@ -58,9 +73,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 document.querySelector('.scroll-indicator').addEventListener('click', () => {
-    const nextSection = document.querySelector('#about'); // Scroll to the about section
+    const nextSection = document.querySelector('#about'); 
     nextSection.scrollIntoView({ behavior: 'smooth' });
-});
+  });
 
 // Fade-In and Zoom-In Animations on Scroll
 document.addEventListener('DOMContentLoaded', () => {
