@@ -32,7 +32,7 @@ window.addEventListener('scroll', () => {
 
     // Define RGB colors for transitions
     const heroColor = [24, 39, 71]; // Navy (#182747)
-    const aboutColor = [104, 126, 104]; // Muted Green (#647E68)
+    const aboutColor = [216, 216, 216]; // Light Gray (#D8D8D8)
 
     // Ensure transition occurs smoothly within the hero height
     if (scrollPosition <= heroHeight) {

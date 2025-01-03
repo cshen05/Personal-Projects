@@ -6,17 +6,17 @@ body {
   color: #182747;
   scroll-behavior: smooth;
 }
-/*
+
 a {
   text-decoration: none;
-  color: #182747; //Matches parent color 
+  color: #182747; 
   transition: color 0.3s ease;
 }
 
 a:hover {
-  color: #647e68; // Medium Brown
+  color: #647e68;
 }
-*/
+
 /* Sticky Navigation */
 .sticky-header {
   position: fixed;
