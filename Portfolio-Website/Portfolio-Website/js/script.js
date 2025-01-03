@@ -98,6 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 let currentFactIndex = 0;
 
+// Array of fun facts
 const funFacts = [
     "Huge Arsenal FC supporter, UT Football is an obligation, and sometimes the Houston Dynamo",
     "My go-to comfort game is Clash of Clans",
@@ -107,45 +108,34 @@ const funFacts = [
     "I can cook 2-minute instant noodles in 1.5 minutes (Personal Record)"
 ];
 
-const funFactsBanner = document.querySelector('.fun-facts-banner');
-const funFactText = document.getElementById('fun-fact');
-const funFactsCard = document.querySelector('.fun-facts-card');
-
-// Show the next fun fact
-function showNextFact() {
-    // Add flip animation
-    funFactsCard.classList.add('flip');
-
-    // Wait for flip animation to complete
-    setTimeout(() => {
-        currentFactIndex = (currentFactIndex + 1) % funFacts.length; // Cycle through facts
-        funFactText.textContent = funFacts[currentFactIndex];
-        funFactsCard.classList.remove('flip'); // Reset flip animation
-    }, 600); // Match CSS transition duration
-}
-
-// Open the fun fact card when clicking the emoji
+// Open the fun fact banner when clicking the emoji
 document.querySelector('.fun-facts-icon').addEventListener('click', () => {
-    funFactsBanner.classList.add('open');
-    funFactText.textContent = funFacts[currentFactIndex]; // Show the first fun fact
+    const banner = document.querySelector('.fun-facts-banner');
+    banner.classList.add('open'); // Add 'open' class to expand the banner
+    const funFactText = document.getElementById('fun-fact');
+    funFactText.textContent = funFacts[currentFactIndex]; // Display the first fun fact
 });
 
-// Flip the card to the next fun fact
-funFactsCard.addEventListener('click', showNextFact);
+// Flip the card to reveal the next fun fact
+document.querySelector('.fun-facts-card').addEventListener('click', () => {
+    const card = document.querySelector('.fun-facts-card');
+    const funFactText = document.getElementById('fun-fact');
 
-// Close the card when scrolling to a different section
-const observer = new IntersectionObserver(
-    (entries) => {
-        entries.forEach((entry) => {
-            if (!entry.isIntersecting) {
-                funFactsBanner.classList.remove('open'); // Close the fun fact card
-            }
-        });
-    },
-    {
-        threshold: 0.5, // Trigger when 50% of the section is out of view
+    // Add flip animation
+    card.classList.add('flip');
+
+    // Wait for the flip animation to complete
+    setTimeout(() => {
+        currentFactIndex = (currentFactIndex + 1) % funFacts.length; // Cycle through fun facts
+        funFactText.textContent = funFacts[currentFactIndex]; // Update the fun fact text
+        card.classList.remove('flip'); // Reset flip animation for the next click
+    }, 600); // Match the CSS animation duration
+});
+
+// Close the fun fact banner when scrolling out of the section
+window.addEventListener('scroll', () => {
+    const banner = document.querySelector('.fun-facts-banner');
+    if (banner.classList.contains('open')) {
+        banner.classList.remove('open'); // Remove 'open' class to collapse the banner
     }
-);
-
-// Observe the section where the fun facts are located
-observer.observe(document.querySelector('#about')); // Replace '#about' with the section containing the fun facts
+});
