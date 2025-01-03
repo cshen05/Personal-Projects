@@ -91,7 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
         },
       { threshold: 0.1 } // Trigger when 10% of the element is visible
     );
-
     // Apply observer to all elements with 'fade-in' or 'zoom-in' classes
     document.querySelectorAll('.fade-in, .zoom-in').forEach((el) => observer.observe(el));
 });
@@ -108,34 +107,53 @@ const funFacts = [
     "I can cook 2-minute instant noodles in 1.5 minutes (Personal Record)"
 ];
 
-// Open the fun fact banner when clicking the emoji
-document.querySelector('.fun-facts-icon').addEventListener('click', () => {
-    const banner = document.querySelector('.fun-facts-banner');
-    banner.classList.add('open'); // Add 'open' class to expand the banner
-    const funFactText = document.getElementById('fun-fact');
-    funFactText.textContent = funFacts[currentFactIndex]; // Display the first fun fact
-});
-
-// Flip the card to reveal the next fun fact
-document.querySelector('.fun-facts-card').addEventListener('click', () => {
+function showNextFact() {
     const card = document.querySelector('.fun-facts-card');
     const funFactText = document.getElementById('fun-fact');
 
     // Add flip animation
     card.classList.add('flip');
 
-    // Wait for the flip animation to complete
+    // Wait for flip animation to complete before showing the next fact
     setTimeout(() => {
-        currentFactIndex = (currentFactIndex + 1) % funFacts.length; // Cycle through fun facts
-        funFactText.textContent = funFacts[currentFactIndex]; // Update the fun fact text
-        card.classList.remove('flip'); // Reset flip animation for the next click
-    }, 600); // Match the CSS animation duration
-});
+        currentFactIndex = (currentFactIndex + 1) % funFacts.length;
+        funFactText.textContent = funFacts[currentFactIndex];
+        card.classList.remove('flip'); // Reset flip for the next fact
+    }, 600); // Match the CSS transition duration
+}
 
-// Close the fun fact banner when scrolling out of the section
-window.addEventListener('scroll', () => {
+// Toggle the fun facts card open/close
+document.querySelector('.fun-facts-icon').addEventListener('click', () => {
     const banner = document.querySelector('.fun-facts-banner');
+    const funFactText = document.getElementById('fun-fact');
+
+    // Toggle the `open` class
+    banner.classList.toggle('open');
+
+    // Show the first fact when opened
     if (banner.classList.contains('open')) {
-        banner.classList.remove('open'); // Remove 'open' class to collapse the banner
+        funFactText.textContent = funFacts[currentFactIndex];
+    } else {
+        funFactText.textContent = ""; // Clear the text when closed
     }
 });
+
+// Flip the card to reveal the next fun fact
+document.querySelector('.fun-facts-card').addEventListener('click', showNextFact);
+
+// **STEP 5: Observer for Closing Fun Facts**
+const funFactsSection = document.querySelector('#about'); // Replace with the correct section ID
+const funFactsObserver = new IntersectionObserver(
+    (entries) => {
+        entries.forEach((entry) => {
+            const banner = document.querySelector('.fun-facts-banner');
+            if (!entry.isIntersecting && banner.classList.contains('open')) {
+                banner.classList.remove('open'); // Close the banner only when scrolling out of the section
+            }
+        });
+    },
+    { threshold: 0.5 } // Trigger when 50% of the section is out of view
+);
+
+// Observe the fun facts section for scrolling behavior
+funFactsObserver.observe(funFactsSection);
