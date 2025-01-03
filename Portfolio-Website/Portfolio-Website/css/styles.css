@@ -14,7 +14,7 @@ a {
 }
 
 a:hover {
-  color: #987554; /* Medium Brown */
+  color: #7FBC7F; /* Medium Brown */
 }
 
 /* Sticky Navigation */
@@ -25,7 +25,7 @@ a:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #E8DCC3; 
+  background-color: #556B2F; 
   padding: 10px 30px;
   z-index: 1000;
   box-sizing: border-box;
@@ -41,7 +41,7 @@ a:hover {
 .logo {
   font-weight: 700;
   font-size: 1.5rem;
-  color: #664229; 
+  color: #E8DCC3; 
   white-space: nowrap;
 }
 
@@ -60,13 +60,13 @@ a:hover {
 
 .nav-links a {
   font-weight: 500;
-  color: #664229; /* Matches Footer Text */
+  color: #E8DCC3; /* Matches Footer Text */
   text-decoration: none; /* Remove underline */
   transition: color 0.3s ease; /* Add smooth hover transition */
 }
 
 .nav-links a:hover {
-  color: #987554; /* Lighter Accent Color */
+  color: #7FBC7F; /* Lighter Accent Color */
 }
 
 /* Hero Section */
@@ -77,7 +77,7 @@ a:hover {
   justify-content: center;
   align-items: center;
   text-align: center;
-  background-color: #E8DCC3; /* Matches Main Background */
+  background-color: linear-gradient(to bottom, #E8DCC3, #FAF9F6);
   color: #664229;
 }
 
@@ -102,20 +102,20 @@ a:hover {
 .about {
   padding: 50px 20px;
   text-align: left;
-  background-color: #E8DCC3; /* Matches Main Background */
-  color: #5C4433; /* Darker Brown Text */
+  background-color: #FAF9F6; /* Matches Main Background */
+  color: #3a3a3a; /* Darker Brown Text */
 }
 
 .section-title {
   font-size: 2.5rem;
-  color: #664229; /* Dark Brown for Section Titles */
+  color: #556B2F; /* Dark Brown for Section Titles */
   margin-bottom: 20px;
 }
 
 .about-highlight {
   font-size: 1.5rem;
   font-weight: 500;
-  color: #5C4433; /* Matches Text Color */
+  color: #7FBC7F; /* Matches Text Color */
   margin-bottom: 20px;
 }
 
@@ -128,13 +128,15 @@ a:hover {
 .photo-section {
   padding: 20px 0;
   text-align: center;
+  background-color: #55682f;
+  color: #E8DCC3;
 }
 
 .profile-photo {
   width: 200px;
   height: 200px;
   border-radius: 50%;
-  border: 5px solid #FAF9F6; /* Accent Border */
+  border: 5px solid #7FBC7F; /* Accent Border */
 }
 
 /* Animations */
@@ -151,22 +153,33 @@ a:hover {
 
 /* Footer */
 .footer {
-  background-color: #664229; /* Dark Brown */
-  color: white;
-  padding: 20px 0;
+  background-color: #3a3a3a; /* Dark Brown */
+  color: #E8DCC3;
+  padding: 50px 20px;
+  text-align: center;
+}
+
+.footer-contact {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
 }
 
 .footer-links {
   list-style: none;
   display: flex;
   justify-content: center;
-  gap: 15px;
+  gap: 30px;
+  padding: 0;
+  margin: 20px 0 0;
 }
 
 .footer-links a {
-  color: white;
+  color: #E8DCC3; /* Light Tan */
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.3s ease;
 }
 
 .footer-links a:hover {
-  color: #FAF9F6; /* Lighter Accent */
+  color: #7FBC7F; /* Soft Green */
 }
