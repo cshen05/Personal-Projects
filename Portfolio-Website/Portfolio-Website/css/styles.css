@@ -50,7 +50,6 @@ a:hover {
   list-style: none;
   display: flex; /* Horizontal alignment of links */
   justify-content: flex-end;
-  flex-grow: 1;
   gap: 30px; /* Spacing between links */
   margin: 0; /* Remove default margin */
   padding: 0; /* Remove default padding */
