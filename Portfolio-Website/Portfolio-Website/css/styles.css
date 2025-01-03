@@ -127,16 +127,19 @@ a:hover {
 
 .scroll-indicator {
   position: absolute;
-  bottom: 20px;
+  bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
+  animation: fadeInOut 3s infinite;
 }
 
 .scroll-text {
   font-size: 1rem;
   color: #d8d8d8;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  animation: pulse 1.5s infinite;
 }
 
 .scroll-arrow {
@@ -145,18 +148,42 @@ a:hover {
   border: 2px solid #d8d8d8;
   border-width: 2px 2px 0 0;
   transform: rotate(45deg);
-  animation: scrollArrow 1.5s infinite;
+  animation: spinArrow 2s infinite;
+  transition: all 0.3s ease;
 }
 
-@keyframes scrollArrow {
+.scroll-indicator:hover .scroll-arrow {
+  border-color: #647e68; /* Change to muted green on hover */
+  transform: rotate(45deg) scale(1.2); /* Slightly enlarge */
+}
+
+/* Animations */
+@keyframes fadeInOut {
   0%, 100% {
-    transform: translate(-50%, -50%) rotate(45deg);
+    opacity: 1;
   }
   50% {
-    transform: translate(-50%, -70%) rotate(45deg);
+    opacity: 0.5;
   }
 }
 
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes spinArrow {
+  0%, 100% {
+    transform: rotate(45deg) translateY(0);
+  }
+  50% {
+    transform: rotate(45deg) translateY(-10px); /* Moves slightly up */
+  }
+}
 /* About Section */
 .about {
   padding: 50px 20px;
@@ -187,8 +214,8 @@ a:hover {
 /* Fun Facts Banner */
 .fun-facts-banner {
   position: absolute;
-  top: 20px; /* Adjust to align next to the "Who I Am" section */
-  right: 30px; /* Align to the right */
+  top: 100px; /* Adjust to align next to the "Who I Am" section */
+  right: 50px; /* Align to the right */
   width: 60px; /* Icon size */
   height: 60px; /* Icon size */
   background-color: #647e68; /* Muted green background */

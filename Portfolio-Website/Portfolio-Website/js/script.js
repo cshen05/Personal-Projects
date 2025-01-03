@@ -57,22 +57,26 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
+document.querySelector('.scroll-indicator').addEventListener('click', () => {
+    const nextSection = document.querySelector('#about'); // Scroll to the about section
+    nextSection.scrollIntoView({ behavior: 'smooth' });
+});
 
 // Fade-In and Zoom-In Animations on Scroll
 document.addEventListener('DOMContentLoaded', () => {
     const observer = new IntersectionObserver(
-      (entries) => {
+        (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
+            if (entry.isIntersecting) {
             // Add fade-in and zoom-in classes dynamically
-            entry.target.classList.add('fade-in', 'zoom-in');
-            observer.unobserve(entry.target); // Stop observing once animation is applied
-          }
+                entry.target.classList.add('fade-in', 'zoom-in');
+                observer.unobserve(entry.target); // Stop observing once animation is applied
+            }
         });
-      },
+        },
       { threshold: 0.1 } // Trigger when 10% of the element is visible
     );
-  
+
     // Apply observer to all elements with 'fade-in' or 'zoom-in' classes
     document.querySelectorAll('.fade-in, .zoom-in').forEach((el) => observer.observe(el));
   });
