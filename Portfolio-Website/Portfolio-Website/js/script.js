@@ -97,63 +97,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
 let currentFactIndex = 0;
 
-// Array of fun facts
 const funFacts = [
-    "Huge Arsenal FC supporter, UT Football is an obligation, and sometimes the Houston Dynamo",
-    "My go-to comfort game is Clash of Clans",
-    "I was originally a swimmer :) Was my high school's varsity captain too",
-    "I can read Korean but I don't understand what I'm reading",
-    "My end goal in life is to travel the world",
-    "I can cook 2-minute instant noodles in 1.5 minutes (Personal Record)"
+  "Huge Arsenal FC supporter, UT Football is an obligation, and sometimes the Houston Dynamo",
+  "My go-to comfort game is Clash of Clans",
+  "I was originally a swimmer :) Was my high school's varsity captain too",
+  "I can read Korean but I don't understand what I'm reading",
+  "My end goal in life is to travel the world",
+  "I can cook 2-minute instant noodles in 1.5 minutes (Personal Record)"
 ];
 
-function showNextFact() {
-    const card = document.querySelector('.fun-facts-card');
-    const funFactText = document.getElementById('fun-fact');
-
-    // Add flip animation
-    card.classList.add('flip');
-
-    // Wait for flip animation to complete before showing the next fact
-    setTimeout(() => {
-        currentFactIndex = (currentFactIndex + 1) % funFacts.length;
-        funFactText.textContent = funFacts[currentFactIndex];
-        card.classList.remove('flip'); // Reset flip for the next fact
-    }, 600); // Match the CSS transition duration
-}
-
-// Toggle the fun facts card open/close
+// Toggle banner open/close
 document.querySelector('.fun-facts-icon').addEventListener('click', () => {
-    const banner = document.querySelector('.fun-facts-banner');
-    const funFactText = document.getElementById('fun-fact');
-
-    // Toggle the `open` class
-    banner.classList.toggle('open');
-
-    // Show the first fact when opened
-    if (banner.classList.contains('open')) {
-        funFactText.textContent = funFacts[currentFactIndex];
-    } else {
-        funFactText.textContent = ""; // Clear the text when closed
-    }
+  const banner = document.querySelector('.fun-facts-banner');
+  banner.classList.toggle('open'); // Toggle the banner open/close
 });
 
-// Flip the card to reveal the next fun fact
-document.querySelector('.fun-facts-card').addEventListener('click', showNextFact);
+// Flip the card to show the next fun fact
+document.querySelector('.fun-facts-card').addEventListener('click', () => {
+  const card = document.querySelector('.fun-facts-card');
+  const funFactText = document.getElementById('fun-fact');
 
-// **STEP 5: Observer for Closing Fun Facts**
-const funFactsSection = document.querySelector('#about'); // Replace with the correct section ID
-const funFactsObserver = new IntersectionObserver(
-    (entries) => {
-        entries.forEach((entry) => {
-            const banner = document.querySelector('.fun-facts-banner');
-            if (!entry.isIntersecting && banner.classList.contains('open')) {
-                banner.classList.remove('open'); // Close the banner only when scrolling out of the section
-            }
-        });
-    },
-    { threshold: 0.5 } // Trigger when 50% of the section is out of view
-);
+  card.classList.add('flip'); // Add flip animation
 
-// Observe the fun facts section for scrolling behavior
-funFactsObserver.observe(funFactsSection);
+  setTimeout(() => {
+    currentFactIndex = (currentFactIndex + 1) % funFacts.length;
+    funFactText.textContent = funFacts[currentFactIndex];
+    card.classList.remove('flip'); // Reset flip for the next click
+  }, 600); // Match the CSS transition duration
+});
+
+// Auto-close the banner when scrolling out of the section
+window.addEventListener('scroll', () => {
+  const banner = document.querySelector('.fun-facts-banner');
+  const section = document.querySelector('#about'); // Replace with the section containing the fun facts
+  const sectionTop = section.getBoundingClientRect().top;
+  const sectionBottom = section.getBoundingClientRect().bottom;
+
+  // Check if the section is out of view
+  if (sectionBottom < 0 || sectionTop > window.innerHeight) {
+    banner.classList.remove('open'); // Close the banner
+  }
+});
