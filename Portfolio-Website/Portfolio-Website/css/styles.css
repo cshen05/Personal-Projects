@@ -1,8 +1,11 @@
-/* General Reset */
-body {
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+/* General Reset */
+body {
+  margin: 0;
   font-family: 'Lexend', sans-serif;
   background-color: #E8DCC3; /* Lighter Tan (Main Background) */
   color: #664229; /* Dark Brown for text */
@@ -51,6 +54,7 @@ a:hover {
 .nav-links {
   list-style: none;
   display: flex; /* Horizontal alignment of links */
+  justify-content: flex-end;
   gap: 30px; /* Spacing between links */
   margin: 0; /* Remove default margin */
   padding: 0; /* Remove default padding */
