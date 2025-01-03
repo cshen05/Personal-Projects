@@ -38,6 +38,11 @@ a:hover {
   opacity: 1; /* Become visible on scroll */
 }
 
+.sticky-header.hidden {
+  opacity: 0;
+  pointer-events: none; /* Disable interaction when hidden */
+}
+
 .logo {
   font-weight: 700;
   font-size: 1.5rem;
@@ -77,13 +82,17 @@ a:hover {
   justify-content: center;
   align-items: center;
   text-align: center;
-  background-color: linear-gradient(to bottom, #182747, #647e68);
+  background: linear-gradient(to bottom, #182747, #d8d8d8);
   color: #d8d8d8;
 }
 
 .hero h1 {
-  font-size: 4rem;
-  font-weight: 700;
+  font-size: 6rem; /* Larger font size for the name */
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #d8d8d8;
+  letter-spacing: 3px;
+  text-shadow: 2px 2px #562b08; /* Shadow effect with Brown */
 }
 
 .hero-links {
@@ -106,8 +115,8 @@ a:hover {
 .about {
   padding: 50px 20px;
   text-align: left;
-  background-color: #d8d8d8; /* Matches Main Background */
-  color: #182747; /* Darker Brown Text */
+  background: linear-gradient(to bottom, #d8d8d8, #182747); /* Matches Main Background */
+  color: #647e68; /* Darker Brown Text */
 }
 
 .section-title {
@@ -154,9 +163,30 @@ a:hover {
   box-sizing: border-box; /* Include padding in height calculation */
 }
 
+/* Footer Stylized Name */
+.footer-logo {
+  font-size: 6rem; /* Same size as the hero */
+  font-weight: 900; /* Bold weight for emphasis */
+  text-transform: uppercase; /* Uppercase text */
+  color: #d8d8d8; /* Light Gray to match the footer */
+  letter-spacing: 3px; /* Add some spacing between letters */
+  text-shadow: 2px 2px #562b08; /* Shadow effect using Brown */
+  margin-bottom: 20px; /* Add spacing below the name */
+}
+
 .footer-contact {
   font-size: 1.5rem; /* Increase font size for better readability */
   margin-bottom: 20px;
+  color: #d8d8d8
+}
+
+.footer-contact a {
+  color: #d8d8d8; /* Same color as text */
+  text-decoration: none; /* No underline */
+}
+
+.footer-contact a:hover {
+  color: #d8d8d8; /* No hover color change */
 }
 
 .footer-links {

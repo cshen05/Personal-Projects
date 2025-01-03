@@ -1,15 +1,18 @@
-// Sticky Header Transition
+// Sticky navigation bar behavior
 window.addEventListener('scroll', () => {
     const header = document.querySelector('.sticky-header');
-    const hero = document.querySelector('.hero');
-
-    // Make sticky header visible after scrolling past the hero section
-    if (window.scrollY > hero.offsetHeight - header.offsetHeight) {
-        header.classList.add('active');
+    const footer = document.querySelector('.footer');
+  
+    const footerTop = footer.getBoundingClientRect().top;
+    const viewportHeight = window.innerHeight;
+  
+    // Hide navigation when footer comes into view
+    if (footerTop <= viewportHeight) {
+      header.classList.add('hidden');
     } else {
-        header.classList.remove('active');
+      header.classList.remove('hidden');
     }
-});
+  });
 
 // Gradual Background Color Transition Between Sections
 window.addEventListener('scroll', () => {
@@ -18,18 +21,20 @@ window.addEventListener('scroll', () => {
     const scrollPosition = window.scrollY;
     const heroHeight = hero.offsetHeight;
 
+    // Define RGB colors for transitions
+    const heroColor = [24, 39, 71]; // Navy (#182747)
+    const aboutColor = [104, 126, 104]; // Muted Green (#647E68)
+
+    // Ensure transition occurs smoothly within the hero height
     if (scrollPosition <= heroHeight) {
         const ratio = scrollPosition / heroHeight; // Calculate scroll percentage
-        const heroColor = [232, 220, 195]; // RGB for #E8DCC3 (Hero Section Color)
-        const footerColor = [102, 66, 41]; // RGB for #664229 (Sticky Header/Footer Color)
-
-        // Interpolate color based on scroll percentage
         const interpolatedColor = heroColor.map((start, index) =>
-            Math.round(start + ratio * (footerColor[index] - start))
+            Math.round(start + ratio * (aboutColor[index] - start))
         );
 
         // Apply interpolated background color to hero section
         hero.style.backgroundColor = `rgb(${interpolatedColor.join(',')})`;
+        about.style.backgroundColor = `rgb(${interpolatedColor.join(',')})`;
     }
 });
 
