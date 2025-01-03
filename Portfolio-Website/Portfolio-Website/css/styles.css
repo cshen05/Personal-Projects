@@ -82,7 +82,7 @@ a:hover {
   justify-content: center;
   align-items: center;
   text-align: center;
-  background: linear-gradient(to bottom, #182747, #d8d8d8);
+  background-color: #182747;
   color: #d8d8d8;
 }
 
@@ -115,8 +115,8 @@ a:hover {
 .about {
   padding: 50px 20px;
   text-align: left;
-  background: linear-gradient(to bottom, #d8d8d8, #182747); /* Matches Main Background */
-  color: #647e68; /* Darker Brown Text */
+  background-color: #d8d8d8; /* Matches Main Background */
+  color: #182747; /* Darker Brown Text */
 }
 
 .section-title {
