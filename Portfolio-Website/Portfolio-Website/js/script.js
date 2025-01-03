@@ -107,33 +107,34 @@ const funFacts = [
     "I can cook 2 minute instant noodles in 1.5 minutes (Personal Record)"
 ];
 
-function toggleFunFacts() {
-    const banner = document.querySelector('.fun-facts-banner');
-    const funFactText = document.getElementById('fun-fact');
-
-    // Toggle open/close state
-    banner.classList.toggle('open');
-
-    if (banner.classList.contains('open')) {
-        // Show the first fact when opened
-        funFactText.textContent = funFacts[currentFactIndex];
-    } else {
-        // Reset to default when closed
-        funFactText.textContent = ""; // No default text when closed
-    }
-}
-
-document.querySelector('.fun-facts-card').addEventListener('click', () => {
+function showNextFact() {
     const card = document.querySelector('.fun-facts-card');
     const funFactText = document.getElementById('fun-fact');
 
-    // Flip animation
+    // Add flip animation
     card.classList.add('flip');
 
-    // Wait for flip animation to complete before showing next fact
+    // Wait for flip animation to complete before showing the next fact
     setTimeout(() => {
         currentFactIndex = (currentFactIndex + 1) % funFacts.length;
         funFactText.textContent = funFacts[currentFactIndex];
         card.classList.remove('flip'); // Reset flip for the next fact
     }, 600); // Match the CSS transition duration
+}
+
+// Close the card when scrolling
+window.addEventListener('scroll', () => {
+    const banner = document.querySelector('.fun-facts-banner');
+    if (banner.classList.contains('open')) {
+        banner.classList.remove('open');
+    }
 });
+
+// Open the card when clicking the emoji
+document.querySelector('.fun-facts-icon').addEventListener('click', () => {
+    const banner = document.querySelector('.fun-facts-banner');
+    banner.classList.add('open');
+});
+
+// Flip the card to reveal the next fun fact
+document.querySelector('.fun-facts-card').addEventListener('click', showNextFact);
