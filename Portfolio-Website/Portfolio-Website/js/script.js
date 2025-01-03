@@ -109,10 +109,9 @@ const funFacts = [
 
 function toggleFunFacts() {
     const banner = document.querySelector('.fun-facts-banner');
-    const card = document.querySelector('.fun-facts-card');
     const funFactText = document.getElementById('fun-fact');
 
-  // Toggle open/close state
+    // Toggle open/close state
     banner.classList.toggle('open');
 
     if (banner.classList.contains('open')) {
@@ -120,7 +119,7 @@ function toggleFunFacts() {
         funFactText.textContent = funFacts[currentFactIndex];
     } else {
         // Reset to default when closed
-        funFactText.textContent = "Click for Fun Facts!";
+        funFactText.textContent = ""; // No default text when closed
     }
 }
 

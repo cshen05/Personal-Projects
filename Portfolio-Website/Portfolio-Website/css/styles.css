@@ -202,8 +202,8 @@ a:hover {
   position: absolute;
   top: 100px;
   right: 200px; /* Align to the right */
-  width: 60px;
-  height: 60px;
+  width: 60px; /* Icon size */
+  height: 60px; /* Icon size */
   background-color: #647e68;
   border-radius: 50%; /* Circular icon */
   display: flex;
@@ -214,13 +214,6 @@ a:hover {
   overflow: hidden;
 }
 
-.fun-facts-banner.open {
-  width: 300px; /* Expand into a rectangle */
-  height: 200px;
-  border-radius: 10px; /* Change shape */
-  background-color: #182747; /* Change background color */
-}
-
 .fun-facts-icon {
   font-size: 1.5rem;
   color: #fff;
@@ -228,8 +221,15 @@ a:hover {
   transition: opacity 0.5s ease;
 }
 
+.fun-facts-banner.open {
+  width: 300px; /* Expand into a rectangle */
+  height: 200px;
+  border-radius: 10px; /* Change to rectangle */
+  background-color: #182747; /* Change background color */
+}
+
 .fun-facts-banner.open .fun-facts-icon {
-  opacity: 0; /* Hide icon when expanded */
+  opacity: 0; /* Hide emoji when expanded */
 }
 
 .fun-facts-container {
