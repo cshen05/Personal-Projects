@@ -25,7 +25,7 @@ a:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #664229; /* Matches Footer */
+  background-color: #FAF9F6; 
   padding: 10px 30px;
   z-index: 1000;
   box-sizing: border-box;
@@ -41,7 +41,7 @@ a:hover {
 .logo {
   font-weight: 700;
   font-size: 1.5rem;
-  color: white; /* Matches Footer Text */
+  color: #664229; 
   white-space: nowrap;
 }
 
@@ -60,13 +60,13 @@ a:hover {
 
 .nav-links a {
   font-weight: 500;
-  color: white; /* Matches Footer Text */
+  color: #664229; /* Matches Footer Text */
   text-decoration: none; /* Remove underline */
   transition: color 0.3s ease; /* Add smooth hover transition */
 }
 
 .nav-links a:hover {
-  color: #FAF9F6; /* Lighter Accent Color */
+  color: #987554; /* Lighter Accent Color */
 }
 
 /* Hero Section */
