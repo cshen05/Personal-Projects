@@ -28,7 +28,6 @@ a:hover {
   background-color: #664229; /* Matches Footer */
   padding: 10px 30px;
   z-index: 1000;
-  box-sizing: border-box;
   opacity: 0; /* Start invisible */
   transition: opacity 0.3s ease, background-color 0.3s ease;
   border: 2px solid red;
