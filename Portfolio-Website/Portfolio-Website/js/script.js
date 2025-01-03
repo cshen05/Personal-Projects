@@ -98,53 +98,46 @@ document.addEventListener('DOMContentLoaded', () => {
 let currentFactIndex = 0;
 
 const funFacts = [
-  "Huge Arsenal FC supporter, UT Football is an obligation, and sometimes the Houston Dynamo",
-  "My go-to comfort game is Clash of Clans",
-  "I was originally a swimmer :) Was my high school's varsity captain too",
-  "I can read Korean but I don't understand what I'm reading",
-  "My end goal in life is to travel the world",
-  "I can cook 2-minute instant noodles in 1.5 minutes (Personal Record)"
+    "Huge Arsenal FC supporter, UT Football is an obligation, and sometimes the Houston Dynamo",
+    "My go-to comfort game is Clash of Clans",
+    "I was originally a swimmer :) Was my high school's varsity captain too",
+    "I can read Korean but I don't understand what I'm reading",
+    "My end goal in life is to travel the world",
+    "I can cook 2-minute instant noodles in 1.5 minutes (Personal Record)"
 ];
 
-// Toggle the banner open/close
+// Handle icon click to toggle card
 document.querySelector('.fun-facts-icon').addEventListener('click', () => {
-  const banner = document.querySelector('.fun-facts-banner');
-  banner.classList.toggle('open'); // Toggle the banner state
+    const banner = document.querySelector('.fun-facts-banner');
+    const funFactText = document.getElementById('fun-fact');
 
-  const funFactText = document.getElementById('fun-fact');
-  if (banner.classList.contains('open')) {
-    // Show the first fun fact when opening
-    funFactText.textContent = funFacts[currentFactIndex];
-  } else {
-    // Clear the text when closing
-    funFactText.textContent = "Click to reveal a fun fact!";
-  }
+    banner.classList.toggle('open'); // Expand or collapse the banner
+
+    if (banner.classList.contains('open')) {
+      funFactText.textContent = funFacts[currentFactIndex]; // Show the first fun fact
+    } else {
+      funFactText.textContent = "Click to reveal a fun fact!"; // Reset to default text
+    }
 });
 
-// Flip the card to show the next fun fact
+// Handle card flip to show next fun fact
 document.querySelector('.fun-facts-card').addEventListener('click', () => {
-  const card = document.querySelector('.fun-facts-card');
-  const funFactText = document.getElementById('fun-fact');
+    const card = document.querySelector('.fun-facts-card');
+    const funFactText = document.getElementById('fun-fact');
 
-  card.classList.add('flip'); // Add the flip animation
+    card.classList.add('flip'); // Trigger flip animation
 
-  // Wait for the flip animation to complete before showing the next fact
-  setTimeout(() => {
-    currentFactIndex = (currentFactIndex + 1) % funFacts.length; // Loop through facts
-    funFactText.textContent = funFacts[currentFactIndex];
-    card.classList.remove('flip'); // Reset flip for the next click
-  }, 600); // Match the CSS transition duration
+    setTimeout(() => {
+      currentFactIndex = (currentFactIndex + 1) % funFacts.length; // Cycle through facts
+      funFactText.textContent = funFacts[currentFactIndex]; // Update text
+      card.classList.remove('flip'); // Reset flip for next click
+    }, 600); // Match CSS transition duration
 });
 
-// Auto-close the banner when scrolling out of the section
+  // Handle scroll to close card
 window.addEventListener('scroll', () => {
-  const banner = document.querySelector('.fun-facts-banner');
-  const section = document.querySelector('#about'); // Replace with the section containing the fun facts
-  const sectionTop = section.getBoundingClientRect().top;
-  const sectionBottom = section.getBoundingClientRect().bottom;
-
-  // Close the banner if the section is out of view
-  if (sectionBottom < 0 || sectionTop > window.innerHeight) {
-    banner.classList.remove('open');
-  }
+    const banner = document.querySelector('.fun-facts-banner');
+    if (banner.classList.contains('open')) {
+      banner.classList.remove('open'); // Collapse the banner
+    }
 });
