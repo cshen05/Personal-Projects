@@ -200,49 +200,70 @@ a:hover {
 /* Fun Facts Banner */
 .fun-facts-banner {
   position: absolute;
-  top: 100px; 
+  top: 100px;
   right: 200px; /* Align to the right */
-  width: 60px; /* Icon size */
-  height: 60px; /* Icon size */
-  background-color: #647e68; /* Muted green background */
-  border-radius: 50%; /* Circle shape for the icon */
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  width: 60px;
+  height: 60px;
+  background-color: #647e68;
+  border-radius: 50%; /* Circular icon */
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
   transition: all 0.5s ease;
+  overflow: hidden;
 }
 
-.fun-facts-banner:hover {
-  transform: scale(1.1); /* Slight zoom on hover */
+.fun-facts-banner.open {
+  width: 300px; /* Expand into a rectangle */
+  height: 200px;
+  border-radius: 10px; /* Change shape */
+  background-color: #182747; /* Change background color */
 }
 
 .fun-facts-icon {
   font-size: 1.5rem;
   color: #fff;
   pointer-events: none;
+  transition: opacity 0.5s ease;
 }
 
-.fun-facts-content {
+.fun-facts-banner.open .fun-facts-icon {
+  opacity: 0; /* Hide icon when expanded */
+}
+
+.fun-facts-container {
   display: none; /* Hidden by default */
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 250px; /* Banner width */
-  height: auto;
-  padding: 20px;
-  background-color: #182747; /* Navy background for the banner */
-  color: #d8d8d8; /* Light gray text */
-  border-radius: 8px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-  transform: translateY(60px); /* Position below the icon */
-  transition: all 0.5s ease;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  justify-content: center;
+  align-items: center;
 }
 
-.fun-facts-banner.open .fun-facts-content {
-  display: block; /* Show when banner is open */
+.fun-facts-banner.open .fun-facts-container {
+  display: flex; /* Show container when expanded */
+}
+
+.fun-facts-card {
+  width: 100%;
+  height: 100%;
+  background-color: #d8d8d8; /* Light gray background */
+  color: #182747; /* Dark text color */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 500;
+  border-radius: 8px;
+  backface-visibility: hidden; /* Hide back side */
+  transform: rotateX(0deg);
+  transition: transform 0.6s ease;
+}
+
+.fun-facts-card.flip {
+  transform: rotateX(-180deg); /* Flip animation */
 }
 
 .experience {

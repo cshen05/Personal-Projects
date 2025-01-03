@@ -3,25 +3,25 @@ window.addEventListener('scroll', () => {
     const header = document.querySelector('.sticky-header');
     const hero = document.querySelector('.hero');
     const footer = document.querySelector('.footer');
-  
+
     const heroHeight = hero.offsetHeight;
     const footerTop = footer.getBoundingClientRect().top;
     const viewportHeight = window.innerHeight;
-  
+
     // Show sticky header after scrolling past the hero section
     if (window.scrollY > heroHeight) {
-      header.classList.add('active');
+        header.classList.add('active');
     } else {
-      header.classList.remove('active');
+        header.classList.remove('active');
     }
-  
+
     // Hide sticky header when footer is in view
     if (footerTop <= viewportHeight) {
-      header.classList.add('hidden');
+        header.classList.add('hidden');
     } else {
-      header.classList.remove('hidden');
+        header.classList.remove('hidden');
     }
-  });
+});
 
 // Gradual Background Color Transition Between Sections
 window.addEventListener('scroll', () => {
@@ -75,7 +75,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 document.querySelector('.scroll-indicator').addEventListener('click', () => {
     const nextSection = document.querySelector('#about'); 
     nextSection.scrollIntoView({ behavior: 'smooth' });
-  });
+});
 
 // Fade-In and Zoom-In Animations on Scroll
 document.addEventListener('DOMContentLoaded', () => {
@@ -94,31 +94,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Apply observer to all elements with 'fade-in' or 'zoom-in' classes
     document.querySelectorAll('.fade-in, .zoom-in').forEach((el) => observer.observe(el));
-  });
+});
 
-  const funFacts = [
+let currentFactIndex = 0;
+
+const funFacts = [
     "Huge Arsenal FC supporter, UT Football is an obligation, and sometimes the Houston Dynamo",
     "My go to comfort game is Clash of Clans",
     "I was originally a swimmer :) Was my high school's varsity captain too",
     "I can read Korean but I don't understand what I'm reading",
     "My end goal in life is to travel the world",
     "I can cook 2 minute instant noodles in 1.5 minutes (Personal Record)"
-  ];
-  
-  let currentFactIndex = 0;
-  
-  function toggleFunFacts() {
+];
+
+function toggleFunFacts() {
     const banner = document.querySelector('.fun-facts-banner');
+    const card = document.querySelector('.fun-facts-card');
     const funFactText = document.getElementById('fun-fact');
-  
-    // Toggle the banner state
+
+  // Toggle open/close state
     banner.classList.toggle('open');
-  
-    // If opening, start displaying facts
+
     if (banner.classList.contains('open')) {
-      funFactText.textContent = funFacts[currentFactIndex];
-      currentFactIndex = (currentFactIndex + 1) % funFacts.length; // Cycle through facts
+        // Show the first fact when opened
+        funFactText.textContent = funFacts[currentFactIndex];
     } else {
-      funFactText.textContent = "Click for Fun Facts!";
+        // Reset to default when closed
+        funFactText.textContent = "Click for Fun Facts!";
     }
-  }
+}
+
+document.querySelector('.fun-facts-card').addEventListener('click', () => {
+    const card = document.querySelector('.fun-facts-card');
+    const funFactText = document.getElementById('fun-fact');
+
+    // Flip animation
+    card.classList.add('flip');
+
+    // Wait for flip animation to complete before showing next fact
+    setTimeout(() => {
+        currentFactIndex = (currentFactIndex + 1) % funFacts.length;
+        funFactText.textContent = funFacts[currentFactIndex];
+        card.classList.remove('flip'); // Reset flip for the next fact
+    }, 600); // Match the CSS transition duration
+});
