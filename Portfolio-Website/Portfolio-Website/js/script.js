@@ -11,7 +11,7 @@ window.addEventListener('load', () => {
         quoteOverlay.addEventListener('transitionend', () => {
             quoteOverlay.style.display = 'none'; // Hide the overlay completely after fade-out
         });
-    }, 3000); // 3 seconds delay
+    }, 2500); // 2.5 seconds delay
 });
 
 // Sticky Header
