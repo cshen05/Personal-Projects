@@ -246,7 +246,7 @@ a:hover {
 }
 
 .about-photo {
-  flex: 0 0 300px; /* Fixed width for the photo container */
+  flex: 0 0 500px; /* Fixed width for the photo container */
   text-align: center;
 }
 
