@@ -9,14 +9,14 @@ window.addEventListener('load', () => {
     // Fade out and scale up the quote overlay after 3 seconds
     setTimeout(() => {
         console.log('Fading out quote overlay...');
-        quoteOverlay.style.opacity = '0';
-        quoteOverlay.style.transform = 'scale(1.5)';
+        quoteOverlay.style.opacity = '0'; // Fade out
+        quoteOverlay.style.transform = 'scale(1.5)'; // Scale up
         quoteOverlay.style.transition = 'opacity 2s ease-in-out, transform 2s ease-in-out';
 
         quoteOverlay.addEventListener('transitionend', (e) => {
             if (e.propertyName === 'opacity') {
                 console.log('Quote overlay hidden, showing hero section...');
-                quoteOverlay.style.display = 'none';
+                quoteOverlay.style.display = 'none'; // Hide the overlay
                 heroSection.classList.add('visible'); // Show the hero section
 
                 // Sequentially fade in elements within the hero section
