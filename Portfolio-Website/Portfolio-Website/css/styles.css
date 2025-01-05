@@ -139,14 +139,6 @@ a:hover {
   padding: 0;
   margin: 0;
   overflow: hidden;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
-}
-
-.hero.visibile {
-  opacity: 1;
-  visibility: visible;
 }
 
 .hero h1 {
@@ -206,11 +198,6 @@ a:hover {
   transition: opacity 1s ease-in-out, transform 1s ease-in-out; /* Smooth fade-in */
 }
 
-.scroll-indicator.visible {
-  opacity: 1; /* Fully visible */
-  transform: translateY(0); /* Correct position */
-}
-
 .scroll-arrow {
   width: 20px;
   height: 20px;
@@ -224,14 +211,6 @@ a:hover {
   border-color: #647e68; /* Change color on hover */
   transform: rotate(45deg) scale(1.2); /* Slightly enlarge on hover */
 }
-
-.hero.visible h1,
-.hero.visible .hero-links,
-.hero.visible .scroll-indicator {
-  opacity: 1; /* Fully visible */
-  transform: translateY(0); /* Move to final position */
-}
-
 /* Animations */
 @keyframes bounce {
   0%, 100% {
