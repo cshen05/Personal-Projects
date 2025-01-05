@@ -53,6 +53,18 @@ a:hover {
   letter-spacing: 2px;
 }
 
+/* Custom Fade-Out and Scale-Up */
+@keyframes fadeOutScaleUp {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
 /* Sticky Navigation */
 .sticky-header {
   position: fixed;
@@ -125,6 +137,14 @@ a:hover {
   padding: 0;
   margin: 0;
   overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+}
+
+.hero.visibile {
+  opacity: 1;
+  visibility: visible;
 }
 
 .hero h1 {
