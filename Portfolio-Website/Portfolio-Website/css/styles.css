@@ -245,25 +245,35 @@ a:hover {
   flex: 1; /* Allow the text to take up the remaining space */
 }
 
+/* About Photo */
 .about-photo {
-  flex: 0 0 500px; /* Fixed width for the photo container */
-  text-align: center;
+  float: right; /* Float the photo to the right of the text */
+  margin: 0 20px 20px 0; /* Add spacing: Right and bottom margin */
 }
 
 .about-photo img {
-  max-width: 100%; /* Ensure the image is responsive */
-  border-radius: 0%; /* Make the photo circular */
+  max-width: 500px; /* Set a responsive width for the image */
+  border-radius: 50%; /* Make the photo circular */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
 }
 
+/* Clear Floats for the Container */
+.about-container::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+
 @media (max-width: 768px) {
-  .about-container {
-    flex-direction: column; /* Stack text and photo vertically */
-    align-items: center;
+  .about-photo {
+    float: none; /* Remove float for smaller screens */
+    margin: 0 auto 20px; /* Center the photo */
+    display: block; /* Ensure it behaves as a block element */
   }
 
-  .about-photo {
-    margin-top: 20px;
+  .about-photo img {
+    max-width: 150px; /* Reduce the size of the photo */
   }
 }
 
