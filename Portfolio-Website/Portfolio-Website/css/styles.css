@@ -234,43 +234,42 @@ a:hover {
 
 /* About Section Layout */
 .about-container {
-  display: flex; /* Align text and photo side by side */
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  flex-wrap: wrap; /* Ensure layout adjusts on smaller screens */
-  overflow: hidden;
+  padding: 50px 20px;
 }
 
+/* About Text Styling */
 .about-text {
   line-height: 1.8;
+  color: #182747;
+  position: relative; /* Enable better positioning */
 }
 
-/* About Photo */
+/* About Photo Styling */
 .about-photo {
   float: right; /* Float the photo to the right of the text */
-  margin: 0 20px 20px 0; /* Add spacing: Right and bottom margin */
-  width: 300px;
-  max-width: 100%;
+  margin: 0 0 20px 20px; /* Add space between the photo and the text */
+  width: 200px; /* Fixed width for the image */
 }
 
 .about-photo img {
-  width: 100%;
-  border-radius: 0%; /* Make the photo circular */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+  width: 100%; /* Ensure the image is responsive */
+  border-radius: 50%; /* Make the photo circular */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add subtle shadow */
 }
 
+/* Mobile Adjustments */
 @media (max-width: 768px) {
   .about-photo {
-    float: none; /* Remove float on small screens */
-    margin: 0 auto 20px; /* Center the photo */
-    display: block; /* Ensure it behaves as a block element */
+    float: none; /* Remove float for smaller screens */
+    margin: 0 auto 20px; /* Center the image */
+    display: block;
   }
 
   .about-photo img {
-    max-width: 150px; /* Reduce size for smaller screens */
+    width: 150px; /* Reduce the size of the image on smaller screens */
   }
 }
 
