@@ -251,7 +251,7 @@ a:hover {
 .about-photo {
   float: right; /* Float the photo to the right of the text */
   margin: 0 0 20px 20px; /* Add space between the photo and the text */
-  width: 200px; /* Fixed width for the image */
+  width: 400px; /* Fixed width for the image */
 }
 
 .about-photo img {
