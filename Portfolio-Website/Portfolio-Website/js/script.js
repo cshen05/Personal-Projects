@@ -4,6 +4,9 @@ window.addEventListener('load', () => {
     // Fade out the quote after 3 seconds
     setTimeout(() => {
         quoteOverlay.style.opacity = '0'; // Trigger fade-out
+        quoteOverlay.style.transform = 'scale(1.5)'; // Scale up the overlay
+        quoteOverlay.style.transition = 'opacity 2s ease-in-out, transform 2s ease-in-out'; // Add smooth transitions
+        
         quoteOverlay.addEventListener('transitionend', () => {
             quoteOverlay.style.display = 'none'; // Hide the overlay completely after fade-out
         });
