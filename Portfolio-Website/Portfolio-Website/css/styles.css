@@ -252,7 +252,7 @@ a:hover {
 
 .about-photo img {
   max-width: 100%; /* Ensure the image is responsive */
-  border-radius: 50%; /* Make the photo circular */
+  border-radius: 0%; /* Make the photo circular */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
 }
 
