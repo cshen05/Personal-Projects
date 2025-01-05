@@ -25,37 +25,39 @@ window.addEventListener('scroll', () => {
 
 // Gradual Background Color Transition Between Sections
 window.addEventListener('scroll', () => {
-    const sections = document.querySelectorAll('section');
+    const hero = document.querySelector('.hero');
+    const about = document.querySelector('#about');
+    const experience = document.querySelector('#experience');
     const scrollPosition = window.scrollY;
-    const viewportHeight = window.innerHeight;
 
     // Define RGB colors for transitions
-    const sectionColors = [
-        [24, 39, 71],   // Section 1: Navy (#182747)
-        [216, 216, 216], // Section 2: Light Gray (#D8D8D8)
-        [245, 245, 245], // Section 3: Lighter Gray (#F5F5F5)
-        [100, 126, 104], // Section 4: Muted Green (#647E68)
-    ];
+    const heroColor = [24, 39, 71]; // Navy (#182747)
+    const aboutColor = [216, 216, 216]; // Light Gray (#D8D8D8)
+    const experienceColor = [245, 245, 245]; // Muted Green (#647E68)
 
-    sections.forEach((section, index) => {
-        const nextSection = sections[index + 1];
-        if (!nextSection) return; // Skip if no next section
+    const heroHeight = hero.offsetHeight;
+    const aboutHeight = about.offsetHeight;
 
-        const currentTop = section.getBoundingClientRect().top;
-        const nextTop = nextSection.getBoundingClientRect().top;
+    // Transition from Hero to About
+    if (scrollPosition <= heroHeight) {
+        const ratio = scrollPosition / heroHeight; // Calculate scroll percentage
+        const interpolatedColor = heroColor.map((start, index) =>
+            Math.round(start + ratio * (aboutColor[index] - start))
+        );
+        hero.style.backgroundColor = `rgb(${interpolatedColor.join(',')})`;
+        about.style.backgroundColor = `rgb(${aboutColor.join(',')})`;
+    }
 
-        if (currentTop <= viewportHeight && nextTop > 0) {
-            // Calculate interpolation ratio based on scroll position
-            const ratio = Math.min(1, Math.max(0, 1 - nextTop / viewportHeight));
-            const interpolatedColor = sectionColors[index].map((start, i) =>
-                Math.round(start + ratio * (sectionColors[index + 1][i] - start))
-            );
-
-            // Apply interpolated color to the current section
-            section.style.backgroundColor = `rgb(${interpolatedColor.join(',')})`;
-            nextSection.style.backgroundColor = `rgb(${sectionColors[index + 1].join(',')})`;
-        }
-    });
+    // Transition from About to Experience
+    const aboutTop = about.getBoundingClientRect().top;
+    if (aboutTop <= window.innerHeight && aboutTop > -aboutHeight) {
+        const ratio = Math.min(1, Math.abs(aboutTop / aboutHeight)); // Ensure ratio stays between 0 and 1
+        const interpolatedColor = aboutColor.map((start, index) =>
+            Math.round(start + ratio * (experienceColor[index] - start))
+        );
+        about.style.backgroundColor = `rgb(${interpolatedColor.join(',')})`;
+        experience.style.backgroundColor = `rgb(${experienceColor.join(',')})`;
+    }
 });
 
 // Smooth Scrolling for Navigation Links
