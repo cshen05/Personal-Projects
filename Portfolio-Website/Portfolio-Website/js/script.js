@@ -1,6 +1,6 @@
 window.addEventListener('load', () => {
     const quoteOverlay = document.getElementById('quote-overlay');
-    
+
     // Fade out the quote after 3 seconds
     setTimeout(() => {
         quoteOverlay.style.opacity = '0'; // Trigger fade-out
@@ -10,7 +10,7 @@ window.addEventListener('load', () => {
     }, 3000); // 3 seconds delay
 });
 
-// sticky header
+// Sticky Header
 window.addEventListener('scroll', () => {
     const header = document.querySelector('.sticky-header');
     const hero = document.querySelector('.hero');
@@ -35,44 +35,42 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// Gradual Background Color Transition Between Sections
+//Background Changer
 window.addEventListener('scroll', () => {
-    const hero = document.querySelector('.hero');
-    const about = document.querySelector('#about');
-    const experience = document.querySelector('#experience');
+    const sections = [
+        document.querySelector('.hero'),
+        document.querySelector('#about'),
+        document.querySelector('#experience'),
+    ];
+    const sectionColors = [
+        [24, 39, 71],   // Hero: Navy (#182747)
+        [216, 216, 216], // About: Light Gray (#D8D8D8)
+        [245, 245, 245], // Experience: Very Light Gray (#F5F5F5)
+    ];
+
     const scrollPosition = window.scrollY;
+    const viewportHeight = window.innerHeight;
 
-    // Define RGB colors for transitions
-    const heroColor = [24, 39, 71]; // Navy (#182747)
-    const aboutColor = [216, 216, 216]; // Light Gray (#D8D8D8)
-    const experienceColor = [245, 245, 245]; // Muted Green (#647E68)
+    sections.forEach((section, index) => {
+        const nextSection = sections[index + 1];
+        if (!nextSection) return; // Skip if no next section
 
-    const heroHeight = hero.offsetHeight;
-    const aboutHeight = about.offsetHeight;
+        const sectionTop = section.getBoundingClientRect().top;
+        const nextSectionTop = nextSection.getBoundingClientRect().top;
 
-    // Transition from Hero to About
-    if (scrollPosition <= heroHeight) {
-        const ratio = scrollPosition / heroHeight; // Calculate scroll percentage
-        const interpolatedColor = heroColor.map((start, index) =>
-            Math.round(start + ratio * (aboutColor[index] - start))
-        );
-        hero.style.backgroundColor = `rgb(${interpolatedColor.join(',')})`;
-        about.style.backgroundColor = `rgb(${aboutColor.join(',')})`;
-    }
+        if (sectionTop <= viewportHeight && nextSectionTop > 0) {
+            const ratio = Math.min(1, Math.max(0, 1 - nextSectionTop / viewportHeight));
+            const interpolatedColor = sectionColors[index].map((start, i) =>
+                Math.round(start + ratio * (sectionColors[index + 1][i] - start))
+            );
 
-    // Transition from About to Experience
-    const aboutTop = about.getBoundingClientRect().top;
-    if (aboutTop <= window.innerHeight && aboutTop > -aboutHeight) {
-        const ratio = Math.min(1, Math.abs(aboutTop / aboutHeight)); // Ensure ratio stays between 0 and 1
-        const interpolatedColor = aboutColor.map((start, index) =>
-            Math.round(start + ratio * (experienceColor[index] - start))
-        );
-        about.style.backgroundColor = `rgb(${interpolatedColor.join(',')})`;
-        experience.style.backgroundColor = `rgb(${experienceColor.join(',')})`;
-    }
+            section.style.backgroundColor = `rgb(${interpolatedColor.join(',')})`;
+            nextSection.style.backgroundColor = `rgb(${sectionColors[index + 1].join(',')})`;
+        }
+    });
 });
 
-// Smooth Scrolling for Navigation Links
+// Smooth Scrolling
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
