@@ -1,46 +1,14 @@
 //Opening Functions
 window.addEventListener('load', () => {
     const quoteOverlay = document.getElementById('quote-overlay');
-    const heroSection = document.querySelector('.hero');
-    const heroName = document.querySelector('.hero h1');
-    const heroLinks = document.querySelector('.hero-links');
-    const scrollIndicator = document.querySelector('.scroll-indicator');
-
-    // Fade out and scale up the quote overlay after 3 seconds
+    
+    // Fade out the quote after 3 seconds
     setTimeout(() => {
-        quoteOverlay.style.opacity = '0'; // Fade out
-        quoteOverlay.style.transform = 'scale(1.5)'; // Scale up
-        quoteOverlay.style.transition = 'opacity 2s ease-in-out, transform 2s ease-in-out';
-
-      // After the overlay fades out, reveal the hero section
-        quoteOverlay.addEventListener('transitionend', (e) => {
-            if (e.propertyName === 'opacity') {
-                quoteOverlay.style.display = 'none';
-                heroSection.classList.add('visible');
-            }
-            quoteOverlay.style.display = 'none'; // Hide the overlay
-            heroSection.classList.add('visible'); // Make the hero section visible
-    
-            // Sequentially fade in elements within the hero section
-            setTimeout(() => {
-                heroName.style.opacity = '1';
-                heroName.style.transform = 'translateY(0)';
-                heroName.style.transition = 'opacity 1s ease-in-out, transform 1s ease-in-out';
-            }, 500); // Delay for a smoother effect
-    
-            setTimeout(() => {
-                heroLinks.style.opacity = '1';
-                heroLinks.style.transform = 'translateY(0)';
-                heroLinks.style.transition = 'opacity 1s ease-in-out, transform 1s ease-in-out';
-            }, 1000);
-    
-            setTimeout(() => {
-                scrollIndicator.style.opacity = '1';
-                scrollIndicator.style.transform = 'translateY(0)';
-                scrollIndicator.style.transition = 'opacity 1s ease-in-out, transform 1s ease-in-out';
-            }, 1500);
+        quoteOverlay.style.opacity = '0'; // Trigger fade-out
+        quoteOverlay.addEventListener('transitionend', () => {
+            quoteOverlay.style.display = 'none'; // Hide the overlay completely after fade-out
         });
-    }, 3000); // Delay before fading out the quote overlay
+    }, 3000); // 3 seconds delay
 });
 
 // Sticky Header
