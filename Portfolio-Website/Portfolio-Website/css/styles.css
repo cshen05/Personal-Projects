@@ -30,6 +30,7 @@ a:hover {
   align-items: center;
   z-index: 1000;
   opacity: 1; /* Fully visible initially */
+  transform: scale(1);
   transition: opacity 2s ease-in-out; /* Smooth fade-out */
 }
 
@@ -154,6 +155,9 @@ a:hover {
   color: #d8d8d8;
   letter-spacing: 3px;
   text-shadow: 2px 2px #562b08; /* Shadow effect with Brown */
+  opacity: 0; /* Start invisible */
+  transform: translateY(20px); /* Slightly below final position */
+  transition: opacity 1s ease-in-out, transform 1s ease-in-out; /* Smooth fade-in */
 }
 
 .hero-links {
@@ -165,6 +169,9 @@ a:hover {
   margin: 20px 0 0; /* Add some space above links */
   padding: 0; /* Ensure no extra padding is applied */
   list-style: none; /* Remove bullet points */
+  opacity: 0; /* Start invisible */
+  transform: translateY(20px); /* Slightly below final position */
+  transition: opacity 1s ease-in-out, transform 1s ease-in-out; /* Smooth fade-in */
 }
 
 .hero-links a {
@@ -193,6 +200,14 @@ a:hover {
   text-align: center;
   z-index: 10;
   animation: fadeInOut 2s infinite; /* Subtle fade in/out animation */
+  opacity: 0; /* Start invisible */
+  transform: translateY(20px); /* Slightly below final position */
+  transition: opacity 1s ease-in-out, transform 1s ease-in-out; /* Smooth fade-in */
+}
+
+.scroll-indicator.visible {
+  opacity: 1; /* Fully visible */
+  transform: translateY(0); /* Correct position */
 }
 
 .scroll-arrow {
@@ -207,6 +222,13 @@ a:hover {
 .scroll-indicator:hover .scroll-arrow {
   border-color: #647e68; /* Change color on hover */
   transform: rotate(45deg) scale(1.2); /* Slightly enlarge on hover */
+}
+
+.hero.visible h1,
+.hero.visible .hero-links,
+.hero.visible .scroll-indicator {
+  opacity: 1; /* Fully visible */
+  transform: translateY(0); /* Move to final position */
 }
 
 /* Animations */
