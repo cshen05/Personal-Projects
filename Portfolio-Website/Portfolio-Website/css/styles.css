@@ -232,6 +232,41 @@ a:hover {
   transition: background-color 0.5s ease;
 }
 
+/* About Section Layout */
+.about-container {
+  display: flex; /* Align text and photo side by side */
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap; /* Ensure layout adjusts on smaller screens */
+}
+
+.about-text {
+  flex: 1; /* Allow the text to take up the remaining space */
+}
+
+.about-photo {
+  flex: 0 0 300px; /* Fixed width for the photo container */
+  text-align: center;
+}
+
+.about-photo img {
+  max-width: 100%; /* Ensure the image is responsive */
+  border-radius: 50%; /* Make the photo circular */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+}
+
+@media (max-width: 768px) {
+  .about-container {
+    flex-direction: column; /* Stack text and photo vertically */
+    align-items: center;
+  }
+
+  .about-photo {
+    margin-top: 20px;
+  }
+}
+
 .section-title {
   font-size: 2.5rem;
   color: #562b08; /* Dark Brown for Section Titles */
