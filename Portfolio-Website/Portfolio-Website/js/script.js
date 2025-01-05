@@ -1,3 +1,15 @@
+window.addEventListener('load', () => {
+    const quoteOverlay = document.getElementById('quote-overlay');
+    
+    // Fade out the quote after 3 seconds
+    setTimeout(() => {
+        quoteOverlay.style.opacity = '0'; // Trigger fade-out
+        quoteOverlay.addEventListener('transitionend', () => {
+            quoteOverlay.style.display = 'none'; // Hide the overlay completely after fade-out
+        });
+    }, 3000); // 3 seconds delay
+});
+
 // sticky header
 window.addEventListener('scroll', () => {
     const header = document.querySelector('.sticky-header');
@@ -110,3 +122,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
 });
+

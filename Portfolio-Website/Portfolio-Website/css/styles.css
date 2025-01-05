@@ -17,6 +17,42 @@ a:hover {
   color: #647e68;
 }
 
+/* Quote Overlay */
+#quote-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff; /* White background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 1; /* Fully visible initially */
+  transition: opacity 2s ease-in-out; /* Smooth fade-out */
+}
+
+.quote-content {
+  text-align: center;
+  font-family: 'Lexend', sans-serif;
+  color: #182747; /* Navy text */
+}
+
+.quote-content blockquote {
+  font-size: 2rem;
+  font-style: italic;
+  margin: 0;
+}
+
+.quote-content footer {
+  margin-top: 10px;
+  font-size: 1.2rem;
+  color: #647e68; /* Muted green */
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
 /* Sticky Navigation */
 .sticky-header {
   position: fixed;
@@ -78,7 +114,7 @@ a:hover {
 
 /* Hero Section */
 .hero {
-  height: 150vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -89,7 +125,6 @@ a:hover {
   padding: 0;
   margin: 0;
   overflow: hidden;
-  padding-bottom: 50px;
 }
 
 .hero h1 {
@@ -127,49 +162,6 @@ a:hover {
   background-color: #647e68; /* Muted green background */
   transform: scale(1.1);
   transition: transform 0.3s ease, color 0.3s ease, background-color 0.3s ease;
-}
-
-.hero .hero-quote {
-  width: 80%; /* Restrict the width for better readability */
-  padding: 20px 30px; /* Add padding for spacing inside the quote */
-  margin-top: 30px; /* Add space above the quote */
-  background: linear-gradient(135deg, #182747, #647e68); /* Subtle gradient */
-  color: #f5f5f5; /* Light text color */
-  text-align: center;
-  border-radius: 10px; /* Rounded corners for aesthetic */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-}
-
-.hero .hero-quote blockquote {
-  margin: 0;
-  font-size: 1.8rem; /* Adjust font size */
-  font-style: italic;
-  line-height: 1.5;
-  color: #f5f5f5; /* Light text */
-}
-
-.hero .hero-quote footer {
-  margin-top: 10px;
-  font-size: 1.2rem;
-  color: #d8d8d8; /* Muted footer color */
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  opacity: 0.8;
-}
-
-.hero .hero-quote blockquote::before,
-.hero .hero-quote blockquote::after {
-  content: '"';
-  font-size: 2rem;
-  color: #f5f5f5; /* Quote marks color */
-  vertical-align: top;
-}
-
-.hero .quote-divider {
-  width: 50%;
-  height: 2px;
-  background: #647e68; /* Muted green color */
-  margin: 20px auto; /* Center the divider */
 }
 
 /* Scroll Indicator */
