@@ -5,6 +5,8 @@ body {
   background-color: #d8d8d8;
   color: #182747;
   scroll-behavior: smooth;
+  overflow-y: scroll;
+  scrollbar-width: none;
 }
 
 a {
