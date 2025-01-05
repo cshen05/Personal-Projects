@@ -238,9 +238,13 @@ a:hover {
   justify-content: space-between;
   gap: 20px;
   flex-wrap: wrap; /* Ensure layout adjusts on smaller screens */
+  overflow: hidden;
 }
 
 .about-text {
+  float:left;
+  width: calc(100% - 320px);
+  box-sizing: border-box;
   line-height: 1.8;
   overflow: hidden;
 }
@@ -249,6 +253,7 @@ a:hover {
 .about-photo {
   float: right; /* Float the photo to the right of the text */
   margin: 0 20px 20px 0; /* Add spacing: Right and bottom margin */
+  width: 300px;
 }
 
 .about-photo img {
@@ -259,14 +264,16 @@ a:hover {
 }
 
 @media (max-width: 768px) {
-  .about-photo {
-    float: none; /* Remove float for smaller screens */
-    margin: 0 auto 20px; /* Center the photo */
-    display: block; /* Ensure it behaves as a block element */
+  .about-text {
+    float: none; /* Remove float on smaller screens */
+    width: 100%; /* Text takes full width */
+    text-align: center; /* Center align the text */
   }
 
-  .about-photo img {
-    max-width: 150px; /* Reduce the size of the photo */
+  .about-photo {
+    float: none; /* Remove float for the photo */
+    margin: 0 auto 20px; /* Center the photo */
+    width: 150px; /* Reduce photo size */
   }
 }
 
