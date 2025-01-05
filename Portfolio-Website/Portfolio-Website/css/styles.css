@@ -229,24 +229,23 @@ a:hover {
   background-color: #d8d8d8; /* Matches Main Background */
   color: #182747; /* Darker Brown Text */
   transition: background-color 0.5s ease;
+  overflow: hidden;
 }
 
 /* About Section Layout */
 .about-container {
   display: flex; /* Align text and photo side by side */
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
   flex-wrap: wrap; /* Ensure layout adjusts on smaller screens */
   overflow: hidden;
 }
 
 .about-text {
-  float:left;
-  width: calc(100% - 320px);
-  box-sizing: border-box;
   line-height: 1.8;
-  overflow: hidden;
 }
 
 /* About Photo */
@@ -254,26 +253,24 @@ a:hover {
   float: right; /* Float the photo to the right of the text */
   margin: 0 20px 20px 0; /* Add spacing: Right and bottom margin */
   width: 300px;
+  max-width: 100%;
 }
 
 .about-photo img {
-  max-width: 300px; /* Set a responsive width for the image */
   width: 100%;
   border-radius: 0%; /* Make the photo circular */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
 }
 
 @media (max-width: 768px) {
-  .about-text {
-    float: none; /* Remove float on smaller screens */
-    width: 100%; /* Text takes full width */
-    text-align: center; /* Center align the text */
+  .about-photo {
+    float: none; /* Remove float on small screens */
+    margin: 0 auto 20px; /* Center the photo */
+    display: block; /* Ensure it behaves as a block element */
   }
 
-  .about-photo {
-    float: none; /* Remove float for the photo */
-    margin: 0 auto 20px; /* Center the photo */
-    width: 150px; /* Reduce photo size */
+  .about-photo img {
+    max-width: 150px; /* Reduce size for smaller screens */
   }
 }
 
