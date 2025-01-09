@@ -2,12 +2,12 @@
 window.addEventListener('load', () => {
     const greetingOverlay = document.getElementById('greeting-overlay');
     const greetingShown = localStorage.getItem('greetingShown')
-    const sessionVisited = sessionStorage.getItem('sessionVisited')
+    const sessionVisited = sessionStorage.getItem('sessionVisited'); // Specific to this session
 
     if (!greetingShown || !sessionVisited) {
         // Mark greeting as shown
         localStorage.setItem('greetingShown', 'true');
-        sessionStorage.getItem('sessionVisited', 'true');
+        sessionStorage.setItem('sessionVisited', 'true');
         
         greetingOverlay.classList.remove('hidden'); // Ensure it's visible
 
