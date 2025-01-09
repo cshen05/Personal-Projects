@@ -9,7 +9,7 @@ window.addEventListener('load', () => {
         localStorage.setItem('greetingShown', 'true');
         sessionStorage.setItem('sessionVisited', 'true');
         
-        greetingOverlay.classList.remove('hidden'); // Ensure it's visible
+        greetingOverlay.style.display = 'flex'; // Ensure it's visible
 
         const line1 = document.getElementById('greeting-line-1'); // Used for "Hey!" and "My name is Connor"
         const line3 = document.getElementById('greeting-line-3'); // Used for "Welcome to my Portfolio"
