@@ -8,7 +8,7 @@ window.addEventListener('load', () => {
     const typeText = (element, text, duration) => {
         element.textContent = ""; // Clear any existing text
         let i = 0;
-        const interval = duration / text.length; // Calculate interval per character
+        const interval = Math.min(duration / text.length, 50); // Calculate interval per character
         const typing = setInterval(() => {
             if (i < text.length) {
                 element.textContent += text[i];
@@ -27,7 +27,7 @@ window.addEventListener('load', () => {
             setTimeout(() => {
                 line1.classList.remove('fade-out'); // Remove fade-out class
                 line1.style.opacity = "1"; // Reset opacity for new text
-                typeText(line1, "My name is Connor", 1500); // Type "My name is Connor" in the same position
+                typeText(line1, "My name is Connor and", 1500); // Type "My name is Connor" in the same position
             }, 3000); // Wait for fade-out to complete before typing next line
         }, 1000); // Pause for 1 second after typing "Hey!"
     }, 1000); // Delay before the pause and fade-out logic
