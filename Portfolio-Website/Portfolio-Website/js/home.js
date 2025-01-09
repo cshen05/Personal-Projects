@@ -4,11 +4,13 @@ window.addEventListener('load', () => {
     const greetingShown = localStorage.getItem('greetingShown')
 
     if (!greetingShown) {
+        // Mark greeting as shown
+        localStorage.setItem('greetingShown', 'true');
         greetingOverlay.classList.remove('hidden'); // Ensure it's visible
-        
+
         const line1 = document.getElementById('greeting-line-1'); // Used for "Hey!" and "My name is Connor"
         const line3 = document.getElementById('greeting-line-3'); // Used for "Welcome to my Portfolio"
-        
+
         // Typing animation helper function
         const typeText = (element, text, duration) => {
             element.textContent = ""; // Clear any existing text
@@ -50,7 +52,7 @@ window.addEventListener('load', () => {
         // Remove the overlay completely
         setTimeout(() => {
             greetingOverlay.style.display = "none"; // Hide the overlay
-        }, 12000);
+        }, 12500);
     } else {
         greetingOverlay.style.display = 'none'
     }
