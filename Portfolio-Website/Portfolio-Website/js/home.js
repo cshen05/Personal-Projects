@@ -47,3 +47,28 @@ window.addEventListener('load', () => {
         greetingOverlay.style.display = "none"; // Hide the overlay
     }, 20000);
 });
+
+// Sticky Header
+window.addEventListener('scroll', () => {
+    const header = document.querySelector('.sticky-header');
+    const hero = document.querySelector('.hero');
+    const footer = document.querySelector('.footer');
+
+    const heroHeight = hero.offsetHeight;
+    const footerTop = footer.getBoundingClientRect().top;
+    const viewportHeight = window.innerHeight;
+
+    // Show sticky header after scrolling past the hero section
+    if (window.scrollY > heroHeight) {
+        header.classList.add('active');
+    } else {
+        header.classList.remove('active');
+    }
+
+    // Hide sticky header when footer is in view
+    if (footerTop <= viewportHeight) {
+        header.classList.add('hidden');
+    } else {
+        header.classList.remove('hidden');
+    }
+});
