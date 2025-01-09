@@ -56,6 +56,12 @@ a:hover {
   color: #647e68; /* Muted green color */
 }
 
+/* Fade-Out Animation for Text */
+.fade-out {
+  opacity: 0;
+  transition: opacity 2s ease-in-out; /* Smooth 2-second fade-out */
+}
+
 /* Custom Fade-Out and Scale-Up */
 @keyframes fadeOutScaleUp {
   0% {
