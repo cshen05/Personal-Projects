@@ -32,24 +32,12 @@ a:hover {
   align-items: center;
   z-index: 1000; /* Ensure it's above everything */
   opacity: 1; /* Fully visible initially */
-  transition: opacity 1s ease-in-out; /* Smooth fade-out */
+  transition: opacity 2s ease-in-out; /* Smooth fade-out */
 }
 
 .greeting-content {
   text-align: center;
   font-family: 'Lexend', sans-serif;
-  color: #182747; /* Navy text */
-}
-
-/* Typing Effect */
-@keyframes typing {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
-@keyframes blink-caret {
-  from, to { border-color: transparent; }
-  50% { border-color: #182747; }
 }
 
 .greeting-line {
@@ -57,17 +45,22 @@ a:hover {
   font-weight: bold;
   white-space: nowrap; /* Prevent line breaks during typing */
   overflow: hidden; /* Hide overflowing text */
-  border-right: 3px solid #182747; /* Typing cursor effect */
-  animation: typing 1.5s steps(30, end), blink-caret 0.5s step-end infinite;
 }
 
 #greeting-line-2 {
-  margin-top: 20px; /* Slight offset for second line */
-  font-size: 2.5rem; /* Smaller font size for the second line */
-  white-space: nowrap; /* Prevent line breaks */
-  overflow: hidden; /* Hide overflowing text */
-  border-right: 3px solid #182747; /* Blinking caret */
-  animation: typing 2s steps(25, end), blink-caret 0.5s step-end infinite;
+  font-size: 4rem; /* Smaller font size for the second line */
+}
+
+#greeting-line-3 {
+  margin-left: 50px;
+  font-size: 4rem; /* Adjust font size as needed */
+  color: #647e68; /* Muted green color */
+}
+
+/* Typing Effect */
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
 }
 
 /* Custom Fade-Out and Scale-Up */

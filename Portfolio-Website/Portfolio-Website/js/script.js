@@ -3,11 +3,11 @@ window.addEventListener('load', () => {
     const greetingOverlay = document.getElementById('greeting-overlay');
     const line1 = document.getElementById('greeting-line-1');
     const line2 = document.getElementById('greeting-line-2');
+    const line3 = document.getElementById('greeting-line-3');
 
-    // Function to set typing animation
-    const typeText = (element, text, duration, hideCaretAfter = false) => {
-        element.style.animation = "none"; // Reset animation
-        element.textContent = ""; // Clear content
+    // Typing animation helper function
+    const typeText = (element, text, duration) => {
+        element.textContent = ""; // Clear any existing text
         let i = 0;
         const interval = duration / text.length; // Calculate interval per character
         const typing = setInterval(() => {
@@ -15,37 +15,30 @@ window.addEventListener('load', () => {
                 element.textContent += text[i];
                 i++;
             } else {
-                clearInterval(typing); // Stop typing
-                if (hideCaretAfter) {
-                    setTimeout(() => {
-                        element.style.borderRight = "none"; // Hide the caret
-                    }, 500); // Delay before hiding the caret
-                }
+                clearInterval(typing); // Stop the typing animation
             }
         }, interval);
     };
 
     // Typing sequence
-    setTimeout(() => typeText(line1, "Hey!", 1000, true), 500); // Type "Hey!" in 1 second
+    setTimeout(() => typeText(line1, "Hey!", 1000), 500); // Type "Hey!" in 1 second
     setTimeout(() => {
         line1.textContent = ""; // Clear line1
-        typeText(line1, "My name is Connor", 1500, true); // Type "My name is Connor" in 1.5 seconds
+        typeText(line2, "My name is Connor", 1500); // Type "My name is Connor" in 1.5 seconds
     }, 2000);
-
     setTimeout(() => {
-        line2.style.animation = "none"; // Reset animation for line 2
-        typeText(line2, "Welcome to my Portfolio Website!", 2000, true); // Type final line
+        typeText(line3, "Welcome to my Portfolio", 2000); // Type "Welcome to my Portfolio" in 2 seconds
     }, 4000);
 
     // Fade out greeting overlay
     setTimeout(() => {
-        greetingOverlay.style.opacity = "0";
+        greetingOverlay.style.opacity = "0"; // Trigger fade-out
         greetingOverlay.style.transition = "opacity 2s ease-in-out";
     }, 8000);
 
-    // Remove overlay completely
+    // Remove the overlay completely
     setTimeout(() => {
-        greetingOverlay.style.display = "none";
+        greetingOverlay.style.display = "none"; // Hide the overlay
     }, 10000);
 });
 
