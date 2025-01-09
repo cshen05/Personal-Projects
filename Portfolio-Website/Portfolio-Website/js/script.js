@@ -8,7 +8,7 @@ window.addEventListener('load', () => {
     const typeText = (element, text, duration) => {
         element.textContent = ""; // Clear any existing text
         let i = 0;
-        const interval = Math.min(duration / text.length, 50); // Calculate interval per character
+        const interval = Math.min(duration / text.length, 75); // Calculate interval per character
         const typing = setInterval(() => {
             if (i < text.length) {
                 element.textContent += text[i];
@@ -33,7 +33,7 @@ window.addEventListener('load', () => {
     }, 1000); // Delay before the pause and fade-out logic
 
     setTimeout(() => {
-        setTimeout(() => typeText(line3, "Welcome to my Portfolio!", 2000), 500); // Pause for 0.5 seconds after "My name is Connor"
+        setTimeout(() => typeText(line3, "Welcome to my Portfolio!", 2000));
     }, 8000); // Adjust timing for the sequence
 
     // Fade out greeting overlay
