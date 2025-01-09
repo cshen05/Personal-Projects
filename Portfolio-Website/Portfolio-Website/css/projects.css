@@ -47,6 +47,30 @@ a {
     /* Slightly Darker Light Green */
 }
 
+/* Sticky Header */
+.sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #123029; /* Darker Green */
+    color: #d1e8df; /* Light Text */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px; /* Larger padding for a balanced look */
+    z-index: 1000; /* Ensure it's on top of other elements */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+.sticky-header .logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #d1e8df; /* Light Text */
+    text-decoration: none;
+}
+
 .nav-links {
     display: flex;
     gap: 20px;
@@ -59,15 +83,15 @@ a {
 }
 
 .nav-links a {
-    color: #ffffff;
+    color: #d1e8df; /* Light Text */
     font-weight: bold;
     text-decoration: none;
+    font-size: 1rem;
     transition: color 0.3s ease;
 }
 
 .nav-links a:hover {
-    color: #647e68;
-    /* Highlight on hover */
+    color: #b3dbca; /* Light Green */
 }
 
 /* Page Overview */
