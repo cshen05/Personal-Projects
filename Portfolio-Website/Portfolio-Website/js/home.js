@@ -45,7 +45,7 @@ window.addEventListener('load', () => {
     // Remove the overlay completely
     setTimeout(() => {
         greetingOverlay.style.display = "none"; // Hide the overlay
-    }, 20000);
+    }, 17000);
 });
 
 // Sticky Header
