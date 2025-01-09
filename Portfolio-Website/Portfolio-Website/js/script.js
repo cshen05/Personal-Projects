@@ -1,41 +1,44 @@
-//Opening Functions
+//Opening Greeting
 window.addEventListener('load', () => {
     const greetingOverlay = document.getElementById('greeting-overlay');
     const line1 = document.getElementById('greeting-line-1');
     const line2 = document.getElementById('greeting-line-2');
 
-    // Type "Hey!"
-    setTimeout(() => {
-        line1.textContent = "Hey!";
-        line1.style.animation = "typing 2s steps(3, end), blink-caret 0.5s step-end infinite";
-    }, 500);
+    // Function to set typing animation
+    const typeText = (element, text, duration) => {
+        element.style.animation = "none"; // Reset animation
+        element.textContent = ""; // Clear content
+        let i = 0;
+        const interval = duration / text.length; // Calculate interval per character
+        const typing = setInterval(() => {
+            if (i < text.length) {
+                element.textContent += text[i];
+                i++;
+            } else {
+                clearInterval(typing); // Stop typing
+            }
+        }, interval);
+    };
 
-    // Replace "Hey!" with "My name is Connor"
+    // Typing sequence
+    setTimeout(() => typeText(line1, "Hey!", 1000), 500); // Type "Hey!" in 1 second
     setTimeout(() => {
-        line1.style.animation = "none"; // Remove typing animation for fade-out
         line1.textContent = ""; // Clear line1
-        setTimeout(() => {
-            line1.textContent = "My name is Connor";
-            line1.style.animation = "typing 3s steps(17, end), blink-caret 0.5s step-end";
-        }, 200);
-    }, 3000);
+        typeText(line1, "My name is Connor", 1500); // Type "My name is Connor" in 1.5 seconds
+    }, 2000);
 
-    // Type "Welcome to my Portfolio Website!"
-    setTimeout(() => {
-        line2.textContent = "Welcome to my Portfolio Website!";
-        line2.style.animation = "typing 3s steps(32, end), blink-caret 0.5s step-end";
-    }, 7000);
+    setTimeout(() => typeText(line2, "Welcome to my Portfolio Website!", 2000), 4000); // Type final line
 
-    // Fade out the greeting overlay
+    // Fade out greeting overlay
     setTimeout(() => {
         greetingOverlay.style.opacity = "0";
         greetingOverlay.style.transition = "opacity 1s ease-in-out";
-    }, 12000);
+    }, 7000);
 
-    // Remove the overlay completely
+    // Remove overlay completely
     setTimeout(() => {
         greetingOverlay.style.display = "none";
-    }, 13000);
+    }, 8000);
 });
 
 // Sticky Header

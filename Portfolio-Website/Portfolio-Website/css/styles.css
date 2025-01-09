@@ -41,20 +41,6 @@ a:hover {
   color: #182747; /* Navy text */
 }
 
-.greeting-line {
-  font-size: 4rem;
-  font-weight: bold;
-  white-space: nowrap; /* Prevent line breaks during typing */
-  overflow: hidden; /* Hide overflowing text */
-  border-right: 3px solid #182747; /* Typing cursor effect */
-  animation: typing 2s steps(30, end), blink-caret 0.5s step-end infinite;
-}
-
-#greeting-line-2 {
-  margin-top: 20px; /* Slight offset for second line */
-  font-size: 2.5rem; /* Smaller font size for the second line */
-}
-
 /* Typing Effect */
 @keyframes typing {
   from { width: 0; }
@@ -66,6 +52,19 @@ a:hover {
   50% { border-color: #182747; }
 }
 
+.greeting-line {
+  font-size: 4rem;
+  font-weight: bold;
+  white-space: nowrap; /* Prevent line breaks during typing */
+  overflow: hidden; /* Hide overflowing text */
+  border-right: 3px solid #182747; /* Typing cursor effect */
+  animation: typing 1s steps(30, end), blink-caret 0.5s step-end infinite;
+}
+
+#greeting-line-2 {
+  margin-top: 20px; /* Slight offset for second line */
+  font-size: 2.5rem; /* Smaller font size for the second line */
+}
 
 /* Custom Fade-Out and Scale-Up */
 @keyframes fadeOutScaleUp {
