@@ -5,7 +5,7 @@ window.addEventListener('load', () => {
     const line2 = document.getElementById('greeting-line-2');
 
     // Function to set typing animation
-    const typeText = (element, text, duration) => {
+    const typeText = (element, text, duration, hideCaretAfter = false) => {
         element.style.animation = "none"; // Reset animation
         element.textContent = ""; // Clear content
         let i = 0;
@@ -16,24 +16,32 @@ window.addEventListener('load', () => {
                 i++;
             } else {
                 clearInterval(typing); // Stop typing
+                if (hideCaretAfter) {
+                    setTimeout(() => {
+                        element.style.borderRight = "none"; // Hide the caret
+                    }, 500); // Delay before hiding the caret
+                }
             }
         }, interval);
     };
 
     // Typing sequence
-    setTimeout(() => typeText(line1, "Hey!", 1000), 500); // Type "Hey!" in 1 second
+    setTimeout(() => typeText(line1, "Hey!", 1000, true), 500); // Type "Hey!" in 1 second
     setTimeout(() => {
         line1.textContent = ""; // Clear line1
-        typeText(line1, "My name is Connor", 1500); // Type "My name is Connor" in 1.5 seconds
+        typeText(line1, "My name is Connor", 1500, true); // Type "My name is Connor" in 1.5 seconds
     }, 2000);
 
-    setTimeout(() => typeText(line2, "Welcome to my Portfolio Website!", 2000), 4000); // Type final line
+    setTimeout(() => {
+        line2.style.animation = "none"; // Reset animation for line 2
+        typeText(line2, "Welcome to my Portfolio Website!", 2000, true); // Type final line
+    }, 4000);
 
     // Fade out greeting overlay
     setTimeout(() => {
         greetingOverlay.style.opacity = "0";
         greetingOverlay.style.transition = "opacity 2s ease-in-out";
-    }, 7000);
+    }, 8000);
 
     // Remove overlay completely
     setTimeout(() => {

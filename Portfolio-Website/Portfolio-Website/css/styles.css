@@ -64,6 +64,10 @@ a:hover {
 #greeting-line-2 {
   margin-top: 20px; /* Slight offset for second line */
   font-size: 2.5rem; /* Smaller font size for the second line */
+  white-space: nowrap; /* Prevent line breaks */
+  overflow: hidden; /* Hide overflowing text */
+  border-right: 3px solid #182747; /* Blinking caret */
+  animation: typing 2s steps(25, end), blink-caret 0.5s step-end infinite;
 }
 
 /* Custom Fade-Out and Scale-Up */
