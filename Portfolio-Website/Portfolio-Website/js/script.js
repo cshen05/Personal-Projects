@@ -27,7 +27,7 @@ window.addEventListener('load', () => {
         setTimeout(() => typeText(line2, "My name is Connor", 1500), 1000); // Pause for 1 second before typing "My name is Connor"
     }, 2000); // Pause before clearing line1
     setTimeout(() => {
-        setTimeout(() => typeText(line3, "Welcome to my Portfolio", 2000), 1000); // Pause for 1 second before typing "Welcome to my Portfolio"
+        setTimeout(() => typeText(line3, "Welcome to my Portfolio!", 2000), 1000); // Pause for 1 second before typing "Welcome to my Portfolio"
     }, 4500); // Pause after line2 finishes typing
 
     // Fade out greeting overlay
