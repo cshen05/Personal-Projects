@@ -4,8 +4,6 @@ window.addEventListener('load', () => {
     const greetingShown = localStorage.getItem('greetingShown')
 
     if (!greetingShown) {
-        // Mark greeting as shown
-        localStorage.setItem('greetingShown', 'true');
         greetingOverlay.classList.remove('hidden'); // Ensure it's visible
 
         const line1 = document.getElementById('greeting-line-1'); // Used for "Hey!" and "My name is Connor"
