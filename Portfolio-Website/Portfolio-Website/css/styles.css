@@ -19,8 +19,8 @@ a:hover {
   color: #647e68;
 }
 
-/* Quote Overlay */
-#quote-overlay {
+/* Greeting Overlay */
+#greeting-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -30,32 +30,47 @@ a:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 1000; /* Ensure it's above everything */
   opacity: 1; /* Fully visible initially */
-  transform: scale(1);
-  transition: opacity 2s ease-in-out, transform 2s ease-in-out; /* Smooth fade-out */
+  transition: opacity 1s ease-in-out; /* Smooth fade-out */
 }
 
-.quote-content {
+.greeting-content {
   text-align: center;
   font-family: 'Lexend', sans-serif;
   color: #182747; /* Navy text */
 }
 
-.quote-content blockquote {
-  font-size: 2rem;
-  font-style: italic;
-  text-align: center;
-  color: #182747; /* Navy text */
+.greeting-line {
+  font-size: 4rem;
+  font-weight: bold;
+  white-space: nowrap; /* Prevent line breaks during typing */
+  overflow: hidden; /* Hide overflowing text */
+  border-right: 3px solid #182747; /* Typing cursor effect */
+  animation: typing 2s steps(12, end), blink-caret 0.5s step-end infinite;
 }
 
-.quote-content footer {
-  margin-top: 10px;
-  font-size: 1.2rem;
-  color: #647e68; /* Muted green */
-  text-transform: uppercase;
-  letter-spacing: 2px;
+#greeting-line-2 {
+  margin-top: 20px; /* Slight offset for second line */
+  font-size: 3.5rem; /* Smaller font size for the second line */
 }
+
+#greeting-line-3 {
+  margin-top: 10px;
+  font-size: 2.5rem; /* Smaller font size for the third line */
+}
+
+/* Typing Effect */
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent; }
+  50% { border-color: #182747; }
+}
+
 
 /* Custom Fade-Out and Scale-Up */
 @keyframes fadeOutScaleUp {
