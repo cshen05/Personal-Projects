@@ -22,14 +22,13 @@ window.addEventListener('load', () => {
     // Typing sequence with pause and fade-out
     setTimeout(() => typeText(line1, "Hey!", 1000), 500); // Type "Hey!" in 1 second
     setTimeout(() => {
-        // Add a pause before fade-out
         setTimeout(() => {
             line1.classList.add('fade-out'); // Apply fade-out class
             setTimeout(() => {
                 line1.classList.remove('fade-out'); // Remove fade-out class
                 line1.style.opacity = "1"; // Reset opacity for new text
                 typeText(line1, "My name is Connor", 1500); // Type "My name is Connor" in the same position
-            }, 3000); // Wait for fade-out to complete before typing next line
+            }, 1000); // Wait for fade-out to complete before typing next line
         }, 1000); // Pause for 1 second after typing "Hey!"
     }, 1000); // Delay before the pause and fade-out logic
 
