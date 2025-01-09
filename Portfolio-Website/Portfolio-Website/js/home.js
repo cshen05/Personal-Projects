@@ -2,8 +2,13 @@
 window.addEventListener('load', () => {
     const greetingOverlay = document.getElementById('greeting-overlay');
     const greetingShown = localStorage.getItem('greetingShown')
+    const sessionVisited = sessionStorage.getItem('sessionVisited')
 
-    if (!greetingShown) {
+    if (!greetingShown || !sessionVisited) {
+        // Mark greeting as shown
+        localStorage.setItem('greetingShown', 'true');
+        sessionStorage.getItem('sessionVisited', 'true');
+        
         greetingOverlay.classList.remove('hidden'); // Ensure it's visible
 
         const line1 = document.getElementById('greeting-line-1'); // Used for "Hey!" and "My name is Connor"
