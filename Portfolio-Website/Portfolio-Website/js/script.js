@@ -32,13 +32,13 @@ window.addEventListener('load', () => {
     // Fade out greeting overlay
     setTimeout(() => {
         greetingOverlay.style.opacity = "0";
-        greetingOverlay.style.transition = "opacity 1s ease-in-out";
+        greetingOverlay.style.transition = "opacity 2s ease-in-out";
     }, 7000);
 
     // Remove overlay completely
     setTimeout(() => {
         greetingOverlay.style.display = "none";
-    }, 8000);
+    }, 10000);
 });
 
 // Sticky Header
