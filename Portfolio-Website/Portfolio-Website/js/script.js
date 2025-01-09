@@ -12,18 +12,18 @@ window.addEventListener('load', () => {
 
     // Replace "Hey!" with "My name is Connor"
     setTimeout(() => {
-        line1.textContent = "";
-        line1.style.animation = "none"; // Remove typing animation for the transition
+        line1.style.animation = "none"; // Remove typing animation for fade-out
+        line1.textContent = ""; // Clear line1
         setTimeout(() => {
             line1.textContent = "My name is Connor";
-            line1.style.animation = "typing 3s steps(17, end), blink-caret 0.5s step-end infinite";
+            line1.style.animation = "typing 3s steps(17, end), blink-caret 0.5s step-end";
         }, 200);
     }, 3000);
 
-    // Type "Welcome to my Portfolio!"
+    // Type "Welcome to my Portfolio Website!"
     setTimeout(() => {
-        line2.textContent = "Welcome to my Portfolio!";
-        line2.style.animation = "typing 3s steps(26, end), blink-caret 0.5s step-end infinite";
+        line2.textContent = "Welcome to my Portfolio Website!";
+        line2.style.animation = "typing 3s steps(32, end), blink-caret 0.5s step-end";
     }, 7000);
 
     // Fade out the greeting overlay
