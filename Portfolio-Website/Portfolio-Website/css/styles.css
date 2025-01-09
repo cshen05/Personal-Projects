@@ -58,7 +58,7 @@ a:hover {
   white-space: nowrap; /* Prevent line breaks during typing */
   overflow: hidden; /* Hide overflowing text */
   border-right: 3px solid #182747; /* Typing cursor effect */
-  animation: typing 1s steps(30, end), blink-caret 0.5s step-end infinite;
+  animation: typing 1.5s steps(30, end), blink-caret 0.5s step-end infinite;
 }
 
 #greeting-line-2 {
