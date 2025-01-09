@@ -2,10 +2,13 @@
 window.addEventListener('load', () => {
     const greetingOverlay = document.getElementById('greeting-overlay');
     const greetingShown = localStorage.getItem('greetingShown')
-    const line1 = document.getElementById('greeting-line-1'); // Used for "Hey!" and "My name is Connor"
-    const line3 = document.getElementById('greeting-line-3'); // Used for "Welcome to my Portfolio"
 
     if (!greetingShown) {
+        greetingOverlay.classList.remove('hidden'); // Ensure it's visible
+        
+        const line1 = document.getElementById('greeting-line-1'); // Used for "Hey!" and "My name is Connor"
+        const line3 = document.getElementById('greeting-line-3'); // Used for "Welcome to my Portfolio"
+        
         // Typing animation helper function
         const typeText = (element, text, duration) => {
             element.textContent = ""; // Clear any existing text
