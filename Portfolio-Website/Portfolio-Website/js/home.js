@@ -45,12 +45,12 @@ window.addEventListener('load', () => {
         setTimeout(() => {
             greetingOverlay.style.opacity = "0"; // Trigger fade-out
             greetingOverlay.style.transition = "opacity 2s ease-in-out";
-        }, 15000); // Delay fade-out to match the longer animation time
+        }, 11000); // Delay fade-out to match the longer animation time
 
         // Remove the overlay completely
         setTimeout(() => {
             greetingOverlay.style.display = "none"; // Hide the overlay
-        }, 17000);
+        }, 12000);
     } else {
         greetingOverlay.style.display = 'none'
     }
