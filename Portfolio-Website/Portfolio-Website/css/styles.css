@@ -47,10 +47,6 @@ a:hover {
   overflow: hidden; /* Hide overflowing text */
 }
 
-#greeting-line-2 {
-  font-size: 4rem; /* Smaller font size for the second line */
-}
-
 #greeting-line-3 {
   font-size: 4rem; /* Adjust font size as needed */
   color: #647e68; /* Muted green color */

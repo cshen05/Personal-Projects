@@ -1,9 +1,8 @@
 //Opening Greeting
 window.addEventListener('load', () => {
     const greetingOverlay = document.getElementById('greeting-overlay');
-    const line1 = document.getElementById('greeting-line-1');
-    const line2 = document.getElementById('greeting-line-2');
-    const line3 = document.getElementById('greeting-line-3');
+    const line1 = document.getElementById('greeting-line-1'); // Used for "Hey!" and "My name is Connor"
+    const line3 = document.getElementById('greeting-line-3'); // Used for "Welcome to my Portfolio"
 
     // Typing animation helper function
     const typeText = (element, text, duration) => {
@@ -20,30 +19,34 @@ window.addEventListener('load', () => {
         }, interval);
     };
 
-    // Typing sequence with fade-out and same position for next line
-    setTimeout(() => typeText(line1, "Hey!", 1500), 500); // Type "Hey!" in 1.5 seconds
+    // Typing sequence with pause and fade-out
+    setTimeout(() => typeText(line1, "Hey!", 1000), 500); // Type "Hey!" in 1 second
     setTimeout(() => {
-        line1.classList.add('fade-out'); // Apply fade-out class
+        // Add a pause before fade-out
         setTimeout(() => {
-            line1.classList.remove('fade-out'); // Remove fade-out class
-            line1.style.opacity = "1"; // Reset opacity for new text
-            typeText(line1, "My name is Connor", 1500); // Type "My name is Connor" in the same position
-        }, 2000); // Wait for fade-out to complete before typing next line
-    }, 2000); // Delay before fading out "Hey!"
+            line1.classList.add('fade-out'); // Apply fade-out class
+            setTimeout(() => {
+                line1.classList.remove('fade-out'); // Remove fade-out class
+                line1.style.opacity = "1"; // Reset opacity for new text
+                typeText(line1, "My name is Connor", 1500); // Type "My name is Connor" in the same position
+            }, 2000); // Wait for fade-out to complete before typing next line
+        }, 3000); // Pause for 3 seconds after typing "Hey!"
+    }, 3000); // Delay before the pause and fade-out logic
+
     setTimeout(() => {
-        setTimeout(() => typeText(line3, "Welcome to my Portfolio", 2000), 1500); // Pause for 1 second after "My name is Connor"
-    }, 5500); // Adjust timing for the sequence
+        setTimeout(() => typeText(line3, "Welcome to my Portfolio!", 2000), 3000); // Pause for 3 seconds after "My name is Connor"
+    }, 8000); // Adjust timing for the sequence
 
     // Fade out greeting overlay
     setTimeout(() => {
         greetingOverlay.style.opacity = "0"; // Trigger fade-out
         greetingOverlay.style.transition = "opacity 2s ease-in-out";
-    }, 9500); // Delay fade-out to match the longer animation time
+    }, 13000); // Delay fade-out to match the longer animation time
 
     // Remove the overlay completely
     setTimeout(() => {
         greetingOverlay.style.display = "none"; // Hide the overlay
-    }, 15500);
+    }, 15000);
 });
 
 // Sticky Header
