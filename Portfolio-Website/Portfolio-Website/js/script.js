@@ -29,24 +29,24 @@ window.addEventListener('load', () => {
                 line1.classList.remove('fade-out'); // Remove fade-out class
                 line1.style.opacity = "1"; // Reset opacity for new text
                 typeText(line1, "My name is Connor", 1500); // Type "My name is Connor" in the same position
-            }, 2000); // Wait for fade-out to complete before typing next line
-        }, 3000); // Pause for 3 seconds after typing "Hey!"
-    }, 3000); // Delay before the pause and fade-out logic
+            }, 3000); // Wait for fade-out to complete before typing next line
+        }, 1000); // Pause for 1 second after typing "Hey!"
+    }, 1000); // Delay before the pause and fade-out logic
 
     setTimeout(() => {
-        setTimeout(() => typeText(line3, "Welcome to my Portfolio!", 2000), 3000); // Pause for 3 seconds after "My name is Connor"
-    }, 8000); // Adjust timing for the sequence
+        setTimeout(() => typeText(line3, "Welcome to my Portfolio!", 2000), 1500); // Pause for 3 seconds after "My name is Connor"
+    }, 10000); // Adjust timing for the sequence
 
     // Fade out greeting overlay
     setTimeout(() => {
         greetingOverlay.style.opacity = "0"; // Trigger fade-out
         greetingOverlay.style.transition = "opacity 2s ease-in-out";
-    }, 13000); // Delay fade-out to match the longer animation time
+    }, 15000); // Delay fade-out to match the longer animation time
 
     // Remove the overlay completely
     setTimeout(() => {
         greetingOverlay.style.display = "none"; // Hide the overlay
-    }, 15000);
+    }, 20000);
 });
 
 // Sticky Header
