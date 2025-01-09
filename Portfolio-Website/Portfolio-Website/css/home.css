@@ -1,0 +1,244 @@
+/* Greeting Overlay */
+#greeting-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+    /* White background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    /* Ensure it's above everything */
+    opacity: 1;
+    /* Fully visible initially */
+    transition: opacity 2s ease-in-out;
+    /* Smooth fade-out */
+}
+
+.greeting-content {
+    text-align: center;
+    font-family: 'Lexend', sans-serif;
+}
+
+.greeting-line {
+    font-size: 4rem;
+    font-weight: bold;
+    white-space: nowrap;
+    /* Prevent line breaks during typing */
+    overflow: hidden;
+    /* Hide overflowing text */
+}
+
+#greeting-line-3 {
+    font-size: 4rem;
+    /* Adjust font size as needed */
+    color: #647e68;
+    /* Muted green color */
+}
+
+/* Hero Section */
+.hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: #182747;
+    color: #d8d8d8;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+.hero h1 {
+    font-size: 6rem;
+    /* Larger font size for the name */
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #d8d8d8;
+    letter-spacing: 3px;
+    text-shadow: 2px 2px #562b08;
+    /* Shadow effect with Brown */
+}
+
+.hero-links {
+    display: flex;
+    justify-content: center;
+    /* Center links horizontally */
+    align-items: center;
+    /* Center links vertically */
+    flex-wrap: wrap;
+    /* Allow wrapping if there are many links */
+    gap: 20px;
+    /* Add spacing between links */
+    margin: 20px 0 0;
+    /* Add some space above links */
+    padding: 0;
+    /* Ensure no extra padding is applied */
+    list-style: none;
+    /* Remove bullet points */
+}
+
+.hero-links a {
+    color: #d8d8d8;
+    /* Matches hero text color */
+    font-weight: 500;
+    font-size: 1.2rem;
+    text-decoration: none;
+    /* Remove underline */
+    padding: 10px 15px;
+    /* Add padding for better clickability */
+    border-radius: 5px;
+    /* Rounded corners for aesthetic */
+    transition: color 0.3s ease, background-color 0.3s ease;
+    /* Smooth hover transition */
+}
+
+.hero-links a:hover {
+    color: #182747;
+    /* Navy text on hover */
+    background-color: #647e68;
+    /* Muted green background */
+    transform: scale(1.1);
+    transition: transform 0.3s ease, color 0.3s ease, background-color 0.3s ease;
+}
+
+/* Scroll Indicator */
+.scroll-indicator {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 10;
+    animation: fadeInOut 2s infinite;
+    /* Subtle fade in/out animation */
+}
+
+.scroll-arrow {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #d8d8d8;
+    border-width: 0 2px 2px 0;
+    /* Create the arrow shape */
+    transform: rotate(45deg);
+    animation: bounce 1.5s infinite;
+    /* Arrow bounces */
+}
+
+.scroll-indicator:hover .scroll-arrow {
+    border-color: #647e68;
+    /* Change color on hover */
+    transform: rotate(45deg) scale(1.2);
+    /* Slightly enlarge on hover */
+}
+
+/* About Section */
+.about {
+    padding: 50px 20px;
+    background-color: #d8d8d8;
+    /* Matches Main Background */
+    color: #182747;
+    /* Darker Brown Text */
+    transition: background-color 0.5s ease;
+    overflow: hidden;
+}
+
+/* About Section Layout */
+.about-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 50px 20px;
+}
+
+/* About Text Styling */
+.about-text {
+    line-height: 1.8;
+    color: #182747;
+    position: relative;
+    /* Enable better positioning */
+}
+
+/* About Photo Styling */
+.about-photo {
+    float: right;
+    /* Float the photo to the right of the text */
+    margin: 0 0 20px 20px;
+    /* Add space between the photo and the text */
+    width: 400px;
+    /* Fixed width for the image */
+}
+
+.about-photo img {
+    width: 100%;
+    /* Ensure the image is responsive */
+    border-radius: 0%;
+    /* Make the photo circular */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    /* Add subtle shadow */
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .about-photo {
+        float: none;
+        /* Remove float for smaller screens */
+        margin: 0 auto 20px;
+        /* Center the image */
+        display: block;
+    }
+
+    .about-photo img {
+        width: 150px;
+        /* Reduce the size of the image on smaller screens */
+    }
+}
+
+.section-title {
+    font-size: 2.5rem;
+    color: #562b08;
+    /* Dark Brown for Section Titles */
+    margin-bottom: 20px;
+}
+
+.about-highlight {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #647e68;
+    /* Matches Text Color */
+    margin-bottom: 20px;
+}
+
+.about-description {
+    font-size: 1.2rem;
+    line-height: 2;
+    margin-bottom: 20px;
+}
+
+/* Experience */
+.experience {
+    padding: 50px 20px;
+    background-color: #f5f5f5;
+    /* Slightly lighter gray */
+    color: #182747;
+    transition: background-color 0.5s ease;
+}
+
+.experience-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.experience-item {
+    flex: 1 1 calc(33% - 20px);
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
