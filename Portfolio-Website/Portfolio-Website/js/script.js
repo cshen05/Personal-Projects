@@ -20,15 +20,15 @@ window.addEventListener('load', () => {
         }, interval);
     };
 
-    // Typing sequence
+    // Typing sequence with pauses
     setTimeout(() => typeText(line1, "Hey!", 1000), 500); // Type "Hey!" in 1 second
     setTimeout(() => {
         line1.textContent = ""; // Clear line1
-        typeText(line2, "My name is Connor", 1500); // Type "My name is Connor" in 1.5 seconds
-    }, 2000);
+        setTimeout(() => typeText(line2, "My name is Connor", 1500), 1000); // Pause for 1 second before typing "My name is Connor"
+    }, 2000); // Pause before clearing line1
     setTimeout(() => {
-        typeText(line3, "Welcome to my Portfolio", 2000); // Type "Welcome to my Portfolio" in 2 seconds
-    }, 4000);
+        setTimeout(() => typeText(line3, "Welcome to my Portfolio", 2000), 1000); // Pause for 1 second before typing "Welcome to my Portfolio"
+    }, 4500); // Pause after line2 finishes typing
 
     // Fade out greeting overlay
     setTimeout(() => {

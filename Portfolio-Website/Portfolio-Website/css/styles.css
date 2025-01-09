@@ -57,12 +57,6 @@ a:hover {
   color: #647e68; /* Muted green color */
 }
 
-/* Typing Effect */
-@keyframes typing {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
 /* Custom Fade-Out and Scale-Up */
 @keyframes fadeOutScaleUp {
   0% {
