@@ -21,25 +21,25 @@ window.addEventListener('load', () => {
     };
 
     // Typing sequence with pauses
-    setTimeout(() => typeText(line1, "Hey!", 1000), 500); // Type "Hey!" in 1 second
+    setTimeout(() => typeText(line1, "Hey!", 1500), 500);
     setTimeout(() => {
         line1.textContent = ""; // Clear line1
         setTimeout(() => typeText(line2, "My name is Connor", 1500), 1000); // Pause for 1 second before typing "My name is Connor"
     }, 2000); // Pause before clearing line1
     setTimeout(() => {
         setTimeout(() => typeText(line3, "Welcome to my Portfolio!", 2000), 1000); // Pause for 1 second before typing "Welcome to my Portfolio"
-    }, 4500); // Pause after line2 finishes typing
+    }, 5000); // Pause after line2 finishes typing
 
     // Fade out greeting overlay
     setTimeout(() => {
         greetingOverlay.style.opacity = "0"; // Trigger fade-out
         greetingOverlay.style.transition = "opacity 2s ease-in-out";
-    }, 8000);
+    }, 9000);
 
     // Remove the overlay completely
     setTimeout(() => {
         greetingOverlay.style.display = "none"; // Hide the overlay
-    }, 10000);
+    }, 15000);
 });
 
 // Sticky Header
