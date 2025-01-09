@@ -3,36 +3,38 @@ window.addEventListener('load', () => {
     const greetingOverlay = document.getElementById('greeting-overlay');
     const line1 = document.getElementById('greeting-line-1');
     const line2 = document.getElementById('greeting-line-2');
-    const line3 = document.getElementById('greeting-line-3');
 
-    // Type and fade-in sequence
+    // Type "Hey!"
     setTimeout(() => {
         line1.textContent = "Hey!";
         line1.style.animation = "typing 2s steps(3, end), blink-caret 0.5s step-end infinite";
     }, 500);
 
+    // Replace "Hey!" with "My name is Connor"
     setTimeout(() => {
-        line1.style.opacity = 0; // Fade out "Hey!"
-        line1.style.transition = "opacity 1s ease-in-out";
+        line1.textContent = "";
+        line1.style.animation = "none"; // Remove typing animation for the transition
+        setTimeout(() => {
+            line1.textContent = "My name is Connor";
+            line1.style.animation = "typing 3s steps(17, end), blink-caret 0.5s step-end infinite";
+        }, 200);
     }, 3000);
 
+    // Type "Welcome to my Portfolio!"
     setTimeout(() => {
-        line2.textContent = "My name is Connor";
-        line2.style.animation = "typing 2s steps(12, end), blink-caret 0.5s step-end infinite";
-    }, 4000);
-
-    setTimeout(() => {
-        line3.textContent = "Welcome to my Portfolio Website!";
-        line3.style.animation = "typing 3s steps(26, end), blink-caret 0.5s step-end infinite";
+        line2.textContent = "Welcome to my Portfolio!";
+        line2.style.animation = "typing 3s steps(26, end), blink-caret 0.5s step-end infinite";
     }, 7000);
 
+    // Fade out the greeting overlay
     setTimeout(() => {
-        greetingOverlay.style.opacity = "0"; // Fade out the overlay
+        greetingOverlay.style.opacity = "0";
         greetingOverlay.style.transition = "opacity 1s ease-in-out";
     }, 12000);
 
+    // Remove the overlay completely
     setTimeout(() => {
-        greetingOverlay.style.display = "none"; // Remove the overlay completely
+        greetingOverlay.style.display = "none";
     }, 13000);
 });
 
