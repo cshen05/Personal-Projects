@@ -100,8 +100,8 @@ a {
 
 /* Page Overview */
 .page-overview {
+    height: 100vh;
     text-align: center;
-    padding: 120px 20px;
     background: #123029;
     color: #d1e8df;
     display: flex;
@@ -116,7 +116,7 @@ a {
     line-height: 2;
     margin-bottom: 0 auto;
     color: #FFFFFF;
-    max-width: 800px;
+    max-width: 1000px;
     animation: slideIn 1s ease-in-out;
 }
 
