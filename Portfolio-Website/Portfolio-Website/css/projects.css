@@ -132,6 +132,36 @@ a {
     }
 }
 
+/* Scroll Indicator */
+.scroll-indicator {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 10;
+    animation: fadeInOut 2s infinite;
+    /* Subtle fade in/out animation */
+}
+
+.scroll-arrow {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #d8d8d8;
+    border-width: 0 2px 2px 0;
+    /* Create the arrow shape */
+    transform: rotate(45deg);
+    animation: bounce 1.5s infinite;
+    /* Arrow bounces */
+}
+
+.scroll-indicator:hover .scroll-arrow {
+    border-color: #647e68;
+    /* Change color on hover */
+    transform: rotate(45deg) scale(1.2);
+    /* Slightly enlarge on hover */
+}
+
 /* Projects Section */
 .projects-section {
     display: flex;
