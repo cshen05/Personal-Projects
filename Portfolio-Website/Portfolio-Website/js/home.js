@@ -43,7 +43,7 @@ window.addEventListener('load', () => {
         }, 1000); // Delay before the pause and fade-out logic
 
         setTimeout(() => {
-            setTimeout(() => typeText(line3, "Welcome to my Portfolio Website!", 2000));
+            setTimeout(() => typeText(line3, "Welcome to my Website!", 2000));
         }, 8000); // Adjust timing for the sequence
 
         // Fade out greeting overlay
