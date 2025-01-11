@@ -101,7 +101,7 @@ a {
 /* Page Overview */
 .page-overview {
     text-align: center;
-    padding: 100px 20px;
+    padding: 120px 20px;
     background: #123029;
     color: #d1e8df;
 }
@@ -111,6 +111,7 @@ a {
     font-weight: bold;
     text-transform: uppercase;
     margin-bottom: 20px;
+    color: #b3dbca;
     animation: slideIn 1s ease-in-out;
 }
 
@@ -118,9 +119,8 @@ a {
     font-size: 1.5rem; /* Larger font for the introductory paragraph */
     line-height: 1.8;
     max-width: 800px;
-    margin: 0 auto;
-    color: #b3dbca; /* Lighter Green */
-    text-align: center;
+    margin: 20px auto;
+    color: #d1e8df; /* Lighter Green */
 }
 
 /* Keyframe Animation */
