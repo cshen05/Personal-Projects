@@ -101,18 +101,38 @@ a {
 /* Page Overview */
 .page-overview {
     text-align: center;
-    padding: 50px 20px;
+    padding: 100px 20px;
+    background: #123029;
+    color: #d1e8df;
 }
 
 .page-overview h1 {
-    font-size: 3rem;
-    margin-bottom: 10px;
+    font-size: 4rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    animation: slideIn 1s ease-in-out;
 }
 
-.page-overview p {
-    font-size: 1.2rem;
-    margin: 0 auto;
+.page-overview p.overview-intro {
+    font-size: 1.5rem; /* Larger font for the introductory paragraph */
+    line-height: 1.8;
     max-width: 800px;
+    margin: 0 auto;
+    color: #b3dbca; /* Lighter Green */
+    text-align: center;
+}
+
+/* Keyframe Animation */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Projects Section */
