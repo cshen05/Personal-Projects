@@ -1,33 +1,25 @@
 // Background Changer
 window.addEventListener('scroll', () => {
-    const sections = [
-        document.querySelector('#overview'), // Overview Section
-        ...document.querySelectorAll('#projects'), // Each project section
-    ];
-    const sectionColors = [
-        [18, 48, 41],
-        [31, 92, 74]
-    ];
+    const overviewSection = document.querySelector('#overview'); // Page Overview
+    const body = document.body; // Body element for overall background
+
+    const overviewColor = [18, 48, 41]; // RGB for #123029
+    const bodyColor = [26, 62, 52]; // RGB for #1a3e34
 
     const viewportHeight = window.innerHeight;
+    const sectionTop = overviewSection.getBoundingClientRect().top;
+    const sectionBottom = overviewSection.getBoundingClientRect().bottom;
 
-    sections.forEach((section, index) => {
-        const nextSection = sections[index + 1];
-        if (!nextSection) return; // Skip if no next section
+    // Calculate scroll ratio within the overview section
+    let ratio = Math.min(1, Math.max(0, 1 - sectionBottom / viewportHeight));
 
-        const sectionTop = section.getBoundingClientRect().top;
-        const nextSectionTop = nextSection.getBoundingClientRect().top;
+    // Interpolate between the two colors based on the scroll ratio
+    const interpolatedColor = overviewColor.map((start, i) =>
+        Math.round(start + ratio * (bodyColor[i] - start))
+    );
 
-        if (sectionTop <= viewportHeight && nextSectionTop > 0) {
-            const ratio = Math.min(1, Math.max(0, 1 - nextSectionTop / viewportHeight));
-            const interpolatedColor = sectionColors[index].map((start, i) =>
-                Math.round(start + ratio * (sectionColors[index + 1][i] - start))
-            );
-
-            section.style.backgroundColor = `rgb(${interpolatedColor.join(',')})`;
-            nextSection.style.backgroundColor = `rgb(${sectionColors[index + 1].join(',')})`;
-        }
-    });
+    // Apply the interpolated color to the body background
+    body.style.backgroundColor = `rgb(${interpolatedColor.join(',')})`;
 });
 
 // Fade-in effect for projects
