@@ -111,9 +111,9 @@ a {
 }
 
 .page-overview h1 {
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: bold;
-    line-height: 2;
+    line-height: 4;
     margin-bottom: 0 auto;
     color: #FFFFFF;
     max-width: 1000px;
