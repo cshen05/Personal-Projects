@@ -156,7 +156,7 @@ a {
 }
 
 .scroll-indicator:hover .scroll-arrow {
-    border-color: #647e68;
+    border-color: #FFFFFF;
     /* Change color on hover */
     transform: rotate(45deg) scale(1.2);
     /* Slightly enlarge on hover */

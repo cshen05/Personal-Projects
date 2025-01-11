@@ -2,13 +2,11 @@
 window.addEventListener('scroll', () => {
     const sections = [
         document.querySelector('#overview'), // Overview Section
-        ...document.querySelectorAll('.project'), // Each project section
+        ...document.querySelectorAll('#projects'), // Each project section
     ];
     const sectionColors = [
-        [24, 39, 71],   // Overview: Navy (#182747)
-        [30, 80, 50],   // Project 1: Dark Green (#1E5032)
-        [40, 90, 60],   // Project 2: Slightly Lighter Green (#285A3C)
-        [50, 100, 70],  // Project 3: Even Lighter Green (#32644A)
+        [18, 48, 41],
+        [31, 92, 74]
     ];
 
     const viewportHeight = window.innerHeight;
