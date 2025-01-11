@@ -104,6 +104,10 @@ a {
     padding: 120px 20px;
     background: #123029;
     color: #d1e8df;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .page-overview h1 {
