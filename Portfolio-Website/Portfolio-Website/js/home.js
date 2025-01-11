@@ -61,6 +61,40 @@ window.addEventListener('load', () => {
     }
 });
 
+//Background Changer
+window.addEventListener('scroll', () => {
+    const sections = [
+        document.querySelector('.hero'),
+        document.querySelector('#about'),
+        document.querySelector('#experience'),
+    ];
+    const sectionColors = [
+        [24, 39, 71],   // Hero: Navy (#182747)
+        [216, 216, 216], // About: Light Gray (#D8D8D8)
+        [245, 245, 245], // Experience: Very Light Gray (#F5F5F5)
+    ];
+    
+    const viewportHeight = window.innerHeight;
+
+    sections.forEach((section, index) => {
+        const nextSection = sections[index + 1];
+        if (!nextSection) return; // Skip if no next section
+
+        const sectionTop = section.getBoundingClientRect().top;
+        const nextSectionTop = nextSection.getBoundingClientRect().top;
+
+        if (sectionTop <= viewportHeight && nextSectionTop > 0) {
+            const ratio = Math.min(1, Math.max(0, 1 - nextSectionTop / viewportHeight));
+            const interpolatedColor = sectionColors[index].map((start, i) =>
+                Math.round(start + ratio * (sectionColors[index + 1][i] - start))
+            );
+
+            section.style.backgroundColor = `rgb(${interpolatedColor.join(',')})`;
+            nextSection.style.backgroundColor = `rgb(${sectionColors[index + 1].join(',')})`;
+        }
+    });
+});
+
 // Sticky Header
 window.addEventListener('scroll', () => {
     const header = document.querySelector('.sticky-header');
