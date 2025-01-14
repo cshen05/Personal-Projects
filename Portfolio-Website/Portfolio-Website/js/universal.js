@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 //Curtain Transition
 document.addEventListener('DOMContentLoaded', () => {
-    const header = document.querySelector('.sticky-header');
+    const curtain = document.querySelector('.curtain-overlay');
     const menuLinks = document.querySelectorAll('.nav-links a');
 
     menuLinks.forEach((link) => {
@@ -55,26 +55,26 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const targetUrl = e.target.href;
 
-            // Add the curtain effect class to trigger the drop
-            header.classList.add('curtain-effect');
-            console.log('Curtain effect class added');
+            // Trigger the curtain drop
+            curtain.classList.add('curtain-drop');
+            console.log('Curtain dropped.');
 
             // Navigate to the new page after the curtain fully drops
             setTimeout(() => {
-                window.location.href = targetUrl; // Navigate to the target page
-            }, 1500); // Match curtain-drop duration
+                window.location.href = targetUrl;
+            }, 1500); // Match the drop duration
         });
     });
 
-    // Ensure the curtain stays solid during load and fades out after the page is fully loaded
+    // On the new page, fade out the curtain after it loads
     window.addEventListener('pageshow', () => {
         console.log('New page fully loaded. Starting fade-out.');
+        curtain.classList.add('curtain-fade-out');
 
-        // Start the fade-out animation
-        header.classList.add('fade-out');
+        // Remove curtain classes after fade-out completes
         setTimeout(() => {
-            header.classList.remove('curtain-effect', 'fade-out'); // Remove the class after fade-out
-            console.log('Curtain effect class removed');
-        }, 2500); // Fade-out duration
+            curtain.classList.remove('curtain-drop', 'curtain-fade-out');
+            console.log('Curtain reset.');
+        }, 2500); // Match fade-out duration
     });
 });
