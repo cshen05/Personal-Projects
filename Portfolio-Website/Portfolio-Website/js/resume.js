@@ -22,24 +22,23 @@ window.addEventListener('scroll', () => {
     body.style.backgroundColor = `rgb(${interpolatedColor.join(',')})`;
 });
 
-// Fade-in effect for resume viewer
 document.addEventListener('DOMContentLoaded', () => {
-    const resumeContainer = document.querySelector('.resume-container');
+    const pdfViewer = document.querySelector('.resume-viewer');
 
+    // Observer for fade-in effect
     const observer = new IntersectionObserver(
         (entries) => {
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
-                    entry.target.style.opacity = 1;
-                    entry.target.style.transform = 'translateY(0)';
-                    observer.unobserve(entry.target);
+                    pdfViewer.classList.add('visible'); // Add the visible class
+                    observer.unobserve(pdfViewer); // Stop observing after it fades in
                 }
             });
         },
-        { threshold: 0.1 } // Trigger when 10% of the resume container is visible
+        { threshold: 0.1 } // Trigger when 10% of the viewer is visible
     );
 
-    observer.observe(resumeContainer);
+    observer.observe(pdfViewer);
 });
 
 // Sticky Header Activation

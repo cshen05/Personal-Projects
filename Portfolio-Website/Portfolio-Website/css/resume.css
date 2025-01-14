@@ -90,6 +90,14 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     background-color: #ffe0b2; /* Lighter Orange for PDF Viewer */
     border-radius: 10px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1s ease, transform 1s ease;
+}
+
+.resume-viewer.visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Download Button */
