@@ -48,3 +48,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
 });
+
+
+//Curtain Transition
+document.addEventListener('DOMContentLoaded', () => {
+    const header = document.querySelector('.sticky-header'); // Sticky header element
+    const menuLinks = document.querySelectorAll('.nav-links a'); // All menu links
+
+    if (!header) {
+        console.error('Sticky header not found. Check your HTML structure.');
+        return;
+    }
+
+    if (!menuLinks.length) {
+        console.error('No menu links found. Ensure .nav-links a exists in your HTML.');
+        return;
+    }
+
+    menuLinks.forEach((link) => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent default link behavior
+            const targetUrl = e.target.href; // Get the URL of the target page
+
+            console.log('Menu link clicked:', targetUrl);
+
+            // Add the curtain effect class
+            header.classList.add('curtain-effect');
+
+            // Wait for the animation to complete before navigating
+            setTimeout(() => {
+                console.log('Navigating to:', targetUrl);
+                header.classList.remove('curtain-effect'); // Clean up the class
+                window.location.href = targetUrl; // Navigate to the target page
+            }, 1500); // Match the animation duration (1.5s)
+        });
+    });
+});
