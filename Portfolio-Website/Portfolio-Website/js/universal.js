@@ -47,39 +47,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
 //Curtain Transition
 document.addEventListener('DOMContentLoaded', () => {
-    const header = document.querySelector('.sticky-header'); // Sticky header element
-    const menuLinks = document.querySelectorAll('.nav-links a'); // All menu links
-
-    if (!header) {
-        console.error('Sticky header not found. Check your HTML structure.');
-        return;
-    }
-
-    if (!menuLinks.length) {
-        console.error('No menu links found. Ensure .nav-links a exists in your HTML.');
-        return;
-    }
+    const header = document.querySelector('.sticky-header');
+    const menuLinks = document.querySelectorAll('.nav-links a');
 
     menuLinks.forEach((link) => {
         link.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent default link behavior
-            const targetUrl = e.target.href; // Get the URL of the target page
+            e.preventDefault();
+            const targetUrl = e.target.href;
 
             // Add the curtain effect class
             header.classList.add('curtain-effect');
 
-            // Wait for the curtain animation to fully cover the screen
+            // Navigate after the curtain is fully down
             setTimeout(() => {
-                // Navigate to the target page
                 window.location.href = targetUrl;
-            }, 750); // Halfway through the animation duration (1.5s)
+            }, 750);
 
-            // Add an event listener for when the new page loads
+            // Wait for the fade-out animation to complete before removing the class
             window.addEventListener('pageshow', () => {
-                // Wait briefly, then remove the curtain effect
                 setTimeout(() => {
                     header.classList.remove('curtain-effect');
-                }, 500); // Adjust timing as needed for fade-out effect
+                }, 4000); // Total duration: drop (0.75s) + fade-out (2.5s)
             });
         });
     });
