@@ -50,3 +50,23 @@ window.addEventListener('scroll', () => {
         header.classList.remove('active');
     }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const header = document.querySelector('.sticky-header'); // Sticky header element
+    const menuLinks = document.querySelectorAll('.nav-links a'); // All menu links
+
+    menuLinks.forEach((link) => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent default link behavior
+            const targetUrl = e.target.href; // Get the URL of the target page
+
+            // Add the curtain effect class
+            header.classList.add('curtain-effect');
+
+            // Wait for the animation to complete before navigating
+            setTimeout(() => {
+                window.location.href = targetUrl; // Navigate to the target page
+            }, 1500); // Match the animation duration (1.5s)
+        });
+    });
+});

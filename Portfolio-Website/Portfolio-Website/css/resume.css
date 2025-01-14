@@ -58,6 +58,32 @@ body {
     color: #ff8c00; /* Brighter Orange */
 }
 
+/* Curtain Effect */
+.sticky-header.curtain-effect::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #e65100; /* Bold orange for the curtain effect */
+    z-index: 9999; /* Ensure it covers everything */
+    animation: curtain-drop 1.5s ease forwards; /* Animate the curtain */
+}
+
+/* Keyframes for Curtain Drop and Rise */
+@keyframes curtain-drop {
+    0% {
+        transform: translateY(-100%); /* Start off-screen above */
+    }
+    50% {
+        transform: translateY(0); /* Cover the entire screen */
+    }
+    100% {
+        transform: translateY(-100%); /* Move back off-screen above */
+    }
+}
+
 /* Resume Section */
 .resume-section {
     text-align: center;
