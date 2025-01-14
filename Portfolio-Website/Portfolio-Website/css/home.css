@@ -41,32 +41,6 @@
     /* Muted green color */
 }
 
-/* Curtain Overlay */
-.curtain-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #182747; /* Same bold orange as sticky header */
-    z-index: 9999; /* Ensure it covers everything */
-    transform: translateY(-100%); /* Start off-screen */
-    opacity: 1; /* Fully visible */
-    transition: transform 1.5s ease, opacity 2.5s ease; /* Smooth drop and fade-out */
-}
-
-/* Trigger for Curtain Drop */
-.curtain-overlay.curtain-drop {
-    transform: translateY(0); /* Fully visible */
-    transition: transform 1.5s ease;
-}
-
-/* Trigger for Curtain Fade-Out */
-.curtain-overlay.curtain-fade-out {
-    opacity: 0; /* Fully invisible */
-    transition: opacity 2.5s ease;
-}
-
 /* Hero Section */
 .hero {
     height: 100vh;
@@ -163,6 +137,32 @@
     /* Change color on hover */
     transform: rotate(45deg) scale(1.2);
     /* Slightly enlarge on hover */
+}
+
+/* Curtain Overlay */
+.curtain-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #182747; /* Same bold orange as sticky header */
+    z-index: 9999; /* Ensure it covers everything */
+    transform: translateY(-100%); /* Start off-screen */
+    opacity: 1; /* Fully visible */
+    transition: transform 1.5s ease, opacity 2.5s ease; /* Smooth drop and fade-out */
+}
+
+/* Trigger for Curtain Drop */
+.curtain-overlay.curtain-drop {
+    transform: translateY(0); /* Fully visible */
+    transition: transform 1.5s ease;
+}
+
+/* Trigger for Curtain Fade-Out */
+.curtain-overlay.curtain-fade-out {
+    opacity: 0; /* Fully invisible */
+    transition: opacity 2.5s ease;
 }
 
 /* Sticky Navigation */
