@@ -50,3 +50,8 @@ window.addEventListener('scroll', () => {
         header.classList.remove('active');
     }
 });
+
+document.querySelector('.scroll-indicator').addEventListener('click', () => {
+    const nextSection = document.querySelector('#projects');
+    nextSection.scrollIntoView({ behavior: 'smooth' });
+});

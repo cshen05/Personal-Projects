@@ -10,11 +10,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-document.querySelector('.scroll-indicator').addEventListener('click', () => {
-    const nextSection = document.querySelector('#about');
-    nextSection.scrollIntoView({ behavior: 'smooth' });
-});
-
 // Fade-In and Zoom-In Animations on Scroll
 document.addEventListener('DOMContentLoaded', () => {
     const observer = new IntersectionObserver(

@@ -119,3 +119,8 @@ window.addEventListener('scroll', () => {
         header.classList.remove('hidden');
     }
 });
+
+document.querySelector('.scroll-indicator').addEventListener('click', () => {
+    const nextSection = document.querySelector('#about');
+    nextSection.scrollIntoView({ behavior: 'smooth' });
+});
