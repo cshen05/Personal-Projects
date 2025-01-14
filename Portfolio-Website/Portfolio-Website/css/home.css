@@ -153,7 +153,7 @@
     box-sizing: border-box;
     overflow: hidden;
     opacity: 0;
-    /* Start invisible */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     transition: opacity 0.3s ease, background-color 0.3s ease;
 }
 
@@ -170,44 +170,36 @@
     transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-.logo {
-    font-weight: 700;
-    font-size: 1.5rem;
+.sticky-header .logo {
+    font-weight: bold;
+    font-size: 1.8rem;
     color: #d8d8d8;
     white-space: nowrap;
+    text-decoration: none;
 }
 
 .nav-links {
     list-style: none;
     display: flex;
-    /* Horizontal alignment of links */
     justify-content: flex-end;
     gap: 20px;
-    /* Spacing between links */
     margin: 0;
-    /* Remove default margin */
     padding: 0;
-    /* Remove default padding */
 }
 
 .nav-links li {
     display: inline-block;
-    /* Ensures each link is treated as a block for spacing */
 }
 
 .nav-links a {
-    font-weight: 500;
+    font-weight: bold;
     color: #d8d8d8;
-    /* Matches Footer Text */
     text-decoration: none;
-    /* Remove underline */
     transition: color 0.3s ease;
-    /* Add smooth hover transition */
 }
 
 .nav-links a:hover {
     color: #647e68;
-    /* Lighter Accent Color */
 }
 
 /* About Section */
