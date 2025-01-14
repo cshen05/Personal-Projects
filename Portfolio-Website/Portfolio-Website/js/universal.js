@@ -65,17 +65,22 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault(); // Prevent default link behavior
             const targetUrl = e.target.href; // Get the URL of the target page
 
-            console.log('Menu link clicked:', targetUrl);
-
             // Add the curtain effect class
             header.classList.add('curtain-effect');
 
-            // Wait for the animation to complete before navigating
+            // Wait for the curtain animation to fully cover the screen
             setTimeout(() => {
-                console.log('Navigating to:', targetUrl);
-                header.classList.remove('curtain-effect'); // Clean up the class
-                window.location.href = targetUrl; // Navigate to the target page
-            }, 1500); // Match the animation duration (1.5s)
+                // Navigate to the target page
+                window.location.href = targetUrl;
+            }, 750); // Halfway through the animation duration (1.5s)
+
+            // Add an event listener for when the new page loads
+            window.addEventListener('pageshow', () => {
+                // Wait briefly, then remove the curtain effect
+                setTimeout(() => {
+                    header.classList.remove('curtain-effect');
+                }, 500); // Adjust timing as needed for fade-out effect
+            });
         });
     });
 });

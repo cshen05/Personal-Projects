@@ -36,19 +36,25 @@ body {
     height: 100%;
     background-color: #e65100; /* Bold orange for the curtain effect */
     z-index: 9999; /* Ensure it covers everything */
-    animation: curtain-drop 1.5s ease forwards; /* Animate the curtain */
+    animation: curtain-drop 1.5s ease forwards, curtain-fade-out 0.5s ease 1.5s forwards;
 }
 
-/* Keyframes for Curtain Drop and Rise */
+/* Keyframes for Curtain Drop and Fade-Out */
 @keyframes curtain-drop {
     0% {
         transform: translateY(-100%); /* Start off-screen above */
     }
-    50% {
-        transform: translateY(0); /* Cover the entire screen */
+    100% {
+        transform: translateY(0); /* Cover the screen */
+    }
+}
+
+@keyframes curtain-fade-out {
+    0% {
+        opacity: 1; /* Fully visible */
     }
     100% {
-        transform: translateY(-100%); /* Move back off-screen above */
+        opacity: 0; /* Fully invisible */
     }
 }
 
