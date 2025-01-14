@@ -25,11 +25,13 @@ body {
 /* Trigger for Curtain Drop */
 .curtain-overlay.curtain-drop {
     transform: translateY(0); /* Fully visible */
+    transition: transform 1.5s ease;
 }
 
 /* Trigger for Curtain Fade-Out */
 .curtain-overlay.curtain-fade-out {
     opacity: 0; /* Fully invisible */
+    transition: opacity 2.5s ease;
 }
 
 /* Sticky Header */

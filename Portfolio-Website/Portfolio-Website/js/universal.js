@@ -68,13 +68,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // On the new page, fade out the curtain after it loads
     window.addEventListener('pageshow', () => {
-        console.log('New page fully loaded. Starting fade-out.');
-        curtain.classList.add('curtain-fade-out');
+        console.log('New page fully loaded. Preparing fade-out.');
 
-        // Remove curtain classes after fade-out completes
+        // Start fade-out after ensuring the drop has completed
         setTimeout(() => {
-            curtain.classList.remove('curtain-drop', 'curtain-fade-out');
-            console.log('Curtain reset.');
-        }, 2500); // Match fade-out duration
+            curtain.classList.add('curtain-fade-out');
+            console.log('Curtain fading out.');
+
+            // Remove curtain classes after fade-out completes
+            setTimeout(() => {
+                curtain.classList.remove('curtain-drop', 'curtain-fade-out');
+                console.log('Curtain reset.');
+            }, 2500); // Match fade-out duration
+        }, 1500); // Delay fade-out until after drop animation completes
     });
 });
