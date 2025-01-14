@@ -71,10 +71,9 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('New page fully loaded. Starting fade-out.');
 
         // Start the fade-out animation
-        const header = document.querySelector('.sticky-header');
-        header.style.animation = 'curtain-fade-out 2.5s ease forwards'; // Trigger fade-out animation
+        header.classList.add('fade-out');
         setTimeout(() => {
-            header.classList.remove('curtain-effect'); // Remove the class after fade-out
+            header.classList.remove('curtain-effect', 'fade-out'); // Remove the class after fade-out
             console.log('Curtain effect class removed');
         }, 2500); // Fade-out duration
     });

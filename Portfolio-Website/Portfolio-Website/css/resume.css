@@ -40,6 +40,12 @@ body {
     opacity: 1;
 }
 
+/* Fade-Out Animation for Curtain Only */
+.sticky-header.curtain-effect.fade-out::before {
+    animation: curtain-fade-out 2.5s ease forwards;
+}
+
+
 /* Keyframes for Curtain Drop and Fade-Out */
 @keyframes curtain-drop {
     0% {
