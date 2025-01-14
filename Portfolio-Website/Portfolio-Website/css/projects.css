@@ -54,23 +54,38 @@ a {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #123029; /* Same bold orange as sticky header */
-    z-index: 9999; /* Ensure it covers everything */
-    transform: translateY(-100%); /* Start off-screen */
-    opacity: 1; /* Fully visible */
-    transition: transform 1.5s ease, opacity 2.5s ease; /* Smooth drop and fade-out */
+    background-color: #123029;
+    /* Same bold orange as sticky header */
+    z-index: 9999;
+    /* Ensure it covers everything */
+    transform: translateY(-100%);
+    /* Start off-screen */
+    opacity: 1;
+    /* Fully visible */
+    transition: transform 1.5s ease, opacity 2.5s ease;
+    /* Smooth drop and fade-out */
 }
 
 /* Trigger for Curtain Drop */
 .curtain-overlay.curtain-drop {
-    transform: translateY(0); /* Fully visible */
+    transform: translateY(0);
+    /* Fully visible */
     transition: transform 1.5s ease;
 }
 
 /* Trigger for Curtain Fade-Out */
 .curtain-overlay.curtain-fade-out {
-    opacity: 0; /* Fully invisible */
+    opacity: 0;
+    /* Fully invisible */
     transition: opacity 2.5s ease;
+}
+
+/* Disable pointer events */
+.no-pointer-events {
+    pointer-events: none;
+    /* Prevent all interactions */
+    cursor: wait;
+    /* Show a "loading" cursor */
 }
 
 /* Sticky Header */
@@ -78,8 +93,10 @@ a {
     position: fixed;
     top: 0;
     width: 100%;
-    background-color: #123029; /* Darker Green */
-    color: #d1e8df; /* Light Text */
+    background-color: #123029;
+    /* Darker Green */
+    color: #d1e8df;
+    /* Light Text */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -94,7 +111,8 @@ a {
 .sticky-header .logo {
     font-size: 1.8rem;
     font-weight: bold;
-    color: #d1e8df; /* Light Text */
+    color: #d1e8df;
+    /* Light Text */
     text-decoration: none;
     white-space: nowrap;
 }
@@ -113,14 +131,16 @@ a {
 }
 
 .nav-links a {
-    color: #d1e8df; /* Light Text */
+    color: #d1e8df;
+    /* Light Text */
     font-weight: bold;
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .nav-links a:hover {
-    color: #b3dbca; /* Light Green */
+    color: #b3dbca;
+    /* Light Green */
 }
 
 /* Page Overview */
@@ -151,6 +171,7 @@ a {
         opacity: 0;
         transform: translateY(-20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);

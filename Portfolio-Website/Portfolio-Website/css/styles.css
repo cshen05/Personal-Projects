@@ -19,12 +19,6 @@ a:hover {
   color: #647e68;
 }
 
-/* Disable pointer events */
-.no-pointer-events {
-  pointer-events: none; /* Prevent all interactions */
-  cursor: wait; /* Show a "loading" cursor */
-}
-
 /* Fade-Out Animation for Text */
 .fade-out {
   opacity: 0;
