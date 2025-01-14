@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.addEventListener('pageshow', () => {
                 setTimeout(() => {
                     header.classList.remove('curtain-effect');
-                }, 4000); // Total duration: drop (0.75s) + fade-out (2.5s)
+                }, 10000); // Total duration: drop (0.75s) + fade-out (2.5s)
             });
         });
     });
