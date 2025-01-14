@@ -55,3 +55,4 @@ document.querySelector('.scroll-indicator').addEventListener('click', () => {
     const nextSection = document.querySelector('#projects');
     nextSection.scrollIntoView({ behavior: 'smooth' });
 });
+
