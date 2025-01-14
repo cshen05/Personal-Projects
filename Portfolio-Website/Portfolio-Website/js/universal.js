@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const targetUrl = e.target.href;
 
-            // Add the curtain effect class
+            // Add the curtain effect class to trigger the drop
             header.classList.add('curtain-effect');
             console.log('Curtain effect class added');
 
@@ -66,14 +66,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Ensure the curtain stays until the new page is fully loaded
+    // Ensure the curtain stays solid during load and fades out after the page is fully loaded
     window.addEventListener('pageshow', () => {
-        const header = document.querySelector('.sticky-header');
         console.log('New page fully loaded. Starting fade-out.');
 
         // Start the fade-out animation
+        const header = document.querySelector('.sticky-header');
+        header.style.animation = 'curtain-fade-out 2.5s ease forwards'; // Trigger fade-out animation
         setTimeout(() => {
-            header.classList.remove('curtain-effect');
+            header.classList.remove('curtain-effect'); // Remove the class after fade-out
             console.log('Curtain effect class removed');
         }, 2500); // Fade-out duration
     });
