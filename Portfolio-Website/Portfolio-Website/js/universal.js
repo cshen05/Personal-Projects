@@ -60,15 +60,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Navigate after the curtain is fully down
             setTimeout(() => {
-                window.location.href = targetUrl;
-            }, 1500);
-
-            // Wait for the fade-out animation to complete before removing the class
-            window.addEventListener('pageshow', () => {
-                setTimeout(() => {
-                    header.classList.remove('curtain-effect');
-                }, 4000); // Total duration: drop (0.75s) + fade-out (2.5s)
-            });
+                window.location.href = targetUrl; // Navigate to the target page
+            }, 1500); // Match curtain-drop duration
         });
+    });
+
+    // On the new page, wait for it to fully load before removing the curtain
+    window.addEventListener('pageshow', () => {
+        const header = document.querySelector('.sticky-header');
+        setTimeout(() => {
+            header.classList.remove('curtain-effect');
+        }, 4000); // Total duration: drop (1.5s) + fade-out (2.5s)
     });
 });
