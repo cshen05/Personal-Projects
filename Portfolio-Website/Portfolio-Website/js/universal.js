@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Add the curtain effect class
             header.classList.add('curtain-effect');
+            console.log('Curtain effect class added:', header.classList.contains('curtain-effect'));
 
             // Navigate after the curtain is fully down
             setTimeout(() => {
