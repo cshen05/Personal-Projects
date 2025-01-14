@@ -61,13 +61,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // Navigate after the curtain is fully down
             setTimeout(() => {
                 window.location.href = targetUrl;
-            }, 750);
+            }, 1500);
 
             // Wait for the fade-out animation to complete before removing the class
             window.addEventListener('pageshow', () => {
                 setTimeout(() => {
                     header.classList.remove('curtain-effect');
-                }, 10000); // Total duration: drop (0.75s) + fade-out (2.5s)
+                }, 4000); // Total duration: drop (0.75s) + fade-out (2.5s)
             });
         });
     });
