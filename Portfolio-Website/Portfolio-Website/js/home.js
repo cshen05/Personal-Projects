@@ -129,11 +129,15 @@ document.querySelector('.scroll-indicator').addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', () => {
     const curtain = document.querySelector('.curtain-overlay');
     const menuLinks = document.querySelectorAll('.nav-links a');
+    const body = document.body;
 
     menuLinks.forEach((link) => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const targetUrl = e.target.href;
+
+            // Block interactions
+            body.classList.add('no-pointer-events');
 
             // Trigger the curtain drop
             curtain.classList.add('curtain-drop');
@@ -155,10 +159,11 @@ document.addEventListener('DOMContentLoaded', () => {
             curtain.classList.add('curtain-fade-out');
             console.log('Curtain fading out.');
 
-            // Remove curtain classes after fade-out completes
+            // Allow interactions after fade-out completes
             setTimeout(() => {
                 curtain.classList.remove('curtain-drop', 'curtain-fade-out');
-                console.log('Curtain reset.');
+                body.classList.remove('no-pointer-events'); // Re-enable interactions
+                console.log('Curtain reset and interactions enabled.');
             }, 2500); // Match fade-out duration
         }, 1500); // Delay fade-out until after drop animation completes
     });
