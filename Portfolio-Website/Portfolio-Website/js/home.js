@@ -4,20 +4,19 @@ window.addEventListener('load', () => {
     // const greetingShown = localStorage.getItem('greetingShown')
     const sessionVisited = sessionStorage.getItem('sessionVisited'); // Specific to this session
 
-    // skip greeting
-    window.addEventListener('click', () => {
-        greetingOverlay.style.display = "none";
-    })
-
     if (!sessionVisited) {
         // Mark greeting as shown
-        // localStorage.setItem('greetingShown', 'true');
         sessionStorage.setItem('sessionVisited', 'true');
-        
+
         greetingOverlay.style.display = 'flex'; // Ensure it's visible
 
         const line1 = document.getElementById('greeting-line-1'); // Used for "Hey!" and "My name is Connor"
         const line3 = document.getElementById('greeting-line-3'); // Used for "Welcome to my Portfolio"
+
+        // skip greeting
+        window.addEventListener('click', () => {
+            greetingOverlay.style.display = "none";
+        })
 
         // Typing animation helper function
         const typeText = (element, text, duration) => {
@@ -78,7 +77,7 @@ window.addEventListener('scroll', () => {
         [216, 216, 216], // About: Light Gray (#D8D8D8)
         [245, 245, 245], // Experience: Very Light Gray (#F5F5F5)
     ];
-    
+
     const viewportHeight = window.innerHeight;
 
     sections.forEach((section, index) => {
