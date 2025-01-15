@@ -4,6 +4,11 @@ window.addEventListener('load', () => {
     // const greetingShown = localStorage.getItem('greetingShown')
     const sessionVisited = sessionStorage.getItem('sessionVisited'); // Specific to this session
 
+    // skip greeting
+    window.addEventListener('click', () => {
+        greetingOverlay.style.display = "none";
+    })
+
     if (!sessionVisited) {
         // Mark greeting as shown
         // localStorage.setItem('greetingShown', 'true');
