@@ -2,8 +2,6 @@
 body {
   margin: 0;
   font-family: 'Lexend', sans-serif;
-  background-color: #d8d8d8;
-  color: #182747;
   scroll-behavior: smooth;
   overflow-y: scroll;
   scrollbar-width: none;
@@ -11,14 +9,8 @@ body {
 
 a {
   text-decoration: none;
-  color: #182747;
   transition: color 0.3s ease;
 }
-
-a:hover {
-  color: #647e68;
-}
-
 /* Fade-Out Animation for Text */
 .fade-out {
   opacity: 0;
