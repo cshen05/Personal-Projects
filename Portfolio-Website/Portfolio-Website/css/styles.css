@@ -11,6 +11,11 @@ a {
   text-decoration: none;
   transition: color 0.3s ease;
 }
+
+a:hover {
+  color: #647e68;
+}
+
 /* Fade-Out Animation for Text */
 .fade-out {
   opacity: 0;
