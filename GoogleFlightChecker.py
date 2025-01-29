@@ -23,23 +23,21 @@ def send_imessage(phone_number, message):
     subprocess.run(["osascript", "-e", script])
 
 def extract_flight_details(page):
-    """Scrape only the departure time, airline names, and prices from Google Flights."""
+    """Scrape only airline names and prices from Google Flights."""
     flights = []
     
     # Wait for elements to load
     page.wait_for_timeout(5000)
 
-    # Locate elements for departure time, airline, and price
+    # Locate elements for airline and price
     price_elements = page.locator("div[class*='YMlIz']").all()
     airline_elements = page.locator("div[class*='sSHqwe']").all()  # Precise airline selector
-    time_elements = page.locator("div[class*='Ir0Voe']").all()  # Departure time selector
 
-    print(f"🔍 Found {len(price_elements)} price elements, {len(airline_elements)} airline elements, and {len(time_elements)} time elements")
+    print(f"🔍 Found {len(price_elements)} price elements and {len(airline_elements)} airline elements")
 
-    for price_elem, airline_elem, time_elem in zip(price_elements, airline_elements, time_elements):
+    for price_elem, airline_elem in zip(price_elements, airline_elements):
         price_text = price_elem.text_content().strip()
         airline_text = airline_elem.text_content().strip()
-        time_text = time_elem.text_content().strip()
 
         # Extract price using regex and ensure it's a valid price
         price_match = re.search(r"\$(\d+)", price_text)
@@ -48,20 +46,15 @@ def extract_flight_details(page):
 
             # Ignore non-price text (e.g., "1 stop") by checking for "$"
             if "$" in price_text:
-                # **Format the extracted time to remove duplicate/unwanted text**
-                time_clean = re.match(r"(\d{1,2}:\d{2} [AP]M)", time_text)
-                if time_clean:
-                    time_final = time_clean.group(1)  # Get only the "6:00 AM" part
+                # **Format the extracted airline name (remove junk text)**
+                airline_final = airline_text.split(" - ")[0]  # Remove extra info if any
 
-                    # **Format the extracted airline name (remove junk text)**
-                    airline_final = airline_text.split(" - ")[0]  # Remove extra info if any
-
-                    flights.append((time_final, airline_final, price))
+                flights.append((airline_final, price))
 
     return flights
 
 def check_flights():
-    """Scrape Google Flights and list only departure times, airlines, and prices under $900."""
+    """Scrape Google Flights and list only airlines and prices under $900."""
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)  # Change to False to see browser actions
         page = browser.new_page()
@@ -83,12 +76,12 @@ def check_flights():
             print(f"📋 Extracted Flights on {departure_date}: {flights}")
 
             # Filter flights under $900
-            cheap_flights = [(time, airline, price) for time, airline, price in flights if price < MAX_PRICE]
+            cheap_flights = [(airline, price) for airline, price in flights if price < MAX_PRICE]
 
             if cheap_flights:
                 print(f"✅ Found flights under $900 on {departure_date}: {cheap_flights}")
 
-                formatted_flights = "\n".join([f"{time} - {airline} - ${price}" for time, airline, price in cheap_flights])
+                formatted_flights = "\n".join([f"{airline} - ${price}" for airline, price in cheap_flights])
                 all_cheapest_flights.append(f"📅 {departure_date}\n{formatted_flights}")
 
         browser.close()
