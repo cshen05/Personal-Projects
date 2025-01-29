@@ -3,7 +3,6 @@ import subprocess
 import time
 import re
 
-# ✅ Corrected Google Flights URLs
 FLIGHT_URLS = {
     "2025-05-06": "https://www.google.com/travel/flights/search?tfs=CBwQAhonEgoyMDI1LTA1LTA2agsIAhIHL20vMHZ6bXIMCAMSCC9tLzA3ZGZrGicSCjIwMjUtMDUtMjBqDAgDEggvbS8wN2Rma3ILCAISBy9tLzB2em1AAUgBcAGCAQsI____________AZgBAQ&tfu=EgoIABAAGAAgAigB&hl=en-US&gl=US",
     "2025-05-07": "https://www.google.com/travel/flights/search?tfs=CBwQAhonEgoyMDI1LTA1LTA3agsIAhIHL20vMHZ6bXIMCAMSCC9tLzA3ZGZrGicSCjIwMjUtMDUtMjBqDAgDEggvbS8wN2Rma3ILCAISBy9tLzB2em1AAUgBcAGCAQsI____________AZgBAQ&tfu=EgoIABAAGAAgAigB&hl=en-US&gl=US"
@@ -23,7 +22,7 @@ def send_imessage(phone_number, message):
     subprocess.run(["osascript", "-e", script])
 
 def extract_flight_details(page):
-    """Scrape only airline names and prices from Google Flights."""
+    """Scrape only airline names and valid prices from Google Flights."""
     flights = []
     
     # Wait for elements to load
@@ -39,15 +38,15 @@ def extract_flight_details(page):
         price_text = price_elem.text_content().strip()
         airline_text = airline_elem.text_content().strip()
 
-        # Extract price using regex and ensure it's a valid price
+        # Extract price using regex and ensure it's a valid price (avoid junk like "$1")
         price_match = re.search(r"\$(\d+)", price_text)
         if price_match:
             price = int(price_match.group(1))
 
-            # Ignore non-price text (e.g., "1 stop") by checking for "$"
-            if "$" in price_text:
-                # **Format the extracted airline name (remove junk text)**
-                airline_final = airline_text.split(" - ")[0]  # Remove extra info if any
+            # Ignore unrealistically low $1 or $2 prices (junk data)
+            if price > 50 and price < MAX_PRICE:  
+                # **Clean the airline name (removes unnecessary info like "round trip")**
+                airline_final = re.sub(r"[\d\w\s]+stop.*", "", airline_text).strip()
 
                 flights.append((airline_final, price))
 
@@ -76,12 +75,8 @@ def check_flights():
             print(f"📋 Extracted Flights on {departure_date}: {flights}")
 
             # Filter flights under $900
-            cheap_flights = [(airline, price) for airline, price in flights if price < MAX_PRICE]
-
-            if cheap_flights:
-                print(f"✅ Found flights under $900 on {departure_date}: {cheap_flights}")
-
-                formatted_flights = "\n".join([f"{airline} - ${price}" for airline, price in cheap_flights])
+            if flights:
+                formatted_flights = "\n".join([f"{airline} - ${price}" for airline, price in flights])
                 all_cheapest_flights.append(f"📅 {departure_date}\n{formatted_flights}")
 
         browser.close()
