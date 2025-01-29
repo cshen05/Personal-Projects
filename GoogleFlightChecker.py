@@ -5,10 +5,12 @@ import re
 
 # Google Flights URLs for May 6-20 and May 7-20
 FLIGHT_URLS = {
-    "2025-05-06": "https://www.google.com/travel/flights/search?tfs=CBwQAhonEgoyMDI1LTA1LTA2agsIAhIHL20vMHZ6bXIMCAISCC9tLzA3ZGZrGicSCjIwMjUtMDUtMjBqDAgCEggvbS8wN2Rma3ILCAISBy9tLzB2em1AAUgBcAGCAQsI____________AZgBAQ&tfu=EgoIABAAGAAgAigB",
-    "2025-05-07": "https://www.google.com/travel/flights/search?tfs=CBwQAhonEgoyMDI1LTA1LTA3agsIAhIHL20vMHZ6bXIMCAISCC9tLzA3ZGZrGicSCjIwMjUtMDUtMjBqDAgCEggvbS8wN2Rma3ILCAISBy9tLzB2em1AAUgBcAGCAQsI____________AZgBAQ&tfu=EgYIACACKAEiAxIBMA"
-    }
-MAX_PRICE = 900  # Set the max price for alerts
+    "2025-05-06": "https://www.google.com/travel/flights/search?tfs=CBwQAhonEgoyMDI1LTA1LTA2agsIAhIHL20vMHZ6bXIMCAMSCC9tLzA3ZGZrGicSCjIwMjUtMDUtMjBqDAgDEggvbS8wN2Rma3ILCAISBy9tLzB2em1AAUgBcAGCAQsI____________AZgBAQ&tfu=EgoIABAAGAAgAigB&hl=en-US&gl=US",
+    "2025-05-07": "https://www.google.com/travel/flights/search?tfs=CBwQAhonEgoyMDI1LTA1LTA3agsIAhIHL20vMHZ6bXIMCAMSCC9tLzA3ZGZrGicSCjIwMjUtMDUtMjBqDAgDEggvbS8wN2Rma3ILCAISBy9tLzB2em1AAUgBcAGCAQsI____________AZgBAQ&tfu=EgoIABAAGAAgAigB&hl=en-US&gl=US"
+}
+MAX_PRICE = 900  # Max price threshold
+
+# Your iMessage Number (Must be linked to iMessage on Mac)
 YOUR_PHONE_NUMBER = "3468188055"  # Replace with your phone number
 
 def send_imessage(phone_number, message):
@@ -34,9 +36,12 @@ def extract_prices(page):
     return prices
 
 def check_flights():
+    """Scrape Google Flights and list all flights under $900."""
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
+
+        all_cheapest_flights = []  # Store all flights under $900
 
         for departure_date, flights_url in FLIGHT_URLS.items():
             print(f"🔍 Checking flights for {departure_date} - 2025-05-20")
@@ -46,20 +51,21 @@ def check_flights():
             # Extract all flight prices
             prices = extract_prices(page)
             
-            # Check if any flight is under $900
-            for price in prices:
-                if price < MAX_PRICE:
-                    print(f"✅ Flight found for ${price} ({departure_date} - 2025-05-20): {flights_url}")
-                    
-                    # Send iMessage Alert
-                    send_imessage(YOUR_PHONE_NUMBER, f"🚀 Flight Found: ${price} round-trip (Depart: {departure_date})! Book now: {flights_url}")
-                    
-                    browser.close()
-                    return True
-        
-        print("❌ No flights found under $900 for both dates.")
+            # Find flights under $900
+            cheap_flights = [price for price in prices if price < MAX_PRICE]
+
+            if cheap_flights:
+                print(f"✅ Found flights under $900 on {departure_date}: {cheap_flights}")
+                all_cheapest_flights.append(f"{departure_date}: {', '.join([f'${p}' for p in cheap_flights])} - {flights_url}")
+
         browser.close()
-        return False
+
+        if all_cheapest_flights:
+            # Format message for iMessage
+            message = "🚀 Flights Under $900 Found!\n\n" + "\n".join(all_cheapest_flights)
+            send_imessage(YOUR_PHONE_NUMBER, message)
+        else:
+            print("❌ No flights found under $900 for both dates.")
 
 if __name__ == "__main__":
     check_flights()
