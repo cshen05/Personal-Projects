@@ -33,6 +33,7 @@ def check_flights():
         for departure_date in DEPARTURE_DATES:
             # Generate Google Flights URL for each departure date
             flights_url = f"https://www.google.com/travel/flights?q=Flights%20to%20{DESTINATION}%20from%20{ORIGIN}%20on%20{departure_date}%20through%20{RETURN_DATE}"
+            print(flights_url)
             
             # Open Google Flights
             page.goto(flights_url)
