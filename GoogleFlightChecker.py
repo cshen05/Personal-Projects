@@ -4,14 +4,14 @@ import time
 import re
 
 # Flight Search Config
-ORIGIN = "AUS"  # Austin Airport Code
-DESTINATION = "TYO"  # Tokyo (Covers HND/NRT)
+FLIGHT_URLS = {
+    "2025-05-06": "https://www.google.com/travel/flights/search?tfs=CBwQAhonEgoyMDI1LTA1LTA2agsIAhIHL20vMHZ6bXIMCAISCC9tLzA3ZGZrGicSCjIwMjUtMDUtMjBqDAgCEggvbS8wN2Rma3ILCAISBy9tLzB2em1AAUgBcAGCAQsI____________AZgBAQ",
+    "2025-05-07": "https://www.google.com/travel/flights/search?tfs=CBwQAhonEgoyMDI1LTA1LTA3agsIAhIHL20vMHZ6bXIMCAISCC9tLzA3ZGZrGicSCjIwMjUtMDUtMjBqDAgCEggvbS8wN2Rma3ILCAISBy9tLzB2em1AAUgBcAGCAQsI____________AZgBAQ"
+}
 MAX_PRICE = 900
-DEPARTURE_DATES = ["2025-05-06", "2025-05-07"]  # Check both May 6 & 7
-RETURN_DATE = "2025-05-20"
 
 # Your iMessage Number (Must be linked to iMessage on Mac)
-YOUR_PHONE_NUMBER = "3468188055"
+YOUR_PHONE_NUMBER = "3468188055"  # Replace with your phone number
 
 def send_imessage(phone_number, message):
     """Send an iMessage using AppleScript."""
@@ -32,12 +32,8 @@ def check_flights():
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
 
-        for departure_date in DEPARTURE_DATES:
-            # Generate Correct Google Flights Link
-            flights_url = f"https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI1LTA1-{departure_date[-2:]}agcIARIDVVNqDAgDEgoyMDI1LTA1-20agcIARIDVFlO&tfu=EgYIARAAGAA"
-            print(flights_url)
-            
-            # Open Google Flights
+        for departure_date, flights_url in FLIGHT_URLS.items():
+            print(f"🔍 Checking flights for {departure_date} - 2025-05-20")
             page.goto(flights_url)
             time.sleep(5)  # Allow time for the page to load
             
@@ -49,7 +45,7 @@ def check_flights():
                 price = extract_price(price_text)
 
                 if price and price < MAX_PRICE:
-                    print(f"✅ Flight found for ${price} ({departure_date} - {RETURN_DATE}): {flights_url}")
+                    print(f"✅ Flight found for ${price} ({departure_date} - 2025-05-20): {flights_url}")
                     
                     # Send iMessage Alert
                     send_imessage(YOUR_PHONE_NUMBER, f"🚀 Flight Found: ${price} round-trip (Depart: {departure_date})! Book now: {flights_url}")
