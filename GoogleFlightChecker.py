@@ -3,14 +3,12 @@ import subprocess
 import time
 import re
 
-# Flight Search Config
+# Google Flights URLs for May 6-20 and May 7-20
 FLIGHT_URLS = {
-    "2025-05-06": "https://www.google.com/travel/flights/search?tfs=CBwQAhonEgoyMDI1LTA1LTA2agsIAhIHL20vMHZ6bXIMCAISCC9tLzA3ZGZrGicSCjIwMjUtMDUtMjBqDAgCEggvbS8wN2Rma3ILCAISBy9tLzB2em1AAUgBcAGCAQsI____________AZgBAQ",
-    "2025-05-07": "https://www.google.com/travel/flights/search?tfs=CBwQAhonEgoyMDI1LTA1LTA3agsIAhIHL20vMHZ6bXIMCAISCC9tLzA3ZGZrGicSCjIwMjUtMDUtMjBqDAgCEggvbS8wN2Rma3ILCAISBy9tLzB2em1AAUgBcAGCAQsI____________AZgBAQ"
-}
-MAX_PRICE = 900
-
-# Your iMessage Number (Must be linked to iMessage on Mac)
+    "2025-05-06": "https://www.google.com/travel/flights/search?tfs=CBwQAhonEgoyMDI1LTA1LTA2agsIAhIHL20vMHZ6bXIMCAISCC9tLzA3ZGZrGicSCjIwMjUtMDUtMjBqDAgCEggvbS8wN2Rma3ILCAISBy9tLzB2em1AAUgBcAGCAQsI____________AZgBAQ&tfu=EgoIABAAGAAgAigB",
+    "2025-05-07": "https://www.google.com/travel/flights/search?tfs=CBwQAhonEgoyMDI1LTA1LTA3agsIAhIHL20vMHZ6bXIMCAISCC9tLzA3ZGZrGicSCjIwMjUtMDUtMjBqDAgCEggvbS8wN2Rma3ILCAISBy9tLzB2em1AAUgBcAGCAQsI____________AZgBAQ&tfu=EgYIACACKAEiAxIBMA"
+    }
+MAX_PRICE = 900  # Set the max price for alerts
 YOUR_PHONE_NUMBER = "3468188055"  # Replace with your phone number
 
 def send_imessage(phone_number, message):
@@ -22,10 +20,18 @@ def send_imessage(phone_number, message):
     '''
     subprocess.run(["osascript", "-e", script])
 
-def extract_price(text):
-    """Extract numerical price from text (e.g., "$850" -> 850)."""
-    match = re.search(r"\$\d+", text)
-    return int(match.group()[1:]) if match else None
+def extract_prices(page):
+    """Scrape all flight prices from Google Flights page."""
+    prices = []
+    price_elements = page.locator("div[class*='YMlIz']").all()
+
+    for element in price_elements:
+        price_text = element.text_content()
+        match = re.search(r"\$(\d+)", price_text)  # Extract numbers after $
+        if match:
+            prices.append(int(match.group(1)))
+
+    return prices
 
 def check_flights():
     with sync_playwright() as p:
@@ -37,14 +43,12 @@ def check_flights():
             page.goto(flights_url)
             time.sleep(5)  # Allow time for the page to load
             
-            # Scrape prices
-            flights = page.locator("div[aria-label*='round trip from Austin']").all()
+            # Extract all flight prices
+            prices = extract_prices(page)
             
-            for flight in flights:
-                price_text = flight.locator("div[class*='YMlIz']").text_content()
-                price = extract_price(price_text)
-
-                if price and price < MAX_PRICE:
+            # Check if any flight is under $900
+            for price in prices:
+                if price < MAX_PRICE:
                     print(f"✅ Flight found for ${price} ({departure_date} - 2025-05-20): {flights_url}")
                     
                     # Send iMessage Alert
