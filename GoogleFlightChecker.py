@@ -3,6 +3,7 @@ import subprocess
 import time
 import re
 
+# ✅ Corrected Google Flights URLs
 FLIGHT_URLS = {
     "2025-05-06": "https://www.google.com/travel/flights/search?tfs=CBwQAhonEgoyMDI1LTA1LTA2agsIAhIHL20vMHZ6bXIMCAMSCC9tLzA3ZGZrGicSCjIwMjUtMDUtMjBqDAgDEggvbS8wN2Rma3ILCAISBy9tLzB2em1AAUgBcAGCAQsI____________AZgBAQ&tfu=EgoIABAAGAAgAigB&hl=en-US&gl=US",
     "2025-05-07": "https://www.google.com/travel/flights/search?tfs=CBwQAhonEgoyMDI1LTA1LTA3agsIAhIHL20vMHZ6bXIMCAMSCC9tLzA3ZGZrGicSCjIwMjUtMDUtMjBqDAgDEggvbS8wN2Rma3ILCAISBy9tLzB2em1AAUgBcAGCAQsI____________AZgBAQ&tfu=EgoIABAAGAAgAigB&hl=en-US&gl=US"
@@ -43,12 +44,14 @@ def extract_flight_details(page):
         if price_match:
             price = int(price_match.group(1))
 
-            # Ignore unrealistically low $1 or $2 prices (junk data)
+            # Ignore junk prices ($1, $2)
             if price > 50 and price < MAX_PRICE:  
-                # **Clean the airline name (removes unnecessary info like "round trip")**
-                airline_final = re.sub(r"[\d\w\s]+stop.*", "", airline_text).strip()
+                # **Clean the airline name (removes unnecessary info like "round trip", stops, and cities)**
+                airline_final = re.sub(r"(round trip|stop.*|airport|AUS|LAX|NRT|HND|DFW|ORD).*", "", airline_text, flags=re.IGNORECASE).strip()
 
-                flights.append((airline_final, price))
+                # **Ensure airline name is valid**
+                if airline_final and not airline_final.isnumeric():
+                    flights.append((airline_final, price))
 
     return flights
 
