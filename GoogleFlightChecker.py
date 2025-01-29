@@ -39,18 +39,18 @@ def extract_flight_details(page):
         price_text = price_elem.text_content().strip()
         airline_text = airline_elem.text_content().strip()
 
-        # Extract price using regex and ensure it's a valid price (avoid junk like "$1")
+        # Extract price using regex and ensure it's a valid price
         price_match = re.search(r"\$(\d+)", price_text)
         if price_match:
             price = int(price_match.group(1))
 
             # Ignore junk prices ($1, $2)
             if price > 50 and price < MAX_PRICE:  
-                # **Clean the airline name (removes unnecessary info like "round trip", stops, and cities)**
-                airline_final = re.sub(r"(round trip|stop.*|airport|AUS|LAX|NRT|HND|DFW|ORD).*", "", airline_text, flags=re.IGNORECASE).strip()
+                # **Clean the airline name (removes unnecessary info)**
+                airline_final = re.sub(r"(round trip|stop.*|airport|AUS|LAX|NRT|HND|DFW|ORD|mins|hr|hour|minute).*", "", airline_text, flags=re.IGNORECASE).strip()
 
                 # **Ensure airline name is valid**
-                if airline_final and not airline_final.isnumeric():
+                if airline_final and not any(char.isdigit() for char in airline_final):  # Remove names with numbers
                     flights.append((airline_final, price))
 
     return flights
