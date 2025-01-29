@@ -3,10 +3,10 @@ import subprocess
 import time
 import re
 
-# Updated Google Flights URLs for May 6-20 and May 7-20
+# ✅ Corrected Google Flights URLs (Now correctly mapped to their dates)
 FLIGHT_URLS = {
-    "2025-05-06": "https://www.google.com/travel/flights/search?tfs=CBwQAhonEgoyMDI1LTA1LTA3agsIAhIHL20vMHZ6bXIMCAMSCC9tLzA3ZGZrGicSCjIwMjUtMDUtMjBqDAgDEggvbS8wN2Rma3ILCAISBy9tLzB2em1AAUgBcAGCAQsI____________AZgBAQ&tfu=EgoIABAAGAAgAigB&hl=en-US&gl=US",
-    "2025-05-07": "https://www.google.com/travel/flights/search?tfs=CBwQAhonEgoyMDI1LTA1LTA2agsIAhIHL20vMHZ6bXIMCAMSCC9tLzA3ZGZrGicSCjIwMjUtMDUtMjBqDAgDEggvbS8wN2Rma3ILCAISBy9tLzB2em1AAUgBcAGCAQsI____________AZgBAQ&tfu=EgoIABAAGAAgAigB&hl=en-US&gl=US"
+    "2025-05-06": "https://www.google.com/travel/flights/search?tfs=CBwQAhonEgoyMDI1LTA1LTA2agsIAhIHL20vMHZ6bXIMCAMSCC9tLzA3ZGZrGicSCjIwMjUtMDUtMjBqDAgDEggvbS8wN2Rma3ILCAISBy9tLzB2em1AAUgBcAGCAQsI____________AZgBAQ&tfu=EgoIABAAGAAgAigB&hl=en-US&gl=US",
+    "2025-05-07": "https://www.google.com/travel/flights/search?tfs=CBwQAhonEgoyMDI1LTA1LTA3agsIAhIHL20vMHZ6bXIMCAMSCC9tLzA3ZGZrGicSCjIwMjUtMDUtMjBqDAgDEggvbS8wN2Rma3ILCAISBy9tLzB2em1AAUgBcAGCAQsI____________AZgBAQ&tfu=EgoIABAAGAAgAigB&hl=en-US&gl=US"
 }
 MAX_PRICE = 900  # Max price threshold
 
@@ -23,32 +23,37 @@ def send_imessage(phone_number, message):
     subprocess.run(["osascript", "-e", script])
 
 def extract_flight_details(page):
-    """Scrape airline names and prices from Google Flights."""
+    """Scrape departure time, airline names, and prices from Google Flights."""
     flights = []
     
     # Wait for elements to load
     page.wait_for_timeout(5000)
 
-    # Locate price elements
+    # Locate elements for departure time, airline, and price
     price_elements = page.locator("div[class*='YMlIz']").all()
-    airline_elements = page.locator("div[role='gridcell'] div[class*='sSHqwe']").all()
+    airline_elements = page.locator("div[class*='sSHqwe']").all()  # More precise airline selector
+    time_elements = page.locator("div[class*='Ir0Voe']").all()  # Departure time selector
 
-    print(f"🔍 Found {len(price_elements)} price elements and {len(airline_elements)} airline elements")
+    print(f"🔍 Found {len(price_elements)} price elements, {len(airline_elements)} airline elements, and {len(time_elements)} time elements")
 
-    for price_elem, airline_elem in zip(price_elements, airline_elements):
+    for price_elem, airline_elem, time_elem in zip(price_elements, airline_elements, time_elements):
         price_text = price_elem.text_content().strip()
         airline_text = airline_elem.text_content().strip()
+        time_text = time_elem.text_content().strip()
 
-        # Extract price using regex
+        # Extract price using regex and ensure it's a valid price
         price_match = re.search(r"\$(\d+)", price_text)
         if price_match:
             price = int(price_match.group(1))
-            flights.append((airline_text, price))
+
+            # Ignore non-price text (e.g., "1 stop") by checking for "$"
+            if "$" in price_text:
+                flights.append((time_text, airline_text, price))
 
     return flights
 
 def check_flights():
-    """Scrape Google Flights and list all airlines and prices under $900."""
+    """Scrape Google Flights and list all departure times, airlines, and prices under $900."""
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)  # Change to False to see browser actions
         page = browser.new_page()
@@ -58,7 +63,7 @@ def check_flights():
         for departure_date, flights_url in FLIGHT_URLS.items():
             print(f"🔍 Checking flights for {departure_date} - 2025-05-20")
             page.goto(flights_url)
-            time.sleep(5)  # Allow time for the page to load
+            page.wait_for_load_state("networkidle")  # Wait for full page load
             
             # Extract all airline names and prices
             flights = extract_flight_details(page)
@@ -66,13 +71,17 @@ def check_flights():
             if not flights:
                 print(f"⚠️ No flights detected for {departure_date}, check the selectors!")
 
+            # Print extracted flights for debugging
+            print(f"📋 Extracted Flights on {departure_date}: {flights}")
+
             # Filter flights under $900
-            cheap_flights = [(airline, price) for airline, price in flights if price < MAX_PRICE]
+            cheap_flights = [(time, airline, price) for time, airline, price in flights if price < MAX_PRICE]
 
             if cheap_flights:
                 print(f"✅ Found flights under $900 on {departure_date}: {cheap_flights}")
-                formatted_flights = "\n".join([f"{airline}: ${price}" for airline, price in cheap_flights])
-                all_cheapest_flights.append(f"📅 {departure_date}:\n{formatted_flights}")
+
+                formatted_flights = "\n".join([f"{time} - {airline} - ${price}" for time, airline, price in cheap_flights])
+                all_cheapest_flights.append(f"📅 {departure_date}\n{formatted_flights}")
 
         browser.close()
 
