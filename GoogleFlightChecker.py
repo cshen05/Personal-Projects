@@ -22,21 +22,26 @@ def send_imessage(phone_number, message):
     '''
     subprocess.run(["osascript", "-e", script])
 
-def extract_prices(page):
-    """Scrape all flight prices from Google Flights page."""
-    prices = []
-    price_elements = page.locator("div[class*='YMlIz']").all()
+def extract_flight_details(page):
+    """Scrape all flight prices and their corresponding airlines from Google Flights."""
+    flights = []
+    
+    price_elements = page.locator("div[class*='YMlIz']").all()  # Price elements
+    airline_elements = page.locator("div[role='gridcell'] div[class*='sSHqwe']").all()  # Airline elements
 
-    for element in price_elements:
-        price_text = element.text_content()
-        match = re.search(r"\$(\d+)", price_text)  # Extract numbers after $
-        if match:
-            prices.append(int(match.group(1)))
+    for price_elem, airline_elem in zip(price_elements, airline_elements):
+        price_text = price_elem.text_content()
+        airline_text = airline_elem.text_content()
 
-    return prices
+        price_match = re.search(r"\$(\d+)", price_text)
+        if price_match:
+            price = int(price_match.group(1))
+            flights.append((airline_text.strip(), price))
+
+    return flights
 
 def check_flights():
-    """Scrape Google Flights and list all flights under $900."""
+    """Scrape Google Flights and list all airlines and prices under $900."""
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
@@ -46,23 +51,24 @@ def check_flights():
         for departure_date, flights_url in FLIGHT_URLS.items():
             print(f"🔍 Checking flights for {departure_date} - 2025-05-20")
             page.goto(flights_url)
-            time.sleep(5)  # Allow time for the page to load
+            time.sleep(50)  # Allow time for the page to load
             
-            # Extract all flight prices
-            prices = extract_prices(page)
+            # Extract all airline names and prices
+            flights = extract_flight_details(page)
             
-            # Find flights under $900
-            cheap_flights = [price for price in prices if price < MAX_PRICE]
+            # Filter flights under $900
+            cheap_flights = [(airline, price) for airline, price in flights if price < MAX_PRICE]
 
             if cheap_flights:
                 print(f"✅ Found flights under $900 on {departure_date}: {cheap_flights}")
-                all_cheapest_flights.append(f"{departure_date}: {', '.join([f'${p}' for p in cheap_flights])} - {flights_url}")
+                formatted_flights = "\n".join([f"{airline}: ${price}" for airline, price in cheap_flights])
+                all_cheapest_flights.append(f"📅 {departure_date}:\n{formatted_flights}")
 
         browser.close()
 
         if all_cheapest_flights:
             # Format message for iMessage
-            message = "🚀 Flights Under $900 Found!\n\n" + "\n".join(all_cheapest_flights)
+            message = "🚀 Flights Under $900 Found!\n\n" + "\n\n".join(all_cheapest_flights)
             send_imessage(YOUR_PHONE_NUMBER, message)
         else:
             print("❌ No flights found under $900 for both dates.")
