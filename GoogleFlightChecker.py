@@ -4,12 +4,14 @@ import time
 import re
 
 # Flight Search Config
-ORIGIN = "Austin (AUS)"
-DESTINATION = "Tokyo (TYO)"
+ORIGIN = "AUS"  # Austin Airport Code
+DESTINATION = "TYO"  # Tokyo (Covers HND/NRT)
 MAX_PRICE = 900
-DEPARTURE_DATES = ["2025-05-06", "2025-05-07"]  # Now checks both May 6th & May 7th
+DEPARTURE_DATES = ["2025-05-06", "2025-05-07"]  # Check both May 6 & 7
 RETURN_DATE = "2025-05-20"
-YOUR_PHONE_NUMBER = "3468188055"  # Replace with your real phone number
+
+# Your iMessage Number (Must be linked to iMessage on Mac)
+YOUR_PHONE_NUMBER = "3468188055"
 
 def send_imessage(phone_number, message):
     """Send an iMessage using AppleScript."""
@@ -31,9 +33,8 @@ def check_flights():
         page = browser.new_page()
 
         for departure_date in DEPARTURE_DATES:
-            # Generate Google Flights URL for each departure date
-            flights_url = f"https://www.google.com/travel/flights?q=Flights%20to%20{DESTINATION}%20from%20{ORIGIN}%20on%20{departure_date}%20through%20{RETURN_DATE}"
-            print(flights_url)
+            # Generate Correct Google Flights Link
+            flights_url = f"https://www.google.com/travel/flights/search?tfs=CBwQAhojEgoyMDI1LTA1-{departure_date[-2:]}agcIARIDVVNqDAgDEgoyMDI1LTA1-20agcIARIDVFlO&tfu=EgYIARAAGAA"
             
             # Open Google Flights
             page.goto(flights_url)
