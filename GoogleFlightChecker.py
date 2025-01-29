@@ -9,7 +9,7 @@ DESTINATION = "Tokyo (TYO)"
 MAX_PRICE = 900
 DEPARTURE_DATES = ["2025-05-06", "2025-05-07"]  # Now checks both May 6th & May 7th
 RETURN_DATE = "2025-05-20"
-YOUR_PHONE_NUMBER = "3468188055"  # Replace with your real phone number
+YOUR_PHONE_NUMBER = "1234567890"  # Replace with your real phone number
 
 def send_imessage(phone_number, message):
     """Send an iMessage using AppleScript."""
