@@ -155,7 +155,7 @@ ggplot(realestate, aes(x=house_age, y=price)) + geom_point() + geom_spline(aes(x
 
 ############################ Assessing model accuracy
 
-install.packages('MLmetrics')
+#install.packages('MLmetrics')
 library(MLmetrics)
 
 ### Create vector from of price
