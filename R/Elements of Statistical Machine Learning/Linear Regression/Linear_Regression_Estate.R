@@ -47,9 +47,11 @@ confint(my_lm) # This operator is used to construct the confidence interval for 
 ######### Y = real estate price, X = distance to station
 ggplot(realestate, aes(x=dist_station, y=price)) + geom_point(size=2, color = "blue", shape=19) + geom_smooth(method='lm', formula= y~x, colour="red")
 
+
 ## Take a look at confidence intervals
 my_lm <- lm(price~dist_station, data=realestate) 
 confint(my_lm)
+summary(my_lm)
 
 ######### Y = real estate price, X = number of stores
 ggplot(realestate, aes(x=number_stores, y=price)) + geom_point(size=2, color = "blue", shape=19) + geom_smooth(method='lm', formula= y~x, colour="red")
@@ -57,6 +59,7 @@ ggplot(realestate, aes(x=number_stores, y=price)) + geom_point(size=2, color = "
 ## Take a look at confidence intervals
 my_lm <- lm(price~number_stores, data=realestate) 
 confint(my_lm)
+summary(my_lm)
 
 
 ################################################### Hypothesis testing
