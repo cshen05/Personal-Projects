@@ -6,7 +6,7 @@ library(tidyr)
 library(dplyr)
 
 # Set the working directory (you need to choose different directory in your computer)
-setwd("/Users/nh23294/Box/Teaching/SDS_323/Data/")
+
 
 ################################################################################
 ############## We first try with the "Heart_disease.csv"
@@ -101,7 +101,7 @@ accuracy_heart_test <- sum(diag(table_heart_test))/ sum(table_heart_test)
 accuracy_heart_test
 
 ###################### Y = heart disease, X = total Cholesterol (totChol)
-my_glm <- glm(Heart_disease~totChol, data = heartdisease_train, family = "binomial")
+my_glm <- glm(Heart_disease~heartRate, data = heartdisease_train, family = "binomial")
 summary(my_glm)
 
 # Visualization within the range of data
