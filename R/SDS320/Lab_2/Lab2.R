@@ -4,8 +4,8 @@ data <- read.csv("DescriptivesLab_acupuncture.csv")
 
 library(ggplot2)
 
-ggplot(data, aes(x=group, y=severity_diff)) +
-  geom_boxplot()
+ggplot(data) +
+  geom_boxplot(aes(x=group, y=severity_diff))
 
 acupuncture <- data %>% 
   group_by(group) %>% 
