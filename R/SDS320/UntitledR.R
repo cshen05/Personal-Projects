@@ -1,43 +1,59 @@
-library(car)
-library(ggplot2)
-library(dplyr)
+set.seed(1)
+x1 <- runif(100)
+x2 <- 0.5 * x1 + rnorm(100) / 10
+y <- -2 + 2 * x1 + 0.3 * x2 + rnorm(100)
 
-cs65692 <- Robey
-cs65692
+correlation <- cor(x1, x2)
+print(paste("Correlation between x1 and x2:", round(correlation, 3)))
 
-mean_tfr <- mean(Robey$tfr, na.rm = TRUE)
-median_tfr <- median(Robey$tfr, na.rm = TRUE)
-sd_tfr <- sd(Robey$tfr, na.rm = TRUE)
-iqr_tfr <- IQR(Robey$tfr, na.rm=TRUE)
+plot(x1, x2, main = paste("Scatterplot of x1 vs x2 (Correlation = ", round(correlation, 3), ")"),
+     xlab = "x1", ylab = "x2", pch = 19, col = "blue")
+grid()
 
-summary_stats <- data.frame(
-  Statistic = c("Mean", "Median", "Standard Deviation", "IQR"),
-  Value = c(mean_tfr, median_tfr, sd_tfr, iqr_tfr)
-)
-print(summary_stats)
+model <- lm(y ~ x1 + x2)
+summary(model)
 
-ggplot(Robey, aes(x = tfr)) +
-  geom_histogram(binwidth = 0.5, fill = "blue", color = "black", alpha = 0.7) +
-  geom_density(alpha = 0.2, fill = "red") +
-  labs(title = "Distribution of Total Fertility Rate (TFR)",
-       x = "Total Fertility Rate",
-       y = "Frequency") +
-  theme_minimal()
+model_x1 <- lm(y ~ x1)
+summary(model_x1)
 
-ggplot(Robey, aes(x = region, y = tfr, fill = region)) +
-  geom_boxplot() +
-  labs(title = "Comparison of Total Fertility Rate Across Regions",
-       x = "World Region",
-       y = "Total Fertility Rate (TFR)") +
-  theme_minimal()
+model_x2 <- lm(y ~ x2)
+summary(model_x2)
 
-stat_tfr_by_region <- Robey %>%
-  group_by(region) %>%
-  summarise(mean_tfr = mean(tfr, na.rm = TRUE),
-            median_tfr = median(tfr, na.rm=TRUE),
-            sd_tfr = sd(tfr, na.rm=TRUE),
-            iqr_tfr = IQR(tfr, na.rm=TRUE),
-            min_tfr = min(tfr, na.rm=TRUE),
-            max_tfr = max(tfr, na.rm=TRUE))
+x1 <- c(x1, 0.1)
+x2 <- c(x2, 0.8)
+y <- c(y, 6)
 
-print(stat_tfr_by_region)
+model <- lm(y ~ x1 + x2)
+summary(model)
+
+model_x1 <- lm(y ~ x1)
+summary(model_x1)
+
+model_x2 <- lm(y ~ x2)
+summary(model_x2)
+
+#11
+set.seed(2)
+x <- rnorm(100)
+y <- 2*x+rnorm(100)
+
+model <- lm(y~x+0)
+summary(model)
+
+model <- lm(x~y+0)
+summary(model)
+
+model <- lm(y ~ x + 0)
+summary(model)
+
+n <- length(x)
+sum_x2 <- sum(x^2)
+sum_y2 <- sum(y^2)
+sum_xy <- sum(x * y)
+
+t_stat_formula <- (sqrt(n - 1) * sum_xy) / sqrt((sum_x2 * sum_y2) - (sum_xy^2))
+
+t_stat_model <- summary(model)$coefficients[1, 3]
+
+cat("t-statistic from regression model:", t_stat_model, "\n")
+cat("t-statistic from formula:", t_stat_formula, "\n")

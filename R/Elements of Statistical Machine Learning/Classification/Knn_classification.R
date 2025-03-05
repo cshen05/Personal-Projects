@@ -6,10 +6,6 @@ library(tidyr)
 library(dplyr)
 library(FNN)
 
-
-# Set the working directory (you need to choose different directory in your computer)
-setwd("/Users/nh23294/Box/Teaching/SDS_323/Data/")
-
 ################################################################################
 ############## We first try with the "Heart_disease.csv"
 heartdisease = read.csv("Heart_disease.csv", head = TRUE, check.names=FALSE)
@@ -65,4 +61,5 @@ max(accuracy_heart_test)
 accuracy_heart_test <- as.data.frame(accuracy_heart_test)
 ggplot(accuracy_heart_test, aes(x = K, y = accuracy_heart_test)) + geom_line(col = "red")
 
+accuracy_heart_test
 
