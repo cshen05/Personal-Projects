@@ -7,6 +7,7 @@ import threading
 import logging
 import datetime
 import numpy as np
+import pandas as pd
 
 import matplotlib
 matplotlib.use("TkAgg")
@@ -232,7 +233,7 @@ def update_model_performance(trading_system, canvas_frame, status_var):
 # Initialize Trading System
 # ---------------------------
 def initialize_trading_system(status_var):
-    tickers = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'TSLA', 'NVDA', 'JPM', 'V', 'UNH']
+    tickers = pd.read_csv('nyse-listed.csv')['ACT Symbol'].tolist()
     start_date = '2020-01-01'
     end_date = datetime.datetime.today().strftime('%Y-%m-%d')
     ts = TradingSystem(tickers, start_date, end_date)
