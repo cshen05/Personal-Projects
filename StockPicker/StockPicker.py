@@ -15,7 +15,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
 # Import the trading system from trading_system.py
-from trading_system import TradingSystem
+from StockPicker import SP_Back
 
 # ---------------------------
 # Custom Logging Handler
