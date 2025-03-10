@@ -43,6 +43,8 @@ class TradingSystem:
             try:
                 logging.info(f"Downloading daily data for {ticker}")
                 df = yf.download(ticker, start=self.start_date, end=self.end_date)
+                if isinstance(df.columns, pd.MultiIndex):
+                    df.columns = df.columns.get_level_values(0)                
             except Exception as e:
                 send_alert(f"Error downloading data for {ticker}: {str(e)}")
                 continue
@@ -67,6 +69,8 @@ class TradingSystem:
                                                 'Close': 'last',
                                                 'Volume': 'sum'})
                 weekly.dropna(inplace=True)
+                if isinstance(weekly.columns, pd.MultiIndex):
+                    weekly.columns = weekly.columns.get_level_values(0)               
                 self.weekly_data[ticker] = weekly
             except Exception as e:
                 send_alert(f"Error processing weekly data for {ticker}: {str(e)}")
@@ -124,7 +128,7 @@ class TradingSystem:
                 df_daily['Target'] = df_daily['Return'].shift(-1)
                 df_daily.dropna(inplace=True)
                 # Save Date for later use
-                df_daily['Date'] = df_daily.index
+                df_daily= df_daily.reset_index()
                 data_list.append(df_daily)
             except Exception as e:
                 send_alert(f"Error building dataset for {ticker}: {str(e)}")
