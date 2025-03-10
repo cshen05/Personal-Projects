@@ -57,3 +57,17 @@ t_stat_model <- summary(model)$coefficients[1, 3]
 
 cat("t-statistic from regression model:", t_stat_model, "\n")
 cat("t-statistic from formula:", t_stat_formula, "\n")
+
+model_y_on_x <- lm(y ~ x)
+summary(model_y_on_x)
+
+t_stat_y_on_x <- summary(model_y_on_x)$coefficients[2, 3]
+
+model_x_on_y <- lm(x ~ y)
+summary(model_x_on_y)
+
+t_stat_x_on_y <- summary(model_x_on_y)$coefficients[2, 3]
+
+cat("t-statistic for regression of y onto x:", t_stat_y_on_x, "\n")
+cat("t-statistic for regression of x onto y:", t_stat_x_on_y, "\n")
+

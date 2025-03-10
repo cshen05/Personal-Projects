@@ -6,15 +6,14 @@ library(dplyr)
 library(MLmetrics)
 
 # Install packges for ridge regression and the Lasso
-install.packages("glmnet")
+#install.packages("glmnet")
 library(glmnet)
 
-install.packages("seriation")
+#install.packages("seriation")
 library(seriation)
 
 ################################################################################
 ############## We first try with the "Real_estate.csv"
-setwd("/Users/nh23294/Box/Teaching/SDS_323/Data/")
 
 realestate = read.csv("Real_estate.csv", head = TRUE, check.names=FALSE)
 
