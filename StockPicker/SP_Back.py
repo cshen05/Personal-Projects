@@ -479,7 +479,7 @@ class TradingSystem:
 # Main Execution
 # ---------------------------
 def main():
-    tickers = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'TSLA', 'NVDA', 'JPM', 'V', 'UNH']
+    tickers = pd.read_csv('nyse-listed.csv')['ACT Symbol'].tolist()
     start_date = '2020-01-01'
     end_date = datetime.datetime.today().strftime('%Y-%m-%d')
     
