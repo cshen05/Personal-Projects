@@ -10,7 +10,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
 # Import the TradingSystem class and filter_tickers function from SP_Back.py
-from SP_Back import TradingSystem, filter_tickers
+from SP_Back import TradingSystem, filter_tickers, send_alert
 
 # ---------------------------
 # Custom Logging Handler
@@ -101,7 +101,7 @@ def update_backtest(ts, notebook, status_var):
             sub_nb = ttk.Notebook(notebook)
             sub_nb.pack(fill=tk.BOTH, expand=True)
             for fig, title in zip([fig1, fig2, fig3, fig4],
-                                  ["Equity Curve", "Drawdown", "Daily Returns", "Metrics"]):
+                                    ["Equity Curve", "Drawdown", "Daily Returns", "Metrics"]):
                 frame = ttk.Frame(sub_nb)
                 sub_nb.add(frame, text=title)
                 canvas = FigureCanvasTkAgg(fig, master=frame)

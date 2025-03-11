@@ -16,7 +16,7 @@ M = 7 # number of cut points
 table(cut(mtcars$hp, M))
 
 ####### We use these cut points for regression
-M = 5
+M = 7
 my_step <- lm(mpg~cut(hp, M), data = mtcars)
 summary(my_step)
 

@@ -22,7 +22,7 @@ def send_alert(message):
     logging.warning("ALERT: " + message)
 
 # ---------------------------
-# Helper Functions for Indicators and Filtering
+# Helper Functions
 # ---------------------------
 def compute_RSI(series, period=14):
     """Compute the Relative Strength Index (RSI) for a pandas Series."""
@@ -58,34 +58,34 @@ def filter_tickers(tickers,
             if data.empty:
                 continue
 
-            # Basic filters on raw data:
+            # Flatten MultiIndex columns if needed
+            if isinstance(data.columns, pd.MultiIndex):
+                data.columns = data.columns.get_level_values(0)
+
             avg_volume = data['Volume'].mean()
             if avg_volume < min_avg_volume:
                 continue
+
             current_price = data['Close'].iloc[-1]
             if current_price < min_price:
                 continue
 
-            # Trend filter using moving averages:
             data['SMA_short'] = data['Close'].rolling(window=sma_short_period).mean()
             data['SMA_long'] = data['Close'].rolling(window=sma_long_period).mean()
             if data['SMA_short'].iloc[-1] <= data['SMA_long'].iloc[-1]:
                 continue
 
-            # Momentum filter (difference between current and 10 days ago)
             if len(data) < 11:
                 continue
             momentum = data['Close'].iloc[-1] - data['Close'].iloc[-11]
             if momentum < min_momentum:
                 continue
 
-            # RSI filter:
             data['RSI'] = compute_RSI(data['Close'], period=14)
             current_rsi = data['RSI'].iloc[-1]
             if not (rsi_lower <= current_rsi <= rsi_upper):
                 continue
 
-            # Volatility filter:
             data['Returns'] = data['Close'].pct_change()
             volatility = data['Returns'].rolling(window=14).std().iloc[-1]
             if volatility > max_volatility:
@@ -100,30 +100,33 @@ def filter_tickers(tickers,
     return [ticker for ticker, *_ in filtered[:target]]
 
 # ---------------------------
-# TradingSystem Class Definition (Computation Module)
+# TradingSystem Class Definition (Backend Computation Module)
 # ---------------------------
 class TradingSystem:
     def __init__(self, tickers, start_date, end_date):
         self.tickers = tickers
         self.start_date = start_date
         self.end_date = end_date
-        self.daily_data = {}     # Dictionary: ticker -> raw daily DataFrame
-        self.weekly_data = {}    # Dictionary: ticker -> raw weekly DataFrame
-        self.full_dataset = pd.DataFrame()  # Combined full dataset (raw + computed indicators)
-        self.dataset = pd.DataFrame()         # Clean feature dataset (for model training)
+        # Dictionaries to store downloaded raw data
+        self.daily_data = {}  # ticker -> raw daily DataFrame
+        self.weekly_data = {} # ticker -> raw weekly DataFrame
+        # Final aggregated DataFrames:
+        self.raw_data = pd.DataFrame()         # All raw data (without indicators)
+        self.indicator_data = pd.DataFrame()   # Data for training: indicators + target
         self.models = {}
         self.best_model = None
         self.features = None
         self.performance_data = []  # Optionally store performance metrics
 
     # ---------------------------
-    # Parallel Download Function
+    # Parallel Download of Raw Data
     # ---------------------------
     def _download_single_ticker(self, ticker):
         """Download data for one ticker and return (ticker, daily_df, weekly_df)."""
         try:
             logging.info(f"Downloading daily data for {ticker}")
-            df = yf.download(ticker, start=self.start_date, end=self.end_date)
+            df = yf.download(ticker, start=self.start_date, end=self.end_date, auto_adjust=True)
+            # Flatten columns if MultiIndex
             if isinstance(df.columns, pd.MultiIndex):
                 df.columns = df.columns.get_level_values(0)
             if df.empty:
@@ -132,11 +135,11 @@ class TradingSystem:
             df.dropna(inplace=True)
             vol_threshold = df['Volume'].quantile(0.05)
             df = df[df['Volume'] > vol_threshold]
-            # Downcast numeric columns for space efficiency
-            for col in ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']:
+            # Downcast numeric columns to save space
+            for col in ['Open', 'High', 'Low', 'Close', 'Volume']:
                 if col in df.columns:
                     df[col] = pd.to_numeric(df[col], downcast='float')
-            # Weekly data
+            # Download weekly data by resampling
             weekly = df.resample('W').agg({
                 'Open': 'first',
                 'High': 'max',
@@ -165,14 +168,10 @@ class TradingSystem:
         logging.info("Data download complete.")
 
     # ---------------------------
-    # Feature Engineering
+    # Compute Technical Indicators
     # ---------------------------
     def compute_technical_indicators(self, df, timeframe='daily'):
-        if timeframe == 'daily':
-            window = 14
-        elif timeframe == 'weekly':
-            window = 7
-        
+        window = 14 if timeframe == 'daily' else 7
         try:
             delta = df['Close'].diff()
             gain = delta.clip(lower=0)
@@ -181,12 +180,10 @@ class TradingSystem:
             avg_loss = loss.rolling(window=window).mean()
             rs = avg_gain / avg_loss
             df['RSI'] = 100 - (100 / (1 + rs))
-            
+            # Compute moving averages (here we use same window; you can adjust if needed)
             df['SMA_5'] = df['Close'].rolling(window=window).mean()
             df['SMA_20'] = df['Close'].rolling(window=window).mean()
-            
             df['Momentum'] = df['Close'] - df['Close'].shift(10)
-            
             df['Return'] = df['Close'].pct_change()
             df['Volatility'] = df['Return'].rolling(window=window).std()
         except Exception as e:
@@ -194,67 +191,57 @@ class TradingSystem:
         return df
 
     # ---------------------------
-    # Build Datasets and Save Full Data to CSV
+    # Build Datasets Separately
+    #   - raw_data: All downloaded data (raw OHLCV)
+    #   - indicator_data: Computed indicators + target (cleaned for training)
     # ---------------------------
     def build_dataset(self):
-        logging.info("Building datasets (full and feature) with daily and weekly features...")
-        data_list = []      # Clean feature dataset for training
-        full_data_list = [] # Full dataset (raw + computed indicators)
+        logging.info("Building datasets: raw_data and indicator_data...")
+        raw_list = []
+        indicator_list = []
         for ticker in self.tickers:
             if ticker not in self.daily_data:
                 continue
             try:
-                # Compute indicators on daily data
-                df_daily = self.compute_technical_indicators(self.daily_data[ticker].copy(), timeframe='daily')
-                # Save full copy (with potential NA values) for archival
-                df_daily_full = df_daily.copy()
+                # --- Raw Data ---
+                df_raw = self.daily_data[ticker].copy()
+                df_raw = df_raw.reset_index()  # Convert Date index to column
+                df_raw['Ticker'] = ticker
+                raw_list.append(df_raw)
                 
+                # --- Indicator Data ---
+                df_ind = self.compute_technical_indicators(self.daily_data[ticker].copy(), timeframe='daily')
+                # If weekly data exists, merge selected weekly indicators:
                 if ticker in self.weekly_data:
                     df_weekly = self.compute_technical_indicators(self.weekly_data[ticker].copy(), timeframe='weekly')
                     df_weekly = df_weekly[['RSI', 'SMA_20', 'Momentum']]
-                    df_weekly = df_weekly.reindex(df_daily.index, method='ffill')
-                    df_daily['RSI_weekly'] = df_weekly['RSI']
-                    df_daily['SMA_20_weekly'] = df_weekly['SMA_20']
-                    df_daily['Momentum_weekly'] = df_weekly['Momentum']
-                    
-                    df_daily_full['RSI_weekly'] = df_weekly['RSI']
-                    df_daily_full['SMA_20_weekly'] = df_weekly['SMA_20']
-                    df_daily_full['Momentum_weekly'] = df_weekly['Momentum']
-                
-                df_daily['Ticker'] = ticker
-                df_daily_full['Ticker'] = ticker
-                
-                # For the feature dataset, set target and drop rows with missing values
-                df_daily['Target'] = df_daily['Return'].shift(-1)
-                df_daily.dropna(inplace=True)
-                df_daily = df_daily.reset_index()  # "Date" becomes a column
-                data_list.append(df_daily)
-                
-                # For the full dataset, add target (keeping NA rows) and reset index
-                df_daily_full['Target'] = df_daily_full['Return'].shift(-1)
-                df_daily_full = df_daily_full.reset_index()
-                full_data_list.append(df_daily_full)
+                    # Reindex weekly indicators to match daily dates via forward fill
+                    df_weekly = df_weekly.reindex(self.daily_data[ticker].index, method='ffill')
+                    df_ind['RSI_weekly'] = df_weekly['RSI']
+                    df_ind['SMA_20_weekly'] = df_weekly['SMA_20']
+                    df_ind['Momentum_weekly'] = df_weekly['Momentum']
+                df_ind['Ticker'] = ticker
+                # Create target as next day's return and drop NA rows:
+                df_ind['Target'] = df_ind['Return'].shift(-1)
+                df_ind.dropna(inplace=True)
+                df_ind = df_ind.reset_index()  # Convert Date index to column
+                indicator_list.append(df_ind)
             except Exception as e:
                 send_alert(f"Error building dataset for {ticker}: {str(e)}")
                 continue
-        try:
-            if data_list:
-                self.dataset = pd.concat(data_list)
-                self.dataset.sort_values(by='Date', inplace=True)
-            else:
-                send_alert("No feature dataset could be built from the available data.")
-            
-            if full_data_list:
-                self.full_dataset = pd.concat(full_data_list)
-                self.full_dataset.sort_values(by='Date', inplace=True)
-                # Save the full dataset (all yfinance columns plus computed indicators) to CSV
-                self.full_dataset.to_csv('stock_data.csv', index=False)
-                logging.info("Full dataset saved to stock_data.csv")
-            else:
-                send_alert("No full dataset could be built from the available data.")
-        except Exception as e:
-            send_alert(f"Error concatenating datasets: {str(e)}")
-        return self.dataset
+        if raw_list:
+            self.raw_data = pd.concat(raw_list).sort_values(by='Date')
+            self.raw_data.to_csv("raw_data.csv", index=False)
+            logging.info("Raw data saved to raw_data.csv")
+        else:
+            send_alert("No raw data could be built from the available data.")
+        if indicator_list:
+            self.indicator_data = pd.concat(indicator_list).sort_values(by='Date')
+            self.indicator_data.to_csv("indicator_data.csv", index=False)
+            logging.info("Indicator data saved to indicator_data.csv")
+        else:
+            send_alert("No indicator data could be built from the available data.")
+        return self.indicator_data
 
     # ---------------------------
     # Model Training with Parallel Grid Search
@@ -262,12 +249,12 @@ class TradingSystem:
     def model_selection_and_training(self):
         logging.info("Starting model selection and hyperparameter tuning...")
         try:
+            # We use indicator_data for training.
             feature_cols = ['RSI', 'SMA_5', 'SMA_20', 'Momentum', 'Volatility',
                             'RSI_weekly', 'SMA_20_weekly', 'Momentum_weekly']
             self.features = feature_cols
-
-            X = self.dataset[feature_cols]
-            y = self.dataset['Target']
+            X = self.indicator_data[feature_cols]
+            y = self.indicator_data['Target']
             tscv = TimeSeriesSplit(n_splits=5)
 
             candidates = {
@@ -297,10 +284,7 @@ class TradingSystem:
 
             results = {}
             with ProcessPoolExecutor(max_workers=len(candidates)) as executor:
-                future_to_name = {
-                    executor.submit(run_grid_search, candidate): name
-                    for name, candidate in candidates.items()
-                }
+                future_to_name = {executor.submit(run_grid_search, candidate): name for name, candidate in candidates.items()}
                 for future in as_completed(future_to_name):
                     name = future_to_name[future]
                     try:
@@ -309,7 +293,6 @@ class TradingSystem:
                         results[name] = (score, estimator)
                     except Exception as e:
                         send_alert(f"Error during grid search for {name}: {e}")
-            
             best_score = float('inf')
             best_name = None
             best_model = None
@@ -335,6 +318,7 @@ class TradingSystem:
                 risk_size = min(target_risk / volatility, 1.0)
             else:
                 risk_size = 0
+            # Adjust position size by the predicted return (heuristic)
             position_size = risk_size * (1 + predicted_return)
         except Exception as e:
             send_alert(f"Error in dynamic position sizing: {str(e)}")
@@ -377,7 +361,7 @@ class TradingSystem:
     # ---------------------------
     def print_basket(self, basket_size=5, portfolio_value=100):
         """
-        For the most recent date in our feature dataset, generate signals for each ticker.
+        For the most recent date in our indicator_data, generate signals for each ticker.
         Then select the top basket_size stocks with positive predicted returns.
         Print out for each:
             - Ticker
@@ -388,13 +372,12 @@ class TradingSystem:
             - Expected Dollar Return (allocated_cost * predicted_return)
             - Position Sizing (as a percentage)
         Also print the total portfolio cost allocated.
-        
         A stock is only included if its expected dollar return is greater than its current price.
         """
         signals = {}
         for ticker in self.tickers:
             try:
-                df_ticker = self.dataset[self.dataset['Ticker'] == ticker]
+                df_ticker = self.indicator_data[self.indicator_data['Ticker'] == ticker]
                 if df_ticker.empty:
                     continue
                 latest_row = df_ticker.iloc[-1]
@@ -454,14 +437,14 @@ class TradingSystem:
     def backtest(self):
         logging.info("Starting robust backtest over out-of-sample period...")
         try:
-            all_dates = np.sort(self.dataset['Date'].unique())
+            all_dates = np.sort(self.indicator_data['Date'].unique())
             split_idx = int(len(all_dates) * 0.8)
             test_dates = all_dates[split_idx:]
         except Exception as e:
             send_alert(f"Error setting up backtest dates: {str(e)}")
             return None, None, None, None
 
-        portfolio_value = 100  # starting with $100
+        portfolio_value = 100  # starting portfolio value
         portfolio_history = []
         trade_log = []
 
@@ -513,10 +496,7 @@ class TradingSystem:
                     next_date = df.index[idx + 1]
                     next_row = df.iloc[idx + 1]
                     stop_loss = daily_signals[ticker]['stop_loss']
-                    if next_row['Low'] < stop_loss:
-                        execution_price = stop_loss
-                    else:
-                        execution_price = next_row['Close']
+                    execution_price = stop_loss if next_row['Low'] < stop_loss else next_row['Close']
                     trade_return = (execution_price - daily_signals[ticker]['price']) / daily_signals[ticker]['price']
                     daily_return += size * trade_return
                     trade_log.append({
@@ -539,7 +519,6 @@ class TradingSystem:
             portfolio_df.set_index('Date', inplace=True)
             daily_returns = portfolio_df['PortfolioValue'].pct_change().dropna()
             sharpe = np.mean(daily_returns) / np.std(daily_returns) * np.sqrt(252)
-            # Instead of plt.show(), create a figure to return
             fig_backtest = Figure(figsize=(10, 6), dpi=100)
             ax = fig_backtest.add_subplot(111)
             ax.plot(portfolio_df.index, portfolio_df['PortfolioValue'], label='Equity Curve')
@@ -556,16 +535,16 @@ class TradingSystem:
         return portfolio_df, trade_log, sharpe, fig_backtest
 
     # ---------------------------
-    # A/B Testing: ML-Based Strategy vs. Baseline (Return Figure Instead of Showing It)
+    # A/B Testing: ML-Based Strategy vs. Baseline (Return Figure)
     # ---------------------------
     def ab_testing(self):
         logging.info("Conducting A/B testing between ML-based strategy and a baseline momentum strategy...")
-        ml_portfolio = 100  # starting with $100
+        ml_portfolio = 100
         baseline_portfolio = 100
         ml_history = []
         baseline_history = []
         try:
-            all_dates = np.sort(self.dataset['Date'].unique())
+            all_dates = np.sort(self.indicator_data['Date'].unique())
             split_idx = int(len(all_dates) * 0.8)
             test_dates = all_dates[split_idx:]
         except Exception as e:
@@ -594,7 +573,7 @@ class TradingSystem:
                             size = self.dynamic_position_sizing(ml_pred, row['Volatility'])
                             ml_return += size * trade_ret
                         if baseline_signal:
-                            baseline_return += 0.1 * trade_ret  # fixed weight for baseline
+                            baseline_return += 0.1 * trade_ret
                 except Exception as e:
                     send_alert(f"Error in A/B test for {ticker} on {current_date}: {str(e)}")
                     continue
