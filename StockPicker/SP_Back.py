@@ -20,6 +20,100 @@ logging.basicConfig(stream=sys.stdout,
 def send_alert(message):
     logging.warning("ALERT: " + message)
 
+def compute_RSI(series, period=14):
+    """
+    Compute the Relative Strength Index (RSI) for a pandas Series.
+    """
+    delta = series.diff()
+    gain = delta.clip(lower=0)
+    loss = -delta.clip(upper=0)
+    avg_gain = gain.rolling(window=period).mean()
+    avg_loss = loss.rolling(window=period).mean()
+    rs = avg_gain / avg_loss
+    rsi = 100 - (100 / (1 + rs))
+    return rsi
+
+def filter_tickers(tickers, 
+                    min_avg_volume=500000, 
+                    min_price=5, 
+                    sma_short_period=10, 
+                    sma_long_period=50,
+                    min_momentum=0,
+                    rsi_lower=30, 
+                    rsi_upper=70, 
+                    max_volatility=0.05,
+                    target=100):
+    """
+    Filters a list of tickers based on liquidity, price, trend, momentum, RSI, and volatility.
+    
+    Parameters:
+        tickers (list): List of ticker symbols.
+        min_avg_volume (int): Minimum average daily volume.
+        min_price (float): Minimum current stock price.
+        sma_short_period (int): Period for the short-term moving average.
+        sma_long_period (int): Period for the long-term moving average.
+        min_momentum (float): Minimum momentum (e.g., difference between current close and close 10 days ago).
+        rsi_lower (float): Lower bound for acceptable RSI.
+        rsi_upper (float): Upper bound for acceptable RSI.
+        max_volatility (float): Maximum allowed volatility (as a decimal).
+        target (int): Maximum number of tickers to return.
+    
+    Returns:
+        list: Filtered list of ticker symbols.
+    """
+    filtered = []
+    for ticker in tickers:
+        try:
+            # Download 6 months of data for screening
+            data = yf.download(ticker, period="6mo")
+            if data.empty:
+                continue
+
+            # Liquidity: average volume must be above threshold
+            avg_volume = data['Volume'].mean()
+            if avg_volume < min_avg_volume:
+                continue
+
+            # Price: current closing price must be above threshold
+            current_price = data['Close'].iloc[-1]
+            if current_price < min_price:
+                continue
+
+            # Trend: short-term SMA > long-term SMA
+            data['SMA_short'] = data['Close'].rolling(window=sma_short_period).mean()
+            data['SMA_long'] = data['Close'].rolling(window=sma_long_period).mean()
+            if data['SMA_short'].iloc[-1] <= data['SMA_long'].iloc[-1]:
+                continue
+
+            # Momentum: difference between current close and close 10 days ago
+            if len(data) < 11:
+                continue  # not enough data
+            momentum = data['Close'].iloc[-1] - data['Close'].iloc[-11]
+            if momentum < min_momentum:
+                continue
+
+            # RSI: must be between rsi_lower and rsi_upper
+            data['RSI'] = compute_RSI(data['Close'], period=14)
+            current_rsi = data['RSI'].iloc[-1]
+            if not (rsi_lower <= current_rsi <= rsi_upper):
+                continue
+
+            # Volatility: 14-day rolling std dev of returns must be below max_volatility
+            data['Returns'] = data['Close'].pct_change()
+            volatility = data['Returns'].rolling(window=14).std().iloc[-1]
+            if volatility > max_volatility:
+                continue
+
+            # If all criteria are met, save ticker with key metrics (optional: for sorting)
+            filtered.append((ticker, momentum, current_price, avg_volume, current_rsi, volatility))
+        except Exception as e:
+            print(f"Error processing {ticker}: {e}")
+            continue
+
+    # Sort by momentum (or choose another metric) in descending order and return top 'target' tickers.
+    filtered.sort(key=lambda x: x[1], reverse=True)
+    return [ticker for ticker, *_ in filtered[:target]]
+
 # ---------------------------
 # TradingSystem Class Definition
 # ---------------------------
@@ -479,7 +573,17 @@ class TradingSystem:
 # Main Execution
 # ---------------------------
 def main():
-    tickers = pd.read_csv('nyse-listed.csv')['ACT Symbol'].tolist()
+    try:
+        tickers = pd.read_csv('nyse-listed.csv')['ACT Symbol'].tolist()
+    except:
+        send_alert(f"Error loading ticker list: {str(e)}")
+    
+    filtered_tickers = filter_tickers(tickers, target=100)
+    if not filtered_tickers:
+        send_alert("No tickers passed the filtering criteria")
+    else:
+        logging.info(f"Filtered to {len(filtered_tickers)} tickers for model training")
+    
     start_date = '2020-01-01'
     end_date = datetime.datetime.today().strftime('%Y-%m-%d')
     
