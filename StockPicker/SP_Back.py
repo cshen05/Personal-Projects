@@ -2,8 +2,10 @@ import sys
 import yfinance as yf
 import pandas as pd
 import numpy as np
+import datetime
 import logging
 import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 from concurrent.futures import ThreadPoolExecutor, as_completed, ProcessPoolExecutor
 
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
@@ -46,7 +48,7 @@ def filter_tickers(tickers,
                     target=100):
     """
     Filters a list of tickers based on basic raw data criteria and computed indicators.
-    This function downloads 6mo of data per ticker to screen for liquidity, price,
+    Downloads 6mo of data per ticker to screen for liquidity, price,
     trend (short SMA > long SMA), momentum, RSI, and volatility.
     Returns a list of ticker symbols (up to 'target').
     """
@@ -108,7 +110,7 @@ class TradingSystem:
         self.end_date = end_date
         self.daily_data = {}     # Dictionary: ticker -> raw daily DataFrame
         self.weekly_data = {}    # Dictionary: ticker -> raw weekly DataFrame
-        self.full_dataset = pd.DataFrame()  # Combined full dataset (raw data + computed indicators)
+        self.full_dataset = pd.DataFrame()  # Combined full dataset (raw + computed indicators)
         self.dataset = pd.DataFrame()         # Clean feature dataset (for model training)
         self.models = {}
         self.best_model = None
@@ -193,14 +195,14 @@ class TradingSystem:
     def build_dataset(self):
         logging.info("Building datasets (full and feature) with daily and weekly features...")
         data_list = []      # Clean feature dataset for training
-        full_data_list = [] # Full dataset (raw data + computed indicators)
+        full_data_list = [] # Full dataset (raw + computed indicators)
         for ticker in self.tickers:
             if ticker not in self.daily_data:
                 continue
             try:
                 # Compute indicators on daily data
                 df_daily = self.compute_technical_indicators(self.daily_data[ticker].copy(), timeframe='daily')
-                # Keep a full copy (raw data plus computed indicators; may contain NA)
+                # Save full copy (with potential NA values) for archival
                 df_daily_full = df_daily.copy()
                 
                 if ticker in self.weekly_data:
@@ -218,13 +220,13 @@ class TradingSystem:
                 df_daily['Ticker'] = ticker
                 df_daily_full['Ticker'] = ticker
                 
-                # For the feature dataset, set target and drop rows with NA
+                # For the feature dataset, set target and drop rows with missing values
                 df_daily['Target'] = df_daily['Return'].shift(-1)
                 df_daily.dropna(inplace=True)
-                df_daily = df_daily.reset_index()  # Make "Date" a column
+                df_daily = df_daily.reset_index()  # "Date" becomes a column
                 data_list.append(df_daily)
                 
-                # For full dataset, keep all rows and then reset index
+                # For the full dataset, add target (keeping NA rows) and reset index
                 df_daily_full['Target'] = df_daily_full['Return'].shift(-1)
                 df_daily_full = df_daily_full.reset_index()
                 full_data_list.append(df_daily_full)
@@ -241,7 +243,7 @@ class TradingSystem:
             if full_data_list:
                 self.full_dataset = pd.concat(full_data_list)
                 self.full_dataset.sort_values(by='Date', inplace=True)
-                # Save full dataset to CSV (overwriting previous file)
+                # Save the full dataset (all yfinance columns plus computed indicators) to CSV
                 self.full_dataset.to_csv('stock_data.csv', index=False)
                 logging.info("Full dataset saved to stock_data.csv")
             else:
@@ -279,7 +281,6 @@ class TradingSystem:
                 }
             }
 
-            # Helper function to run grid search for one candidate
             def run_grid_search(candidate):
                 grid = GridSearchCV(candidate['model'],
                                     candidate['params'],
@@ -443,7 +444,7 @@ class TradingSystem:
         print(f"\nTotal Portfolio Cost Allocated: {round(total_cost, 2)}")
 
     # ---------------------------
-    # Robust Backtesting
+    # Robust Backtesting (Return Figure Instead of Showing It)
     # ---------------------------
     def backtest(self):
         logging.info("Starting robust backtest over out-of-sample period...")
@@ -453,7 +454,7 @@ class TradingSystem:
             test_dates = all_dates[split_idx:]
         except Exception as e:
             send_alert(f"Error setting up backtest dates: {str(e)}")
-            return None, None, None
+            return None, None, None, None
 
         portfolio_value = 100  # starting with $100
         portfolio_history = []
@@ -533,22 +534,24 @@ class TradingSystem:
             portfolio_df.set_index('Date', inplace=True)
             daily_returns = portfolio_df['PortfolioValue'].pct_change().dropna()
             sharpe = np.mean(daily_returns) / np.std(daily_returns) * np.sqrt(252)
-            plt.figure(figsize=(10, 6))
-            plt.plot(portfolio_df.index, portfolio_df['PortfolioValue'], label='Equity Curve')
-            plt.xlabel("Date")
-            plt.ylabel("Portfolio Value ($)")
-            plt.title("Robust Backtest Equity Curve")
-            plt.legend()
-            plt.show()
+            # Instead of plt.show(), create a figure to return
+            fig_backtest = Figure(figsize=(10, 6), dpi=100)
+            ax = fig_backtest.add_subplot(111)
+            ax.plot(portfolio_df.index, portfolio_df['PortfolioValue'], label='Equity Curve')
+            ax.set_xlabel("Date")
+            ax.set_ylabel("Portfolio Value ($)")
+            ax.set_title("Robust Backtest Equity Curve")
+            ax.legend()
+            plt.close(fig_backtest)
             logging.info(f"Robust Backtest Sharpe Ratio: {sharpe:.2f}")
         except Exception as e:
             send_alert(f"Error finalizing backtest results: {str(e)}")
-            return None, trade_log, None
+            return None, trade_log, None, None
 
-        return portfolio_df, trade_log, sharpe
+        return portfolio_df, trade_log, sharpe, fig_backtest
 
     # ---------------------------
-    # A/B Testing: ML-Based Strategy vs. Baseline
+    # A/B Testing: ML-Based Strategy vs. Baseline (Return Figure Instead of Showing It)
     # ---------------------------
     def ab_testing(self):
         logging.info("Conducting A/B testing between ML-based strategy and a baseline momentum strategy...")
@@ -562,7 +565,7 @@ class TradingSystem:
             test_dates = all_dates[split_idx:]
         except Exception as e:
             send_alert(f"Error setting up A/B test dates: {str(e)}")
-            return
+            return None
 
         for current_date in test_dates:
             ml_return = 0
@@ -599,13 +602,19 @@ class TradingSystem:
             baseline_df = pd.DataFrame(baseline_history, columns=['Date', 'Baseline_Portfolio'])
             ml_df.set_index('Date', inplace=True)
             baseline_df.set_index('Date', inplace=True)
-            plt.figure(figsize=(10, 6))
-            plt.plot(ml_df.index, ml_df['ML_Portfolio'], label="ML Strategy")
-            plt.plot(baseline_df.index, baseline_df['Baseline_Portfolio'], label="Baseline Strategy")
-            plt.xlabel("Date")
-            plt.ylabel("Portfolio Value ($)")
-            plt.title("A/B Testing: ML vs. Baseline Strategy")
-            plt.legend()
-            plt.show()
+            fig_ab = Figure(figsize=(10, 6), dpi=100)
+            ax = fig_ab.add_subplot(111)
+            ax.plot(ml_df.index, ml_df['ML_Portfolio'], label="ML Strategy")
+            ax.plot(baseline_df.index, baseline_df['Baseline_Portfolio'], label="Baseline Strategy")
+            ax.set_xlabel("Date")
+            ax.set_ylabel("Portfolio Value ($)")
+            ax.set_title("A/B Testing: ML vs. Baseline Strategy")
+            ax.legend()
+            plt.close(fig_ab)
         except Exception as e:
             send_alert(f"Error finalizing A/B test results: {str(e)}")
+            return None
+
+        return fig_ab
+
+# End of SP_Back.py module.
