@@ -59,7 +59,7 @@ def update_backtest(ts, notebook, status_var):
                 status_var.set("Backtest failed.")
                 return
             
-            # Compute additional figures
+            # Additional figures (e.g., drawdown and histogram)
             portfolio_df['RunningMax'] = portfolio_df['PortfolioValue'].cummax()
             portfolio_df['Drawdown'] = (portfolio_df['PortfolioValue'] - portfolio_df['RunningMax']) / portfolio_df['RunningMax']
             daily_returns = portfolio_df['PortfolioValue'].pct_change().dropna()
@@ -102,7 +102,7 @@ def update_backtest(ts, notebook, status_var):
             sub_nb = ttk.Notebook(notebook)
             sub_nb.pack(fill=tk.BOTH, expand=True)
             for fig, title in zip([fig1, fig2, fig3, fig4],
-                                    ["Equity Curve", "Drawdown", "Daily Returns", "Metrics"]):
+                                  ["Equity Curve", "Drawdown", "Daily Returns", "Metrics"]):
                 frame = ttk.Frame(sub_nb)
                 sub_nb.add(frame, text=title)
                 canvas = FigureCanvasTkAgg(fig, master=frame)
@@ -216,6 +216,29 @@ def update_model_performance(ts, canvas_frame, status_var):
     threading.Thread(target=update_perf, daemon=True).start()
 
 # ---------------------------
+# Functions to View Datasets
+# ---------------------------
+def view_full_dataset(ts):
+    if ts and not ts.full_dataset.empty:
+        window = tk.Toplevel(root)
+        window.title("Full Dataset")
+        st = ScrolledText(window, width=100, height=30)
+        st.pack(fill=tk.BOTH, expand=True)
+        st.insert(tk.END, ts.full_dataset.head(100).to_string())
+    else:
+        send_alert("No full dataset available.")
+
+def view_train_dataset(ts):
+    if ts and not ts.dataset.empty:
+        window = tk.Toplevel(root)
+        window.title("Training Dataset")
+        st = ScrolledText(window, width=100, height=30)
+        st.pack(fill=tk.BOTH, expand=True)
+        st.insert(tk.END, ts.dataset.head(100).to_string())
+    else:
+        send_alert("No training dataset available.")
+
+# ---------------------------
 # File Upload and Settings Handling
 # ---------------------------
 def upload_csv():
@@ -276,11 +299,13 @@ def initialize_trading_system(status_var, settings, ticker_csv=None):
                                         rsi_upper=float(settings.get('rsi_upper', 70)),
                                         max_volatility=float(settings.get('max_volatility', 0.05)),
                                         target=int(settings.get('target', 100)))
+    if not filtered_tickers:
+        send_alert("Filtered to 0 tickers. Using all available tickers.")
+        filtered_tickers = tickers
     logging.info(f"Filtered to {len(filtered_tickers)} tickers.")
     start_date = settings.get('start_date', '2020-01-01')
     end_date = settings.get('end_date', datetime.datetime.today().strftime('%Y-%m-%d'))
     ts = TradingSystem(filtered_tickers, start_date, end_date)
-    # Initialize stop flag
     ts.stop_flag = False
     status_var.set("Downloading data...")
     ts.download_data()
@@ -385,7 +410,7 @@ model_perf_canvas.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 ttk.Button(model_perf_tab, text="Update Model Performance",
             command=lambda: update_model_performance(trading_system, model_perf_canvas, status_var)).pack(padx=10, pady=5)
 
-# Tab: Settings (All parameters and CSV upload)
+# Tab: Settings
 settings_tab = ttk.Frame(notebook)
 notebook.add(settings_tab, text="Settings")
 settings_frame = ttk.Frame(settings_tab)
@@ -478,21 +503,45 @@ progress.pack(side=tk.BOTTOM, fill=tk.X)
 progress.start(10)
 
 # ---------------------------
-# Start and Stop Buttons
+# Start and Stop Buttons (already defined above)
 # ---------------------------
-def start_trading_system():
-    threading.Thread(target=init_trading_system, daemon=True).start()
-
-def stop_trading_system():
-    global trading_system
-    if trading_system:
-        trading_system.stop_flag = True
-        status_var.set("Trading system stopped.")
-
-start_button = ttk.Button(root, text="Start", command=start_trading_system)
+start_button = ttk.Button(root, text="Start", command=lambda: threading.Thread(target=init_trading_system, daemon=True).start())
 start_button.pack(side=tk.TOP, pady=5)
 stop_button = ttk.Button(root, text="Stop", command=stop_trading_system)
 stop_button.pack(side=tk.TOP, pady=5)
+
+# ---------------------------
+# Datasets Tab: View Full and Training Datasets
+# ---------------------------
+datasets_tab = ttk.Frame(notebook)
+notebook.add(datasets_tab, text="Datasets")
+datasets_frame = ttk.Frame(datasets_tab)
+datasets_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+def view_full_dataset():
+    global trading_system
+    if trading_system and not trading_system.full_dataset.empty:
+        window = tk.Toplevel(root)
+        window.title("Full Dataset")
+        st = ScrolledText(window, width=120, height=30)
+        st.pack(fill=tk.BOTH, expand=True)
+        st.insert(tk.END, trading_system.full_dataset.head(100).to_string())
+    else:
+        send_alert("No full dataset available.")
+
+def view_train_dataset():
+    global trading_system
+    if trading_system and not trading_system.dataset.empty:
+        window = tk.Toplevel(root)
+        window.title("Training Dataset")
+        st = ScrolledText(window, width=120, height=30)
+        st.pack(fill=tk.BOTH, expand=True)
+        st.insert(tk.END, trading_system.dataset.head(100).to_string())
+    else:
+        send_alert("No training dataset available.")
+
+ttk.Button(datasets_frame, text="View Full Dataset", command=view_full_dataset).pack(padx=10, pady=5)
+ttk.Button(datasets_frame, text="View Training Dataset", command=view_train_dataset).pack(padx=10, pady=5)
 
 # ---------------------------
 # Initialize Trading System (Triggered by Start button)
@@ -540,11 +589,14 @@ def initialize_trading_system(status_var, settings, ticker_csv=None):
                                         rsi_upper=float(settings.get('rsi_upper', 70)),
                                         max_volatility=float(settings.get('max_volatility', 0.05)),
                                         target=int(settings.get('target', 100)))
+    if not filtered_tickers:
+        send_alert("Filtered to 0 tickers. Using all available tickers.")
+        filtered_tickers = tickers
     logging.info(f"Filtered to {len(filtered_tickers)} tickers.")
     start_date = settings.get('start_date', '2020-01-01')
     end_date = settings.get('end_date', datetime.datetime.today().strftime('%Y-%m-%d'))
     ts = TradingSystem(filtered_tickers, start_date, end_date)
-    ts.stop_flag = False  # Initialize stop flag
+    ts.stop_flag = False
     status_var.set("Downloading data...")
     ts.download_data()
     status_var.set("Building dataset...")
