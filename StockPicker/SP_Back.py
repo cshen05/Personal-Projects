@@ -2,7 +2,6 @@ import sys
 import yfinance as yf
 import pandas as pd
 import numpy as np
-import datetime
 import logging
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
@@ -169,22 +168,27 @@ class TradingSystem:
     # Feature Engineering
     # ---------------------------
     def compute_technical_indicators(self, df, timeframe='daily'):
+        if timeframe == 'daily':
+            window = 14
+        elif timeframe == 'weekly':
+            window = 7
+        
         try:
             delta = df['Close'].diff()
             gain = delta.clip(lower=0)
             loss = -delta.clip(upper=0)
-            avg_gain = gain.rolling(window=14).mean()
-            avg_loss = loss.rolling(window=14).mean()
+            avg_gain = gain.rolling(window=window).mean()
+            avg_loss = loss.rolling(window=window).mean()
             rs = avg_gain / avg_loss
             df['RSI'] = 100 - (100 / (1 + rs))
             
-            df['SMA_5'] = df['Close'].rolling(window=5).mean()
-            df['SMA_20'] = df['Close'].rolling(window=20).mean()
+            df['SMA_5'] = df['Close'].rolling(window=window).mean()
+            df['SMA_20'] = df['Close'].rolling(window=window).mean()
             
             df['Momentum'] = df['Close'] - df['Close'].shift(10)
             
             df['Return'] = df['Close'].pct_change()
-            df['Volatility'] = df['Return'].rolling(window=5).std()
+            df['Volatility'] = df['Return'].rolling(window=window).std()
         except Exception as e:
             send_alert(f"Error computing technical indicators: {str(e)}")
         return df
@@ -328,9 +332,10 @@ class TradingSystem:
         try:
             target_risk = 0.01  # risk 1% of portfolio per trade
             if volatility > 0:
-                position_size = min(target_risk / volatility, 1.0)
+                risk_size = min(target_risk / volatility, 1.0)
             else:
-                position_size = 0
+                risk_size = 0
+            position_size = risk_size * (1 + predicted_return)
         except Exception as e:
             send_alert(f"Error in dynamic position sizing: {str(e)}")
             position_size = 0

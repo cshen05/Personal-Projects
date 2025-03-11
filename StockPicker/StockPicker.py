@@ -54,7 +54,7 @@ def update_backtest(ts, notebook, status_var):
     status_var.set("Running robust backtest...")
     def run_backtest():
         try:
-            portfolio_df, trade_log, sharpe, fig_backtest = ts.backtest()
+            portfolio_df, _, sharpe, _ = ts.backtest()
             if portfolio_df is None:
                 status_var.set("Backtest failed.")
                 return
@@ -131,7 +131,7 @@ def update_risk_dashboard(ts, risk_frame, status_var):
     status_var.set("Calculating risk metrics...")
     def calc_risk():
         try:
-            portfolio_df, trade_log, sharpe, _ = ts.backtest()
+            portfolio_df, _, sharpe, _ = ts.backtest()
             if portfolio_df is None:
                 status_var.set("Risk metrics unavailable.")
                 return
@@ -249,13 +249,13 @@ def initialize_trading_system(status_var, settings, ticker_csv=None):
         try:
             tickers = pd.read_csv(ticker_csv)['ACT Symbol'].tolist()
         except Exception as e:
-            send_alert(f"Error loading ticker CSV: {str(e)}")
+            ts.send_alert(f"Error loading ticker CSV: {str(e)}")
             tickers = []
     else:
         try:
             tickers = pd.read_csv('nyse-listed.csv')['ACT Symbol'].tolist()
         except Exception as e:
-            send_alert(f"Error loading default ticker CSV: {str(e)}")
+            ts.send_alert(f"Error loading default ticker CSV: {str(e)}")
             tickers = []
     filtered_tickers = filter_tickers(tickers,
                                         min_avg_volume=int(settings.get('min_avg_volume', 500000)),
