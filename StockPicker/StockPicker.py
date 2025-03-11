@@ -102,7 +102,7 @@ def update_backtest(ts, notebook, status_var):
             sub_nb = ttk.Notebook(notebook)
             sub_nb.pack(fill=tk.BOTH, expand=True)
             for fig, title in zip([fig1, fig2, fig3, fig4],
-                                  ["Equity Curve", "Drawdown", "Daily Returns", "Metrics"]):
+                                    ["Equity Curve", "Drawdown", "Daily Returns", "Metrics"]):
                 frame = ttk.Frame(sub_nb)
                 sub_nb.add(frame, text=title)
                 canvas = FigureCanvasTkAgg(fig, master=frame)
@@ -285,7 +285,7 @@ def initialize_trading_system(status_var, settings, ticker_csv=None):
             tickers = []
     else:
         try:
-            tickers = pd.read_csv('nyse-listed.csv')['ACT Symbol'].tolist()
+            tickers = pd.read_csv('test.csv')['ACT Symbol'].tolist()
         except Exception as e:
             send_alert(f"Error loading default ticker CSV: {str(e)}")
             tickers = []
