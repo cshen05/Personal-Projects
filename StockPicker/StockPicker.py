@@ -223,21 +223,32 @@ def upload_csv():
     return file_path
 
 def apply_settings():
-    settings = {
-        'min_avg_volume': min_avg_volume_entry.get(),
-        'min_price': min_price_entry.get(),
-        'sma_short_period': sma_short_entry.get(),
-        'sma_long_period': sma_long_entry.get(),
-        'min_momentum': min_momentum_entry.get(),
-        'rsi_lower': rsi_lower_entry.get(),
-        'rsi_upper': rsi_upper_entry.get(),
-        'max_volatility': max_volatility_entry.get(),
-        'target': target_entry.get(),
-        'start_date': start_date_entry.get(),
-        'end_date': end_date_entry.get()
-    }
+    def reinit():
+        settings = {
+            'min_avg_volume': min_avg_volume_entry.get(),
+            'min_price': min_price_entry.get(),
+            'sma_short_period': sma_short_entry.get(),
+            'sma_long_period': sma_long_entry.get(),
+            'min_momentum': min_momentum_entry.get(),
+            'rsi_lower': rsi_lower_entry.get(),
+            'rsi_upper': rsi_upper_entry.get(),
+            'max_volatility': max_volatility_entry.get(),
+            'target': target_entry.get(),
+            'start_date': start_date_entry.get(),
+            'end_date': end_date_entry.get()
+        }
+        global trading_system
+        trading_system = initialize_trading_system(status_var, settings, ticker_csv=ticker_csv_path)
+    threading.Thread(target=reinit, daemon=True).start()
+
+# ---------------------------
+# Stop Button Functionality
+# ---------------------------
+def stop_trading_system():
     global trading_system
-    trading_system = initialize_trading_system(status_var, settings, ticker_csv=ticker_csv_path)
+    if trading_system:
+        trading_system.stop_flag = True
+        status_var.set("Trading system stopped.")
 
 # ---------------------------
 # Initialize Trading System Function
@@ -247,13 +258,13 @@ def initialize_trading_system(status_var, settings, ticker_csv=None):
         try:
             tickers = pd.read_csv(ticker_csv)['ACT Symbol'].tolist()
         except Exception as e:
-            ts.send_alert(f"Error loading ticker CSV: {str(e)}")
+            send_alert(f"Error loading ticker CSV: {str(e)}")
             tickers = []
     else:
         try:
-            tickers = pd.read_csv('test.csv')['ACT Symbol'].tolist()
+            tickers = pd.read_csv('nyse-listed.csv')['ACT Symbol'].tolist()
         except Exception as e:
-            ts.send_alert(f"Error loading default ticker CSV: {str(e)}")
+            send_alert(f"Error loading default ticker CSV: {str(e)}")
             tickers = []
     filtered_tickers = filter_tickers(tickers,
                                         min_avg_volume=int(settings.get('min_avg_volume', 500000)),
@@ -269,6 +280,8 @@ def initialize_trading_system(status_var, settings, ticker_csv=None):
     start_date = settings.get('start_date', '2020-01-01')
     end_date = settings.get('end_date', datetime.datetime.today().strftime('%Y-%m-%d'))
     ts = TradingSystem(filtered_tickers, start_date, end_date)
+    # Initialize stop flag
+    ts.stop_flag = False
     status_var.set("Downloading data...")
     ts.download_data()
     status_var.set("Building dataset...")
@@ -465,16 +478,24 @@ progress.pack(side=tk.BOTTOM, fill=tk.X)
 progress.start(10)
 
 # ---------------------------
-# Start Button
+# Start and Stop Buttons
 # ---------------------------
 def start_trading_system():
     threading.Thread(target=init_trading_system, daemon=True).start()
 
+def stop_trading_system():
+    global trading_system
+    if trading_system:
+        trading_system.stop_flag = True
+        status_var.set("Trading system stopped.")
+
 start_button = ttk.Button(root, text="Start", command=start_trading_system)
 start_button.pack(side=tk.TOP, pady=5)
+stop_button = ttk.Button(root, text="Stop", command=stop_trading_system)
+stop_button.pack(side=tk.TOP, pady=5)
 
 # ---------------------------
-# Initialize Trading System (will now be triggered by Start button)
+# Initialize Trading System (Triggered by Start button)
 # ---------------------------
 def init_trading_system():
     global trading_system
@@ -523,6 +544,7 @@ def initialize_trading_system(status_var, settings, ticker_csv=None):
     start_date = settings.get('start_date', '2020-01-01')
     end_date = settings.get('end_date', datetime.datetime.today().strftime('%Y-%m-%d'))
     ts = TradingSystem(filtered_tickers, start_date, end_date)
+    ts.stop_flag = False  # Initialize stop flag
     status_var.set("Downloading data...")
     ts.download_data()
     status_var.set("Building dataset...")
