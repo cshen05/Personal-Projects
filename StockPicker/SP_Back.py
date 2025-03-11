@@ -574,7 +574,8 @@ class TradingSystem:
 # ---------------------------
 def main():
     try:
-        tickers = pd.read_csv('nyse-listed.csv')['ACT Symbol'].tolist()
+        #tickers = pd.read_csv('nyse-listed.csv')['ACT Symbol'].tolist()
+        tickers = pd.read_csv('test.csv')['ACT Symbol'].tolist()
     except:
         send_alert(f"Error loading ticker list: {str(e)}")
     
