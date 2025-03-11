@@ -233,7 +233,7 @@ def update_model_performance(trading_system, canvas_frame, status_var):
 # Initialize Trading System
 # ---------------------------
 def initialize_trading_system(status_var):
-    tickers = pd.read_csv('nyse-listed.csv')['ACT Symbol'].tolist()
+    tickers = pd.read_csv('test.csv')['ACT Symbol'].tolist()
     start_date = '2020-01-01'
     end_date = datetime.datetime.today().strftime('%Y-%m-%d')
     ts = TradingSystem(tickers, start_date, end_date)
