@@ -54,12 +54,11 @@ def update_backtest(ts, notebook, status_var):
     status_var.set("Running robust backtest...")
     def run_backtest():
         try:
-            portfolio_df, _, sharpe, fig_backtest = ts.backtest()
+            portfolio_df, _, sharpe, _ = ts.backtest()
             if portfolio_df is None:
                 status_var.set("Backtest failed.")
                 return
             
-            # Additional figures (e.g., drawdown and histogram)
             portfolio_df['RunningMax'] = portfolio_df['PortfolioValue'].cummax()
             portfolio_df['Drawdown'] = (portfolio_df['PortfolioValue'] - portfolio_df['RunningMax']) / portfolio_df['RunningMax']
             daily_returns = portfolio_df['PortfolioValue'].pct_change().dropna()
@@ -102,7 +101,7 @@ def update_backtest(ts, notebook, status_var):
             sub_nb = ttk.Notebook(notebook)
             sub_nb.pack(fill=tk.BOTH, expand=True)
             for fig, title in zip([fig1, fig2, fig3, fig4],
-                                    ["Equity Curve", "Drawdown", "Daily Returns", "Metrics"]):
+                                  ["Equity Curve", "Drawdown", "Daily Returns", "Metrics"]):
                 frame = ttk.Frame(sub_nb)
                 sub_nb.add(frame, text=title)
                 canvas = FigureCanvasTkAgg(fig, master=frame)
@@ -169,10 +168,10 @@ def update_trade_log(ts, log_tree, status_var):
                 log_tree.insert("", "end", values=(
                     trade.get('date', ''),
                     trade.get('ticker', ''),
-                    round(trade.get('entry_price', 0),2),
-                    round(trade.get('exit_price', 0),2),
-                    round(trade.get('position_size', 0),4),
-                    round(trade.get('trade_return', 0)*100,2)
+                    round(trade.get('entry_price', 0), 2),
+                    round(trade.get('exit_price', 0), 2),
+                    round(trade.get('position_size', 0), 4),
+                    round(trade.get('trade_return', 0)*100, 2)
                 ))
             status_var.set("Trade log updated.")
         except Exception as e:
@@ -222,7 +221,7 @@ def view_full_dataset(ts):
     if ts and not ts.full_dataset.empty:
         window = tk.Toplevel(root)
         window.title("Full Dataset")
-        st = ScrolledText(window, width=100, height=30)
+        st = ScrolledText(window, width=120, height=30)
         st.pack(fill=tk.BOTH, expand=True)
         st.insert(tk.END, ts.full_dataset.head(100).to_string())
     else:
@@ -232,7 +231,7 @@ def view_train_dataset(ts):
     if ts and not ts.dataset.empty:
         window = tk.Toplevel(root)
         window.title("Training Dataset")
-        st = ScrolledText(window, width=100, height=30)
+        st = ScrolledText(window, width=120, height=30)
         st.pack(fill=tk.BOTH, expand=True)
         st.insert(tk.END, ts.dataset.head(100).to_string())
     else:
@@ -272,49 +271,6 @@ def stop_trading_system():
     if trading_system:
         trading_system.stop_flag = True
         status_var.set("Trading system stopped.")
-
-# ---------------------------
-# Initialize Trading System Function
-# ---------------------------
-def initialize_trading_system(status_var, settings, ticker_csv=None):
-    if ticker_csv:
-        try:
-            tickers = pd.read_csv(ticker_csv)['ACT Symbol'].tolist()
-        except Exception as e:
-            send_alert(f"Error loading ticker CSV: {str(e)}")
-            tickers = []
-    else:
-        try:
-            tickers = pd.read_csv('test.csv')['ACT Symbol'].tolist()
-        except Exception as e:
-            send_alert(f"Error loading default ticker CSV: {str(e)}")
-            tickers = []
-    filtered_tickers = filter_tickers(tickers,
-                                        min_avg_volume=int(settings.get('min_avg_volume', 500000)),
-                                        min_price=float(settings.get('min_price', 5)),
-                                        sma_short_period=int(settings.get('sma_short_period', 10)),
-                                        sma_long_period=int(settings.get('sma_long_period', 50)),
-                                        min_momentum=float(settings.get('min_momentum', 0)),
-                                        rsi_lower=float(settings.get('rsi_lower', 30)),
-                                        rsi_upper=float(settings.get('rsi_upper', 70)),
-                                        max_volatility=float(settings.get('max_volatility', 0.05)),
-                                        target=int(settings.get('target', 100)))
-    if not filtered_tickers:
-        send_alert("Filtered to 0 tickers. Using all available tickers.")
-        filtered_tickers = tickers
-    logging.info(f"Filtered to {len(filtered_tickers)} tickers.")
-    start_date = settings.get('start_date', '2020-01-01')
-    end_date = settings.get('end_date', datetime.datetime.today().strftime('%Y-%m-%d'))
-    ts = TradingSystem(filtered_tickers, start_date, end_date)
-    ts.stop_flag = False
-    status_var.set("Downloading data...")
-    ts.download_data()
-    status_var.set("Building dataset...")
-    ts.build_dataset()
-    status_var.set("Training model...")
-    ts.model_selection_and_training()
-    status_var.set("Trading system initialized.")
-    return ts
 
 # ---------------------------
 # Main GUI Setup
@@ -416,7 +372,6 @@ notebook.add(settings_tab, text="Settings")
 settings_frame = ttk.Frame(settings_tab)
 settings_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-# Filtering parameters
 ttk.Label(settings_frame, text="Filtering Parameters:", font=("Arial", 12, "bold")).grid(row=0, column=0, sticky=tk.W, pady=5)
 ttk.Label(settings_frame, text="Min Average Volume:").grid(row=1, column=0, sticky=tk.W, padx=5)
 min_avg_volume_entry = ttk.Entry(settings_frame, width=10)
@@ -455,7 +410,6 @@ target_entry = ttk.Entry(settings_frame, width=10)
 target_entry.grid(row=9, column=1, padx=5)
 target_entry.insert(0, "100")
 
-# Model hyperparameters
 ttk.Label(settings_frame, text="Model Hyperparameters:", font=("Arial", 12, "bold")).grid(row=10, column=0, sticky=tk.W, pady=5)
 ttk.Label(settings_frame, text="RF n_estimators:").grid(row=11, column=0, sticky=tk.W, padx=5)
 rf_n_estimators_entry = ttk.Entry(settings_frame, width=10)
@@ -466,7 +420,6 @@ rf_max_depth_entry = ttk.Entry(settings_frame, width=10)
 rf_max_depth_entry.grid(row=12, column=1, padx=5)
 rf_max_depth_entry.insert(0, "5")
 
-# Date range for downloading
 ttk.Label(settings_frame, text="Download Start Date (YYYY-MM-DD):").grid(row=13, column=0, sticky=tk.W, padx=5)
 start_date_entry = ttk.Entry(settings_frame, width=15)
 start_date_entry.grid(row=13, column=1, padx=5)
@@ -476,7 +429,6 @@ end_date_entry = ttk.Entry(settings_frame, width=15)
 end_date_entry.grid(row=14, column=1, padx=5)
 end_date_entry.insert(0, datetime.datetime.today().strftime('%Y-%m-%d'))
 
-# File upload for ticker CSV
 ttk.Label(settings_frame, text="Ticker CSV File:").grid(row=15, column=0, sticky=tk.W, padx=5)
 ticker_file_label = ttk.Label(settings_frame, text="No file selected")
 ticker_file_label.grid(row=15, column=1, padx=5)
@@ -488,11 +440,10 @@ def select_file():
         ticker_csv_path = file_path
 ttk.Button(settings_frame, text="Upload CSV", command=select_file).grid(row=15, column=2, padx=5)
 
-# Button to apply settings and reinitialize trading system
 ttk.Button(settings_frame, text="Apply Settings and Reinitialize", command=apply_settings).grid(row=16, column=0, columnspan=3, pady=10)
 
 # ---------------------------
-# Global Status and Progress Bar (Terminal at Bottom already set above)
+# Global Status and Progress Bar
 # ---------------------------
 status_var = tk.StringVar()
 status_var.set("Initializing...")
@@ -503,7 +454,7 @@ progress.pack(side=tk.BOTTOM, fill=tk.X)
 progress.start(10)
 
 # ---------------------------
-# Start and Stop Buttons (already defined above)
+# Start and Stop Buttons (placed at the top)
 # ---------------------------
 start_button = ttk.Button(root, text="Start", command=lambda: threading.Thread(target=init_trading_system, daemon=True).start())
 start_button.pack(side=tk.TOP, pady=5)
@@ -511,40 +462,7 @@ stop_button = ttk.Button(root, text="Stop", command=stop_trading_system)
 stop_button.pack(side=tk.TOP, pady=5)
 
 # ---------------------------
-# Datasets Tab: View Full and Training Datasets
-# ---------------------------
-datasets_tab = ttk.Frame(notebook)
-notebook.add(datasets_tab, text="Datasets")
-datasets_frame = ttk.Frame(datasets_tab)
-datasets_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-
-def view_full_dataset():
-    global trading_system
-    if trading_system and not trading_system.full_dataset.empty:
-        window = tk.Toplevel(root)
-        window.title("Full Dataset")
-        st = ScrolledText(window, width=120, height=30)
-        st.pack(fill=tk.BOTH, expand=True)
-        st.insert(tk.END, trading_system.full_dataset.head(100).to_string())
-    else:
-        send_alert("No full dataset available.")
-
-def view_train_dataset():
-    global trading_system
-    if trading_system and not trading_system.dataset.empty:
-        window = tk.Toplevel(root)
-        window.title("Training Dataset")
-        st = ScrolledText(window, width=120, height=30)
-        st.pack(fill=tk.BOTH, expand=True)
-        st.insert(tk.END, trading_system.dataset.head(100).to_string())
-    else:
-        send_alert("No training dataset available.")
-
-ttk.Button(datasets_frame, text="View Full Dataset", command=view_full_dataset).pack(padx=10, pady=5)
-ttk.Button(datasets_frame, text="View Training Dataset", command=view_train_dataset).pack(padx=10, pady=5)
-
-# ---------------------------
-# Initialize Trading System (Triggered by Start button)
+# Initialization Function (Triggered by Start button)
 # ---------------------------
 def init_trading_system():
     global trading_system
