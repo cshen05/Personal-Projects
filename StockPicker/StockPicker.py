@@ -54,17 +54,16 @@ def update_backtest(ts, notebook, status_var):
     status_var.set("Running robust backtest...")
     def run_backtest():
         try:
-            portfolio_df, _, sharpe, _ = ts.backtest()
+            portfolio_df, _, sharpe, fig_backtest = ts.backtest()
             if portfolio_df is None:
                 status_var.set("Backtest failed.")
                 return
             
-            # Compute drawdowns & daily returns for additional figures:
+            # Compute additional figures
             portfolio_df['RunningMax'] = portfolio_df['PortfolioValue'].cummax()
             portfolio_df['Drawdown'] = (portfolio_df['PortfolioValue'] - portfolio_df['RunningMax']) / portfolio_df['RunningMax']
             daily_returns = portfolio_df['PortfolioValue'].pct_change().dropna()
             
-            # Create figures:
             fig1 = Figure(figsize=(5, 3), dpi=100)
             ax1 = fig1.add_subplot(111)
             ax1.plot(portfolio_df.index, portfolio_df['PortfolioValue'])
@@ -98,7 +97,6 @@ def update_backtest(ts, notebook, status_var):
             ax4.axis('off')
             ax4.set_title("Performance Metrics")
             
-            # Clear existing sub-tabs and add new ones:
             for tab in notebook.winfo_children():
                 tab.destroy()
             sub_nb = ttk.Notebook(notebook)
@@ -161,7 +159,7 @@ def update_trade_log(ts, log_tree, status_var):
     status_var.set("Fetching trade log...")
     def fetch_log():
         try:
-            portfolio_df, trade_log, sharpe, _ = ts.backtest()
+            _, trade_log, _, _ = ts.backtest()
             if trade_log is None:
                 status_var.set("No trade log available.")
                 return
@@ -386,42 +384,34 @@ ttk.Label(settings_frame, text="Min Average Volume:").grid(row=1, column=0, stic
 min_avg_volume_entry = ttk.Entry(settings_frame, width=10)
 min_avg_volume_entry.grid(row=1, column=1, padx=5)
 min_avg_volume_entry.insert(0, "500000")
-
 ttk.Label(settings_frame, text="Min Price:").grid(row=2, column=0, sticky=tk.W, padx=5)
 min_price_entry = ttk.Entry(settings_frame, width=10)
 min_price_entry.grid(row=2, column=1, padx=5)
 min_price_entry.insert(0, "5")
-
 ttk.Label(settings_frame, text="SMA Short Period:").grid(row=3, column=0, sticky=tk.W, padx=5)
 sma_short_entry = ttk.Entry(settings_frame, width=10)
 sma_short_entry.grid(row=3, column=1, padx=5)
 sma_short_entry.insert(0, "10")
-
 ttk.Label(settings_frame, text="SMA Long Period:").grid(row=4, column=0, sticky=tk.W, padx=5)
 sma_long_entry = ttk.Entry(settings_frame, width=10)
 sma_long_entry.grid(row=4, column=1, padx=5)
 sma_long_entry.insert(0, "50")
-
 ttk.Label(settings_frame, text="Min Momentum:").grid(row=5, column=0, sticky=tk.W, padx=5)
 min_momentum_entry = ttk.Entry(settings_frame, width=10)
 min_momentum_entry.grid(row=5, column=1, padx=5)
 min_momentum_entry.insert(0, "0")
-
 ttk.Label(settings_frame, text="RSI Lower:").grid(row=6, column=0, sticky=tk.W, padx=5)
 rsi_lower_entry = ttk.Entry(settings_frame, width=10)
 rsi_lower_entry.grid(row=6, column=1, padx=5)
 rsi_lower_entry.insert(0, "30")
-
 ttk.Label(settings_frame, text="RSI Upper:").grid(row=7, column=0, sticky=tk.W, padx=5)
 rsi_upper_entry = ttk.Entry(settings_frame, width=10)
 rsi_upper_entry.grid(row=7, column=1, padx=5)
 rsi_upper_entry.insert(0, "70")
-
 ttk.Label(settings_frame, text="Max Volatility:").grid(row=8, column=0, sticky=tk.W, padx=5)
 max_volatility_entry = ttk.Entry(settings_frame, width=10)
 max_volatility_entry.grid(row=8, column=1, padx=5)
 max_volatility_entry.insert(0, "0.05")
-
 ttk.Label(settings_frame, text="Target (# tickers):").grid(row=9, column=0, sticky=tk.W, padx=5)
 target_entry = ttk.Entry(settings_frame, width=10)
 target_entry.grid(row=9, column=1, padx=5)
@@ -475,7 +465,16 @@ progress.pack(side=tk.BOTTOM, fill=tk.X)
 progress.start(10)
 
 # ---------------------------
-# Initialize Trading System in Separate Thread
+# Start Button
+# ---------------------------
+def start_trading_system():
+    threading.Thread(target=init_trading_system, daemon=True).start()
+
+start_button = ttk.Button(root, text="Start", command=start_trading_system)
+start_button.pack(side=tk.TOP, pady=5)
+
+# ---------------------------
+# Initialize Trading System (will now be triggered by Start button)
 # ---------------------------
 def init_trading_system():
     global trading_system
@@ -497,6 +496,40 @@ def init_trading_system():
     status_var.set("Trading system ready.")
     progress.stop()
 
-threading.Thread(target=init_trading_system, daemon=True).start()
+def initialize_trading_system(status_var, settings, ticker_csv=None):
+    if ticker_csv:
+        try:
+            tickers = pd.read_csv(ticker_csv)['ACT Symbol'].tolist()
+        except Exception as e:
+            send_alert(f"Error loading ticker CSV: {str(e)}")
+            tickers = []
+    else:
+        try:
+            tickers = pd.read_csv('nyse-listed.csv')['ACT Symbol'].tolist()
+        except Exception as e:
+            send_alert(f"Error loading default ticker CSV: {str(e)}")
+            tickers = []
+    filtered_tickers = filter_tickers(tickers,
+                                        min_avg_volume=int(settings.get('min_avg_volume', 500000)),
+                                        min_price=float(settings.get('min_price', 5)),
+                                        sma_short_period=int(settings.get('sma_short_period', 10)),
+                                        sma_long_period=int(settings.get('sma_long_period', 50)),
+                                        min_momentum=float(settings.get('min_momentum', 0)),
+                                        rsi_lower=float(settings.get('rsi_lower', 30)),
+                                        rsi_upper=float(settings.get('rsi_upper', 70)),
+                                        max_volatility=float(settings.get('max_volatility', 0.05)),
+                                        target=int(settings.get('target', 100)))
+    logging.info(f"Filtered to {len(filtered_tickers)} tickers.")
+    start_date = settings.get('start_date', '2020-01-01')
+    end_date = settings.get('end_date', datetime.datetime.today().strftime('%Y-%m-%d'))
+    ts = TradingSystem(filtered_tickers, start_date, end_date)
+    status_var.set("Downloading data...")
+    ts.download_data()
+    status_var.set("Building dataset...")
+    ts.build_dataset()
+    status_var.set("Training model...")
+    ts.model_selection_and_training()
+    status_var.set("Trading system initialized.")
+    return ts
 
 root.mainloop()
