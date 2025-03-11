@@ -251,7 +251,7 @@ def initialize_trading_system(status_var, settings, ticker_csv=None):
             tickers = []
     else:
         try:
-            tickers = pd.read_csv('nyse-listed.csv')['ACT Symbol'].tolist()
+            tickers = pd.read_csv('test.csv')['ACT Symbol'].tolist()
         except Exception as e:
             ts.send_alert(f"Error loading default ticker CSV: {str(e)}")
             tickers = []
