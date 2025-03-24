@@ -50,10 +50,9 @@ anova(my_gam_2,my_gam_3)
 #### Prediction error from the best model
 mymodel_pred <- predict(my_gam_2, mtcars)
 error <- RMSE(mymodel_pred, mtcars$mpg)
+error
 
 ############################################# Classification GAMs with the heart disease dataset
-
-setwd("/Users/nh23294/Box/Teaching/SDS_323/Data/")
 
 heartdisease = read.csv("Heart_disease.csv", head = TRUE, check.names=FALSE)
 
@@ -89,3 +88,5 @@ heartdisease_pred <- predict(my_gam_1, heartdisease)
 yhat_predict <- ifelse(heartdisease_pred > 0.5, 1, 0)
 table_heart <- table(y = heartdisease$Heart_disease, yhat = yhat_predict)
 accuracy <- sum(diag(table_heart))/ sum(table_heart)
+accuracy
+
