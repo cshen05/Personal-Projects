@@ -1,0 +1,1300 @@
+id,region,age,bmi,children,smoker,costs
+1,southwest,39,obese,none,no,5650
+2,northeast,60,overweight,none,former,12731
+3,southwest,19,healthy weight,none,no,1732
+4,southeast,59,obese,two or more,no,12929
+5,northeast,54,overweight,two or more,no,12097
+6,southwest,46,overweight,two or more,no,8823
+7,northeast,25,obese,none,no,2727
+8,southeast,29,obese,two or more,no,4058
+9,southwest,39,overweight,one,yes,21082
+10,northwest,38,obese,one,no,6374
+11,northwest,48,overweight,one,no,9249
+12,northwest,19,healthy weight,none,no,1627
+13,southeast,27,healthy weight,one,no,3562
+14,southeast,28,obese,two or more,no,4449
+15,northeast,29,overweight,one,no,20278
+16,southwest,52,obese,two or more,no,10325
+17,northwest,46,healthy weight,two or more,no,9194
+18,northwest,46,obese,two or more,former,8733
+19,northeast,24,overweight,none,no,3046
+20,southwest,44,overweight,one,no,7625
+21,northeast,18,obese,two or more,no,3393
+22,northwest,40,obese,two or more,no,8163
+23,southwest,55,obese,none,no,20630
+24,northwest,31,obese,two or more,yes,38746
+25,southeast,36,obese,one,yes,38709
+26,northwest,54,healthy weight,two or more,no,12475
+27,southwest,50,overweight,none,no,8444
+28,northeast,53,obese,none,yes,43254
+29,southwest,27,healthy weight,none,no,2974
+30,southeast,27,obese,none,yes,39612
+31,northwest,23,overweight,none,yes,18034
+32,southwest,19,healthy weight,none,no,1243
+33,southeast,39,obese,two or more,former,23563
+34,northeast,24,obese,two or more,no,17128
+35,northwest,51,healthy weight,two or more,yes,23967
+36,northwest,62,obese,two or more,yes,46718
+37,northwest,46,obese,two or more,yes,40721
+38,northeast,53,overweight,two or more,no,11244
+39,northwest,42,obese,none,no,6359
+40,northwest,55,obese,two or more,no,12269
+41,northwest,57,obese,none,yes,43579
+42,northeast,21,healthy weight,one,no,3167
+43,southeast,61,obese,two or more,former,36580
+44,northwest,19,obese,none,no,1640
+45,southwest,29,overweight,none,no,2866
+46,northwest,57,obese,none,no,11357
+47,northeast,43,overweight,none,no,6837
+48,northeast,32,obese,one,no,5149
+49,northeast,37,overweight,two or more,no,6406
+50,southwest,39,healthy weight,two or more,yes,19023
+51,northwest,59,overweight,none,no,12125
+52,southwest,39,overweight,two or more,no,7512
+53,northeast,34,healthy weight,none,no,4992
+54,northeast,36,overweight,two or more,no,6749
+55,northwest,28,obese,none,no,19673
+56,southeast,18,obese,none,yes,38793
+57,southwest,19,obese,none,no,1263
+58,northeast,18,healthy weight,none,no,1695
+59,southeast,44,obese,one,no,7147
+60,northeast,35,obese,two or more,former,24915
+61,southeast,20,obese,two or more,no,3056
+62,southeast,23,obese,none,no,1824
+63,southeast,49,obese,two or more,former,10977
+64,northeast,23,obese,none,no,2899
+65,southeast,40,overweight,one,no,6500
+66,southeast,33,overweight,one,no,4780
+67,northwest,53,obese,one,no,10462
+68,southwest,49,obese,two or more,no,11553
+69,southwest,42,obese,none,no,5980
+70,southeast,52,obese,two or more,no,12593
+71,northwest,19,healthy weight,none,no,1625
+72,northwest,55,obese,two or more,no,12270
+73,northwest,19,obese,none,no,2138
+74,northwest,25,healthy weight,one,no,3594
+75,southwest,34,obese,one,no,14358
+76,southwest,41,overweight,one,no,6282
+77,southwest,49,healthy weight,one,no,9182
+78,southeast,34,overweight,two or more,yes,18972
+79,northeast,59,obese,two or more,no,14591
+80,southwest,37,overweight,two or more,no,6312
+81,northwest,21,overweight,none,no,1906
+82,northeast,56,overweight,none,former,11658
+83,northwest,26,healthy weight,none,no,2681
+84,southwest,57,healthy weight,one,former,12032
+85,southwest,19,healthy weight,none,yes,13845
+86,southwest,20,obese,none,no,1880
+87,northeast,36,overweight,none,no,5469
+88,northeast,63,obese,none,no,13982
+89,northwest,21,obese,none,no,1910
+90,southeast,25,overweight,none,no,2138
+91,southeast,61,obese,none,yes,46599
+92,northeast,21,overweight,two or more,no,3280
+93,southeast,44,healthy weight,two or more,no,8211
+94,northeast,49,overweight,one,no,9288
+95,northwest,43,overweight,none,yes,21774
+96,southwest,38,overweight,two or more,no,7151
+97,northeast,51,overweight,one,no,9958
+98,southwest,22,obese,none,yes,35586
+99,northeast,64,obese,two or more,former,16069
+100,southwest,19,obese,none,no,1256
+101,southwest,19,overweight,one,no,1843
+102,southwest,23,obese,two or more,no,3598
+103,southwest,32,obese,one,no,4076
+104,northwest,48,overweight,two or more,former,11015
+105,northeast,40,obese,one,no,6610
+106,southeast,54,obese,one,no,10929
+107,southeast,59,obese,one,yes,48970
+108,southeast,58,obese,none,no,24227
+109,northeast,46,obese,one,no,8824
+110,southwest,58,overweight,none,no,11842
+111,southeast,27,obese,one,yes,34806
+112,southeast,27,obese,none,no,2497
+113,southwest,61,obese,none,no,13064
+114,northeast,62,obese,two or more,no,15230
+115,southwest,45,overweight,two or more,no,9102
+116,northeast,49,obese,one,no,9778
+117,northwest,58,obese,none,former,12232
+118,northeast,25,healthy weight,two or more,no,23241
+119,northeast,61,healthy weight,none,former,13616
+120,southeast,30,obese,two or more,no,4266
+121,northeast,42,healthy weight,two or more,yes,21259
+122,southeast,53,healthy weight,one,yes,23245
+123,northwest,34,obese,two or more,no,5990
+124,northwest,50,overweight,two or more,no,30285
+125,southeast,48,obese,none,no,8284
+126,southeast,38,obese,none,no,5401
+127,northwest,61,obese,two or more,former,14120
+128,northwest,52,healthy weight,one,yes,23888
+129,southwest,61,obese,none,no,12574
+130,northwest,54,obese,two or more,no,12495
+131,northeast,54,obese,none,no,10924
+132,northwest,43,obese,one,former,7727
+133,northeast,55,overweight,two or more,no,13047
+134,southeast,53,obese,none,no,27346
+135,northeast,18,healthy weight,none,yes,13748
+136,northeast,45,healthy weight,two or more,no,8604
+137,southeast,33,obese,one,no,4796
+138,southeast,48,overweight,two or more,yes,24181
+139,northeast,43,overweight,one,yes,21771
+140,southwest,48,obese,two or more,no,9563
+141,southwest,61,obese,one,yes,47404
+142,southeast,51,obese,one,no,9378
+143,northeast,53,healthy weight,two or more,yes,24873
+144,southwest,47,healthy weight,one,no,8540
+145,northeast,22,obese,two or more,no,3926
+146,southwest,31,overweight,two or more,yes,19200
+147,southeast,34,obese,none,no,3935
+148,southwest,46,overweight,none,no,24603
+149,northwest,33,obese,none,yes,55135
+150,southwest,40,overweight,two or more,former,15829
+151,northeast,59,healthy weight,none,no,12324
+152,northeast,18,obese,none,no,2217
+153,northwest,37,healthy weight,two or more,no,6199
+154,northeast,22,obese,none,no,2755
+155,northwest,41,overweight,one,no,6665
+156,northeast,42,overweight,two or more,former,7730
+157,southeast,59,obese,none,former,12245
+158,southeast,42,healthy weight,none,no,5967
+159,southeast,21,healthy weight,two or more,no,3181
+160,southeast,29,overweight,one,no,3947
+161,northeast,47,overweight,two or more,no,9225
+162,northeast,23,healthy weight,none,no,2395
+163,southeast,64,healthy weight,none,yes,27038
+164,northwest,23,obese,two or more,former,4467
+165,southwest,54,obese,two or more,no,12105
+166,northwest,20,obese,none,no,2262
+167,northeast,18,obese,none,yes,33733
+168,northwest,23,healthy weight,none,no,21595
+169,northeast,33,healthy weight,none,yes,17905
+170,northwest,56,obese,none,former,10976
+171,northwest,37,healthy weight,two or more,no,6686
+172,northeast,18,overweight,none,no,7324
+173,southeast,37,obese,two or more,no,6436
+174,southwest,56,obese,none,no,10602
+175,northwest,39,healthy weight,one,no,6117
+176,northeast,26,overweight,two or more,no,4661
+177,northwest,39,overweight,one,no,6124
+178,northwest,26,healthy weight,none,no,3177
+179,southwest,35,obese,one,no,5246
+180,southwest,20,healthy weight,none,yes,20167
+181,southwest,33,obese,two or more,no,5375
+182,southeast,31,overweight,none,yes,19350
+183,northeast,18,obese,none,yes,34618
+184,northeast,40,obese,one,yes,39125
+185,southeast,35,healthy weight,two or more,yes,19362
+186,southwest,30,healthy weight,two or more,yes,18259
+187,northeast,57,overweight,none,yes,27218
+188,northwest,61,obese,none,no,13429
+189,northwest,19,obese,none,no,2128
+190,southwest,54,obese,none,no,9850
+191,southeast,51,obese,one,no,9386
+192,southwest,31,overweight,none,no,3761
+193,southeast,19,obese,none,yes,34440
+194,northeast,44,obese,none,no,12797
+195,southeast,25,obese,two or more,yes,36125
+196,southwest,41,obese,two or more,no,7372
+197,southwest,43,overweight,two or more,yes,22479
+198,southwest,56,obese,one,no,11674
+199,northeast,41,healthy weight,one,former,13725
+200,northeast,26,healthy weight,two or more,yes,14456
+201,southwest,28,obese,one,yes,51195
+202,southeast,36,overweight,two or more,no,7244
+203,northeast,58,obese,none,no,12431
+204,northeast,37,healthy weight,two or more,former,6878
+205,southwest,46,overweight,two or more,no,10097
+206,southwest,45,overweight,two or more,no,8028
+207,southwest,27,obese,two or more,no,4261
+208,northwest,26,obese,none,no,3201
+209,northwest,25,overweight,none,no,2523
+210,southeast,26,overweight,one,no,3392
+211,northwest,19,obese,none,no,1646
+212,northeast,43,overweight,none,no,7325
+213,northwest,48,obese,two or more,yes,45702
+214,northeast,29,healthy weight,none,yes,16115
+215,northeast,56,obese,two or more,no,13430
+216,southeast,26,overweight,one,no,3393
+217,southwest,27,obese,two or more,no,3693
+218,southeast,58,obese,none,no,11363
+219,northeast,26,overweight,none,no,3385
+220,southeast,32,overweight,one,yes,19720
+221,southwest,48,overweight,none,no,8278
+222,southeast,50,healthy weight,two or more,no,10107
+223,southwest,24,healthy weight,none,no,1970
+224,northwest,56,overweight,none,no,11454
+225,northeast,45,obese,none,no,7448
+226,southeast,47,obese,none,yes,41676
+227,northwest,62,obese,two or more,no,15020
+228,southwest,28,overweight,two or more,former,20178
+229,northeast,25,overweight,none,no,3214
+230,northwest,32,obese,two or more,no,6129
+231,northeast,55,obese,one,no,11879
+232,northeast,52,obese,one,no,10797
+233,northwest,55,overweight,none,no,10595
+234,southeast,53,obese,none,no,9504
+235,southwest,39,obese,one,no,6238
+236,southeast,43,obese,two or more,yes,40941
+237,southwest,27,obese,none,yes,34839
+238,southwest,64,obese,two or more,yes,47291
+239,southeast,60,healthy weight,none,no,12630
+240,southwest,57,healthy weight,none,former,10959
+241,northwest,47,overweight,two or more,yes,24536
+242,northwest,22,healthy weight,two or more,no,4296
+243,northeast,18,overweight,none,no,2196
+244,southeast,49,obese,two or more,no,9801
+245,northwest,60,healthy weight,one,no,13113
+246,southwest,20,overweight,none,yes,16233
+247,northwest,22,overweight,one,no,2639
+248,southeast,24,obese,none,yes,38126
+249,southeast,18,obese,one,no,1726
+250,northwest,52,obese,two or more,no,33472
+251,southeast,27,healthy weight,none,no,2484
+252,northeast,56,overweight,none,no,11658
+253,northwest,32,healthy weight,two or more,yes,32734
+254,southwest,21,overweight,none,no,2008
+255,southeast,63,obese,two or more,no,15162
+256,southwest,42,obese,none,no,6474
+257,northwest,63,overweight,none,yes,28950
+258,southeast,55,obese,two or more,no,11882
+259,northeast,53,obese,two or more,no,29186
+260,southeast,39,healthy weight,two or more,no,8582
+261,southwest,54,overweight,two or more,yes,25382
+262,northwest,22,obese,none,no,2055
+263,northeast,21,overweight,none,no,2102
+264,southeast,54,obese,none,no,10339
+265,northwest,54,healthy weight,two or more,no,12480
+266,northeast,24,obese,none,yes,34254
+267,southeast,29,overweight,none,no,2867
+268,northwest,59,healthy weight,none,yes,25679
+269,southeast,31,overweight,one,no,4351
+270,northeast,52,healthy weight,none,no,10198
+271,southwest,19,obese,none,no,1261
+272,northeast,61,obese,none,former,13636
+273,northwest,19,healthy weight,none,no,1628
+274,southeast,24,healthy weight,none,former,25082
+275,northeast,18,healthy weight,two or more,yes,12829
+276,northeast,40,healthy weight,two or more,no,7173
+277,southwest,19,overweight,none,no,1744
+278,northwest,61,overweight,none,yes,29141
+279,southeast,63,obese,one,no,14475
+280,southeast,36,obese,two or more,no,5584
+281,southeast,30,obese,two or more,no,4754
+282,southeast,52,overweight,two or more,yes,24667
+283,southeast,26,obese,none,no,2323
+284,northwest,46,healthy weight,one,yes,21677
+285,southwest,23,obese,two or more,no,3591
+286,southeast,55,obese,two or more,former,11987
+287,southeast,21,obese,none,former,16586
+288,southwest,30,overweight,none,no,3554
+289,northeast,36,overweight,one,yes,20774
+290,northwest,64,obese,none,no,14211
+291,northwest,44,overweight,none,no,7421
+292,southwest,45,obese,one,no,7441
+293,southeast,32,obese,one,no,4074
+294,southeast,33,obese,two or more,no,6654
+295,northeast,63,obese,none,no,13974
+296,southwest,44,obese,two or more,yes,38999
+297,northwest,53,healthy weight,one,no,10942
+298,southeast,49,overweight,none,no,8601
+299,northeast,34,obese,one,yes,37702
+300,southeast,42,obese,two or more,no,7160
+301,southeast,35,obese,one,no,5245
+302,southeast,18,obese,two or more,yes,34303
+303,southwest,26,obese,one,no,2904
+304,northwest,35,overweight,none,yes,20235
+305,southeast,22,obese,two or more,yes,37484
+306,southeast,59,overweight,two or more,no,14001
+307,northwest,19,healthy weight,two or more,no,2804
+308,northeast,21,overweight,none,no,2104
+309,southwest,26,healthy weight,two or more,no,3484
+310,northwest,35,obese,two or more,no,5729
+311,northeast,18,healthy weight,none,no,1705
+312,northeast,35,obese,two or more,no,19497
+313,northeast,36,healthy weight,none,no,5458
+314,southeast,50,overweight,none,no,8443
+315,southeast,40,obese,none,no,5439
+316,northwest,36,overweight,none,no,5266
+317,southeast,51,healthy weight,one,no,9855
+318,southeast,46,obese,two or more,no,8944
+319,northwest,48,obese,one,no,8765
+320,northeast,56,overweight,none,no,11165
+321,southeast,33,obese,two or more,no,4890
+322,northeast,18,obese,none,no,2218
+323,northeast,44,healthy weight,two or more,no,8303
+324,southeast,48,obese,none,no,8281
+325,northwest,34,overweight,one,no,4895
+326,southwest,54,obese,one,no,10451
+327,northeast,40,healthy weight,two or more,no,8252
+328,southwest,64,obese,one,yes,47928
+329,southwest,19,obese,none,former,23083
+330,northwest,63,obese,two or more,no,15555
+331,southwest,45,obese,two or more,no,8520
+332,northeast,22,obese,none,no,2742
+333,northeast,36,obese,two or more,yes,43753
+334,northwest,36,overweight,none,no,5268
+335,southwest,31,obese,two or more,yes,38711
+336,northwest,24,obese,two or more,no,4618
+337,northwest,37,overweight,two or more,no,7282
+338,southwest,43,obese,two or more,no,8522
+339,northwest,40,overweight,two or more,no,8060
+340,southwest,23,obese,none,no,10796
+341,southeast,55,obese,none,former,20781
+342,southwest,49,overweight,two or more,yes,23307
+343,southeast,42,overweight,two or more,no,7640
+344,southwest,35,overweight,one,no,4746
+345,southeast,60,obese,none,yes,48674
+346,northeast,31,overweight,two or more,no,5031
+347,southwest,38,obese,two or more,no,6082
+348,northeast,35,overweight,none,no,5228
+349,southwest,50,obese,two or more,former,9630
+350,northeast,39,healthy weight,two or more,no,7986
+351,southwest,19,overweight,two or more,no,4688
+352,northwest,57,healthy weight,none,former,11831
+353,northwest,23,healthy weight,two or more,no,14426
+354,southwest,44,overweight,one,no,7627
+355,northeast,27,obese,one,no,18903
+356,southeast,42,obese,two or more,yes,43896
+357,southeast,52,obese,none,no,9141
+358,northwest,30,overweight,two or more,yes,20746
+359,southwest,60,overweight,none,no,12147
+360,southeast,61,overweight,none,former,24513
+361,northeast,54,obese,none,former,10435
+362,northeast,45,obese,two or more,no,9705
+363,southeast,40,obese,two or more,no,7683
+364,southeast,31,overweight,none,no,3757
+365,southeast,46,overweight,one,no,7742
+366,northwest,47,healthy weight,one,no,8428
+367,southeast,55,obese,none,no,10226
+368,southwest,46,obese,two or more,former,9415
+369,northwest,36,obese,one,no,5373
+370,southwest,53,obese,one,no,10086
+371,southwest,42,obese,two or more,no,7160
+372,northwest,59,overweight,two or more,no,14383
+373,southwest,26,healthy weight,none,no,2302
+374,northwest,22,healthy weight,none,no,2528
+375,northeast,42,healthy weight,none,yes,19965
+376,southwest,47,overweight,two or more,yes,25309
+377,northwest,19,obese,none,yes,36899
+378,northeast,31,obese,none,no,3858
+379,southeast,18,obese,none,former,11483
+380,northeast,23,healthy weight,none,no,2396
+381,southeast,51,healthy weight,one,yes,22218
+382,northwest,50,obese,one,no,9910
+383,southeast,18,obese,two or more,no,2801
+384,northwest,20,overweight,one,yes,17560
+385,northeast,48,obese,two or more,no,10043
+386,northeast,53,healthy weight,two or more,no,11730
+387,southwest,50,obese,two or more,no,11299
+388,northwest,31,healthy weight,none,no,4134
+389,southeast,42,healthy weight,none,yes,19516
+390,northeast,56,healthy weight,none,yes,22413
+391,northeast,62,obese,one,no,31620
+392,southeast,18,obese,none,no,14133
+393,northwest,30,healthy weight,two or more,yes,18766
+394,southeast,31,overweight,none,no,3758
+395,northeast,55,overweight,none,no,11287
+396,northwest,50,overweight,two or more,no,10494
+397,northeast,20,obese,none,no,2460
+398,southwest,33,obese,none,yes,37079
+399,southwest,50,obese,two or more,yes,42857
+400,northwest,37,obese,two or more,no,6797
+401,northwest,21,healthy weight,two or more,no,3077
+402,northeast,27,obese,two or more,no,4847
+403,southeast,33,obese,one,no,11327
+404,southwest,35,overweight,two or more,no,5927
+405,southwest,56,healthy weight,none,no,10577
+406,northwest,47,overweight,two or more,yes,24915
+407,southwest,51,obese,none,no,8799
+408,southeast,43,obese,two or more,yes,42560
+409,northeast,49,healthy weight,two or more,yes,24107
+410,southeast,34,overweight,none,no,4415
+411,northeast,26,obese,one,no,3491
+412,northeast,42,obese,none,no,7050
+413,northwest,21,obese,none,no,1917
+414,southwest,34,obese,two or more,no,6196
+415,southwest,25,overweight,two or more,yes,19933
+416,southeast,36,overweight,none,no,4400
+417,northwest,37,obese,one,no,6112
+418,northwest,48,obese,none,no,8671
+419,southeast,52,obese,one,no,9749
+420,southeast,54,obese,none,yes,63770
+421,southeast,45,healthy weight,two or more,no,9789
+422,northeast,33,healthy weight,one,no,5354
+423,northeast,32,obese,two or more,no,6334
+424,southwest,22,obese,none,no,2167
+425,northeast,33,obese,none,no,12405
+426,southwest,64,obese,none,former,13823
+427,southeast,35,obese,two or more,no,5934
+428,northwest,41,obese,two or more,no,7262
+429,southeast,50,overweight,two or more,no,10703
+430,southeast,25,obese,two or more,yes,42112
+431,southwest,19,obese,two or more,yes,36398
+432,northeast,18,obese,two or more,no,4561
+433,northeast,22,overweight,none,no,2251
+434,northwest,29,overweight,two or more,no,18158
+435,southeast,43,obese,none,yes,45863
+436,southwest,19,overweight,none,no,1743
+437,southwest,19,overweight,none,yes,17081
+438,southwest,35,obese,one,no,4762
+439,northwest,42,overweight,none,yes,21349
+440,northeast,25,obese,none,no,17879
+441,northwest,19,obese,one,no,2719
+442,northwest,49,obese,two or more,no,10269
+443,northwest,62,obese,none,no,13352
+444,northwest,63,overweight,none,former,13770
+445,southwest,50,obese,two or more,no,10118
+446,southeast,18,obese,none,no,1622
+447,northeast,60,healthy weight,none,no,13204
+448,southeast,37,obese,one,yes,39872
+449,southwest,36,overweight,one,no,5472
+450,southwest,25,healthy weight,two or more,no,5080
+451,southeast,53,obese,two or more,no,20463
+452,southwest,22,obese,none,no,1683
+453,northwest,47,overweight,two or more,no,9620
+454,southeast,61,overweight,two or more,yes,30942
+455,southeast,49,obese,none,no,8124
+456,northeast,46,healthy weight,two or more,no,9501
+457,northeast,49,obese,one,no,9290
+458,northwest,60,healthy weight,none,no,12524
+459,southeast,44,obese,one,no,7153
+460,southwest,47,obese,one,no,8557
+461,southwest,29,healthy weight,two or more,no,4529
+462,northwest,35,healthy weight,one,no,5117
+463,southeast,47,obese,two or more,yes,44203
+464,northwest,62,overweight,one,no,13938
+465,northeast,25,overweight,none,no,2721
+466,southwest,54,overweight,one,no,10436
+467,northwest,53,healthy weight,none,no,9863
+468,northeast,18,healthy weight,none,no,1705
+469,northwest,41,overweight,one,no,7154
+470,northwest,29,obese,two or more,no,4433
+471,northeast,20,obese,none,no,1984
+472,northeast,21,healthy weight,one,yes,15359
+473,southwest,58,obese,none,no,11848
+474,southeast,44,obese,one,no,7634
+475,southeast,28,overweight,two or more,no,4340
+476,southwest,64,overweight,two or more,former,14988
+477,southeast,45,overweight,two or more,no,8517
+478,southeast,49,obese,two or more,no,10381
+479,southwest,46,healthy weight,none,no,7147
+480,northwest,61,obese,none,no,12950
+481,northeast,46,obese,two or more,no,9433
+482,northeast,47,overweight,two or more,no,10407
+483,northwest,32,overweight,one,former,4454
+484,southeast,18,overweight,none,no,1616
+485,northwest,33,overweight,none,no,4571
+486,northwest,37,overweight,none,no,5028
+487,southeast,40,healthy weight,two or more,yes,19444
+488,northwest,45,obese,two or more,yes,42761
+489,northeast,20,obese,two or more,no,4915
+490,northwest,60,healthy weight,none,no,13012
+491,southeast,45,overweight,two or more,no,8516
+492,northwest,34,obese,none,no,4320
+493,southeast,57,obese,none,former,10983
+494,southwest,32,obese,two or more,no,4671
+495,northwest,56,overweight,one,yes,26109
+496,southwest,30,obese,two or more,yes,39241
+497,southwest,20,obese,two or more,yes,38345
+498,northwest,51,obese,two or more,no,10848
+499,southeast,46,overweight,one,no,8233
+500,southeast,23,obese,two or more,no,3501
+501,southwest,37,obese,two or more,yes,40182
+502,southwest,47,obese,one,no,8063
+503,southeast,64,obese,none,no,13831
+504,northwest,38,overweight,two or more,no,6456
+505,southwest,55,overweight,one,former,35160
+506,southeast,60,obese,none,former,12649
+507,northwest,52,healthy weight,none,no,9991
+508,southeast,46,obese,two or more,no,8347
+509,southeast,47,overweight,none,yes,23065
+510,northwest,54,obese,none,no,10231
+511,southwest,49,overweight,one,no,8703
+512,northwest,31,overweight,one,no,4244
+513,northeast,50,overweight,one,no,9618
+514,southwest,51,obese,one,no,9880
+515,northwest,19,healthy weight,none,no,1621
+516,southwest,37,overweight,none,no,20421
+517,northwest,19,overweight,one,yes,16451
+518,northwest,56,obese,none,yes,43921
+519,southeast,62,obese,none,no,12981
+520,southwest,28,healthy weight,two or more,no,3848
+521,northwest,25,overweight,two or more,no,4878
+522,northwest,53,overweight,none,no,9870
+523,northwest,19,obese,none,no,2131
+524,northwest,19,obese,none,no,2135
+525,southwest,53,overweight,two or more,former,11742
+526,southeast,26,overweight,one,no,2903
+527,northeast,55,obese,one,no,11394
+528,southwest,24,overweight,none,no,1978
+529,northwest,26,healthy weight,none,no,3176
+530,northeast,41,obese,one,no,7358
+531,northwest,51,healthy weight,two or more,no,11520
+532,southwest,45,overweight,two or more,no,8615
+533,southeast,47,obese,one,yes,42970
+534,northwest,22,obese,none,yes,33908
+535,northwest,24,healthy weight,none,no,2843
+536,southeast,53,healthy weight,none,yes,21196
+537,southeast,48,obese,none,no,7804
+538,northeast,26,overweight,two or more,no,4564
+539,southeast,37,obese,two or more,no,6314
+540,southwest,54,healthy weight,two or more,no,12094
+541,northwest,44,overweight,one,no,7518
+542,southeast,43,obese,one,no,7346
+543,southeast,25,obese,two or more,no,4505
+544,southwest,62,healthy weight,none,no,12957
+545,northwest,20,overweight,none,no,1770
+546,southeast,35,overweight,one,no,4747
+547,northwest,35,obese,one,no,5630
+548,northwest,33,obese,two or more,no,6361
+549,northeast,41,overweight,two or more,no,9222
+550,southwest,61,obese,two or more,no,14235
+551,southwest,53,overweight,two or more,no,11151
+552,northeast,38,healthy weight,two or more,no,7134
+553,northeast,50,overweight,none,no,25657
+554,northwest,56,obese,two or more,no,12643
+555,northeast,51,obese,none,no,9876
+556,northwest,37,overweight,two or more,no,6204
+557,northeast,60,obese,none,former,13229
+558,southeast,64,obese,two or more,former,16085
+559,northwest,53,overweight,none,no,10356
+560,southeast,51,obese,two or more,yes,47463
+561,southeast,29,obese,none,no,3367
+562,southeast,40,obese,none,no,5920
+563,northeast,54,healthy weight,none,no,10423
+564,southeast,41,healthy weight,one,no,6272
+565,southeast,39,obese,two or more,no,6338
+566,northeast,33,healthy weight,two or more,yes,16776
+567,southwest,49,obese,none,no,8117
+568,southwest,44,overweight,two or more,former,7727
+569,southwest,51,obese,one,former,9391
+570,southeast,33,healthy weight,none,no,4185
+571,northwest,40,obese,one,no,28477
+572,northeast,22,obese,none,no,2255
+573,northwest,28,overweight,two or more,former,5312
+574,southeast,48,overweight,none,no,7790
+575,northeast,40,overweight,one,yes,22332
+576,southeast,49,obese,none,no,8126
+577,northwest,41,obese,two or more,no,7749
+578,southeast,32,healthy weight,one,no,17626
+579,northwest,29,obese,two or more,no,19442
+580,northwest,31,obese,one,no,4738
+581,northeast,25,overweight,one,no,3310
+582,northeast,46,obese,two or more,no,9411
+583,southwest,22,obese,two or more,no,3443
+584,northwest,50,obese,none,no,8835
+585,southeast,22,obese,one,yes,37165
+586,southwest,55,obese,none,no,10714
+587,southwest,58,healthy weight,none,no,11346
+588,southeast,25,obese,one,no,3227
+589,southeast,56,obese,none,no,11094
+590,southeast,40,healthy weight,two or more,no,6594
+591,northeast,43,healthy weight,two or more,yes,19798
+592,northeast,28,overweight,one,no,4338
+593,northwest,56,overweight,one,no,12044
+594,southwest,21,obese,none,no,1526
+595,southwest,43,healthy weight,none,no,6250
+596,southwest,31,overweight,two or more,no,4935
+597,northwest,44,obese,two or more,no,8116
+598,southeast,60,overweight,none,no,12143
+599,southeast,48,obese,two or more,no,8978
+600,southeast,50,overweight,two or more,no,19749
+601,northwest,19,obese,none,yes,33308
+602,southeast,54,obese,one,yes,42000
+603,northwest,25,obese,none,no,3022
+604,southeast,31,obese,one,no,3876
+605,northeast,50,obese,none,no,9542
+606,southeast,37,overweight,none,yes,19539
+607,northwest,27,obese,two or more,no,18805
+608,northeast,32,obese,one,no,4668
+609,northeast,61,obese,none,no,13144
+610,northeast,62,obese,none,former,13555
+611,northwest,36,obese,none,former,5272
+612,northwest,62,obese,two or more,no,15612
+613,northeast,22,healthy weight,none,no,2732
+614,northeast,33,obese,two or more,no,6552
+615,northwest,33,healthy weight,two or more,no,5258
+616,northeast,35,healthy weight,two or more,no,6402
+617,northwest,45,healthy weight,none,no,7223
+618,southwest,37,obese,none,no,4647
+619,southwest,41,obese,two or more,no,7955
+620,southeast,29,obese,one,no,3471
+621,northeast,23,obese,two or more,yes,36189
+622,northwest,52,obese,two or more,yes,60021
+623,southeast,18,obese,one,no,1720
+624,northeast,48,obese,one,no,26392
+625,northeast,47,obese,none,former,20879
+626,southwest,39,obese,two or more,yes,40104
+627,southeast,18,obese,none,no,1622
+628,northwest,32,overweight,two or more,yes,21472
+629,northwest,50,overweight,none,no,8827
+630,southwest,30,obese,two or more,no,5326
+631,southeast,56,obese,two or more,yes,43814
+632,southeast,41,obese,one,no,6290
+633,southeast,32,overweight,one,no,4563
+634,southwest,21,obese,none,no,2020
+635,southeast,56,obese,none,no,10594
+636,southeast,54,obese,two or more,yes,44261
+637,southeast,64,obese,none,no,14314
+638,northeast,61,obese,none,former,13143
+639,northwest,63,overweight,none,no,14255
+640,southeast,23,overweight,one,yes,18328
+641,northwest,40,obese,two or more,no,6987
+642,northeast,18,healthy weight,none,no,1706
+643,southeast,46,obese,one,no,8241
+644,northeast,27,healthy weight,two or more,no,4828
+645,northwest,32,overweight,none,no,3867
+646,northwest,57,obese,none,no,11841
+647,southwest,48,overweight,none,no,21232
+648,southeast,37,obese,none,no,19215
+649,northwest,50,obese,two or more,no,10601
+650,northeast,21,healthy weight,two or more,no,3861
+651,southwest,19,healthy weight,none,no,1242
+652,northeast,18,obese,none,no,2203
+653,northwest,21,obese,none,no,2405
+654,southeast,40,overweight,none,no,5416
+655,northwest,55,obese,two or more,no,30064
+656,northwest,26,obese,two or more,no,3877
+657,southeast,58,obese,one,no,11947
+658,northwest,19,obese,none,no,2137
+659,northwest,28,obese,none,no,3063
+660,northeast,30,overweight,none,no,3645
+661,northwest,46,overweight,two or more,no,9302
+662,northwest,19,obese,none,no,1640
+663,northeast,18,obese,two or more,no,3482
+664,southwest,58,overweight,none,no,11837
+665,northeast,37,overweight,one,yes,20297
+666,southwest,63,obese,none,no,13394
+667,southwest,21,overweight,one,no,2598
+668,southeast,59,overweight,two or more,no,12926
+669,northeast,58,obese,two or more,former,13607
+670,northwest,35,obese,two or more,yes,39983
+671,southwest,28,overweight,none,no,3161
+672,northwest,55,overweight,none,no,11083
+673,southwest,39,obese,two or more,no,7419
+674,southeast,20,obese,none,no,1878
+675,northeast,27,overweight,none,no,3071
+676,southwest,25,overweight,two or more,no,3906
+677,southwest,30,obese,one,no,4150
+678,northwest,52,obese,two or more,no,11188
+679,northeast,52,obese,none,former,23046
+680,northwest,24,obese,none,no,2855
+681,southwest,26,obese,two or more,yes,36085
+682,southeast,18,obese,none,no,1634
+683,southeast,24,obese,none,no,1982
+684,northeast,30,obese,two or more,no,5429
+685,northwest,41,obese,two or more,no,7257
+686,northeast,50,obese,two or more,former,25333
+687,northeast,41,obese,two or more,yes,39597
+688,southeast,22,overweight,none,no,1665
+689,southwest,41,obese,none,no,6186
+690,southeast,42,overweight,one,yes,38246
+691,southeast,51,obese,none,yes,44400
+692,northeast,48,obese,two or more,no,10737
+693,northeast,63,healthy weight,none,no,14450
+694,northeast,45,overweight,two or more,former,9095
+695,southwest,33,overweight,one,yes,19041
+696,northeast,46,obese,one,no,8343
+697,southeast,22,overweight,none,no,2157
+698,northeast,42,obese,one,no,7639
+699,southwest,27,obese,none,no,2494
+700,northwest,38,obese,two or more,former,7537
+701,southwest,63,obese,none,no,13881
+702,northeast,52,healthy weight,two or more,yes,24870
+703,northeast,28,healthy weight,one,no,23289
+704,southeast,28,obese,one,no,3767
+705,southeast,22,overweight,none,no,2156
+706,southeast,33,obese,one,yes,38283
+707,southwest,58,obese,none,no,11366
+708,southeast,34,obese,two or more,no,5124
+709,northeast,39,healthy weight,two or more,no,7986
+710,northwest,39,overweight,two or more,no,7202
+711,southeast,59,overweight,none,no,11743
+712,southwest,38,overweight,none,no,5384
+713,southeast,42,overweight,one,no,7047
+714,southeast,55,obese,two or more,no,12486
+715,southwest,32,overweight,two or more,no,5152
+716,southeast,47,obese,one,no,8570
+717,northeast,28,healthy weight,two or more,no,4429
+718,northwest,43,healthy weight,two or more,yes,21881
+719,northwest,19,overweight,one,no,2222
+720,southeast,64,obese,none,yes,46889
+721,northwest,19,overweight,none,no,1633
+722,northwest,61,overweight,one,yes,28869
+723,northwest,58,obese,none,former,12236
+724,southeast,41,obese,none,no,5700
+725,southeast,56,obese,none,no,11091
+726,southwest,27,obese,one,no,3578
+727,southeast,26,obese,one,no,2927
+728,southeast,45,obese,none,no,17929
+729,northeast,18,overweight,one,no,11272
+730,northwest,49,healthy weight,two or more,no,10157
+731,southwest,52,obese,two or more,former,11412
+732,southeast,34,overweight,two or more,no,6184
+733,northeast,18,overweight,none,no,1712
+734,southwest,51,overweight,one,no,9861
+735,southwest,48,obese,two or more,no,8968
+736,northwest,20,obese,two or more,yes,37465
+737,southwest,64,obese,none,no,14319
+738,northeast,38,overweight,one,no,6067
+739,southeast,62,obese,none,former,13471
+740,northeast,52,obese,two or more,no,11488
+741,northeast,52,obese,two or more,no,11397
+742,southwest,44,overweight,one,no,7624
+743,southwest,21,healthy weight,one,no,2103
+744,northwest,60,overweight,none,former,28923
+745,northeast,28,overweight,two or more,no,4438
+746,northwest,20,overweight,none,no,2257
+747,southeast,57,healthy weight,one,no,22192
+748,southeast,32,overweight,none,no,3973
+749,southeast,18,overweight,one,no,1719
+750,northwest,24,overweight,one,no,12610
+751,southwest,47,obese,one,no,8551
+752,northeast,31,obese,none,no,4347
+753,southwest,22,overweight,none,no,2154
+754,southeast,27,overweight,none,yes,18246
+755,southeast,27,obese,none,no,2498
+756,southeast,61,obese,none,no,12558
+757,southeast,54,obese,two or more,no,27323
+758,northeast,35,overweight,two or more,yes,20984
+759,northeast,42,obese,one,no,7651
+760,southwest,45,obese,one,no,7446
+761,southwest,56,obese,none,no,10601
+762,southwest,19,overweight,none,no,1254
+763,northwest,34,overweight,one,yes,20010
+764,southwest,52,obese,one,no,9725
+765,southeast,64,healthy weight,none,yes,26927
+766,northeast,47,overweight,two or more,former,9716
+767,northwest,23,healthy weight,one,no,2775
+768,southeast,64,obese,one,no,14418
+769,southeast,24,obese,none,no,2481
+770,northeast,58,obese,none,no,11938
+771,southeast,40,healthy weight,one,yes,17180
+772,southwest,50,obese,none,former,8458
+773,northwest,39,healthy weight,two or more,no,6710
+774,southwest,36,obese,two or more,yes,38415
+775,northeast,18,obese,none,no,12890
+776,northwest,27,obese,two or more,no,4059
+777,northeast,23,obese,two or more,yes,38512
+778,northeast,48,obese,two or more,no,10141
+779,southeast,62,obese,none,no,12983
+780,northwest,61,healthy weight,none,no,13415
+781,southeast,43,overweight,two or more,no,14478
+782,northeast,24,healthy weight,none,yes,14572
+783,northwest,23,overweight,one,no,2789
+784,northwest,31,overweight,one,no,4240
+785,northeast,18,overweight,one,yes,17179
+786,southeast,55,obese,none,yes,44424
+787,southwest,55,overweight,two or more,no,11881
+788,southwest,62,obese,none,former,13471
+789,northeast,46,obese,one,no,8334
+790,southwest,54,obese,two or more,no,11538
+791,southwest,49,overweight,one,former,26140
+792,southwest,29,overweight,two or more,no,5709
+793,southeast,51,obese,one,no,9878
+794,southeast,22,obese,one,yes,44501
+795,northeast,54,obese,one,no,11512
+796,southeast,45,obese,two or more,former,8528
+797,southeast,37,obese,none,yes,40419
+798,southwest,47,healthy weight,one,no,26237
+799,southeast,41,obese,none,no,5709
+800,southeast,30,overweight,one,yes,19522
+801,southwest,19,overweight,one,no,2332
+802,northeast,45,obese,none,no,7935
+803,northeast,51,obese,one,no,9964
+804,southeast,48,obese,none,yes,40974
+805,southeast,24,overweight,none,no,2465
+806,southwest,21,overweight,two or more,yes,17942
+807,northwest,19,obese,two or more,former,24060
+808,northeast,34,healthy weight,none,no,4500
+809,southwest,19,obese,none,yes,34780
+810,northeast,53,obese,none,no,10565
+811,northwest,26,obese,one,no,3293
+812,southwest,59,overweight,none,former,12234
+813,northwest,54,overweight,one,no,11306
+814,northeast,18,obese,none,no,2204
+815,southwest,31,healthy weight,none,no,3260
+816,southeast,35,obese,two or more,no,5837
+817,southwest,31,healthy weight,two or more,no,4932
+818,southwest,20,overweight,none,no,1875
+819,northwest,19,overweight,two or more,former,22494
+820,southeast,18,overweight,two or more,yes,18223
+821,southeast,54,healthy weight,two or more,former,11014
+822,northwest,28,overweight,one,no,4134
+823,southwest,33,obese,two or more,no,6666
+824,southeast,20,overweight,one,yes,17085
+825,northwest,31,obese,two or more,no,5425
+826,southeast,56,obese,two or more,former,12266
+827,southeast,49,obese,two or more,no,9305
+828,northeast,51,obese,none,no,9866
+829,southwest,19,overweight,none,no,1252
+830,southeast,63,obese,none,yes,47056
+831,southwest,23,obese,none,no,1827
+832,northeast,46,obese,one,no,8335
+833,northeast,26,overweight,none,no,2897
+834,northwest,49,healthy weight,one,no,9567
+835,northeast,43,overweight,two or more,no,8606
+836,southeast,23,obese,one,no,2438
+837,northeast,38,obese,one,no,6080
+838,southwest,19,overweight,none,yes,16298
+839,southwest,52,obese,none,no,9635
+840,northwest,30,healthy weight,one,no,4032
+841,northeast,36,healthy weight,two or more,no,7228
+842,northeast,56,obese,one,no,11763
+843,northeast,64,obese,none,former,14902
+844,southeast,53,overweight,none,no,9488
+845,southwest,45,obese,none,no,7348
+846,southeast,32,obese,two or more,no,4673
+847,southeast,47,obese,one,yes,42211
+848,southwest,22,healthy weight,none,no,2150
+849,southeast,26,overweight,two or more,no,3982
+850,southwest,42,obese,none,yes,22144
+851,northwest,36,overweight,two or more,no,6548
+852,southeast,56,obese,two or more,former,12949
+853,northwest,59,obese,none,no,12622
+854,southwest,25,healthy weight,one,no,3209
+855,southeast,20,obese,one,former,27724
+856,northeast,53,obese,none,no,10072
+857,southeast,52,obese,two or more,yes,47270
+858,southeast,20,obese,two or more,no,2566
+859,southwest,33,overweight,two or more,no,6059
+860,southwest,60,obese,none,former,12645
+861,northeast,30,healthy weight,one,no,4718
+862,northwest,32,overweight,none,no,4357
+863,northeast,63,overweight,none,yes,29523
+864,northeast,27,obese,one,former,16796
+865,southeast,39,obese,none,no,5662
+866,northwest,24,overweight,none,no,2851
+867,southwest,38,obese,two or more,no,6572
+868,northwest,40,overweight,one,no,6389
+869,northwest,63,overweight,none,no,14256
+870,northeast,51,obese,two or more,yes,44641
+871,northeast,57,overweight,two or more,no,14394
+872,southwest,57,obese,two or more,former,12646
+873,northwest,45,obese,none,no,7732
+874,southwest,26,healthy weight,one,no,3379
+875,northwest,26,obese,none,no,2700
+876,northwest,22,overweight,none,no,2046
+877,southwest,29,overweight,none,no,3353
+878,southeast,35,obese,two or more,no,5847
+879,northeast,23,healthy weight,two or more,no,22396
+880,southeast,18,obese,one,no,2219
+881,northeast,24,overweight,none,no,3044
+882,northeast,59,overweight,two or more,yes,30185
+883,northwest,44,obese,one,no,8023
+884,northeast,39,obese,none,no,5757
+885,southwest,49,obese,none,yes,39728
+886,southeast,60,obese,two or more,no,13920
+887,southeast,47,obese,one,no,8084
+888,southeast,43,obese,two or more,yes,42125
+889,northwest,24,overweight,two or more,no,3538
+890,northeast,58,obese,one,no,13019
+891,northwest,19,obese,one,no,2730
+892,southeast,52,healthy weight,none,no,27118
+893,southeast,58,obese,none,no,11856
+894,northwest,21,obese,two or more,no,3580
+895,northwest,40,obese,two or more,yes,40003
+896,northwest,29,obese,two or more,no,4434
+897,northwest,32,obese,one,former,4463
+898,northwest,58,overweight,none,no,11736
+899,northwest,19,healthy weight,none,no,2117
+900,northeast,20,overweight,none,no,2457
+901,northeast,57,obese,none,former,20709
+902,southeast,18,obese,none,yes,36149
+903,northwest,46,healthy weight,none,no,7527
+904,southwest,32,obese,none,no,3990
+905,northwest,47,overweight,one,no,8931
+906,northeast,50,overweight,one,no,10106
+907,southwest,38,obese,one,no,5488
+908,southeast,18,healthy weight,two or more,former,11884
+909,southwest,59,obese,none,no,21797
+910,southeast,27,obese,none,yes,37134
+911,southwest,38,healthy weight,none,yes,15821
+912,northeast,30,healthy weight,one,no,4720
+913,southeast,33,obese,none,no,3704
+914,southeast,57,obese,one,yes,48676
+915,southwest,51,obese,one,no,9873
+916,northwest,64,obese,none,former,14693
+917,northeast,31,obese,two or more,no,6113
+918,northeast,18,obese,none,no,2211
+919,southwest,19,healthy weight,one,no,1837
+920,southeast,21,healthy weight,none,no,1515
+921,northwest,29,healthy weight,two or more,no,4906
+922,southeast,31,obese,two or more,no,4950
+923,southeast,53,obese,one,no,10580
+924,northwest,30,overweight,one,no,4527
+925,southwest,51,healthy weight,none,no,9265
+926,southeast,22,obese,none,no,1675
+927,northeast,29,obese,none,no,3944
+928,northeast,28,overweight,two or more,no,4435
+929,southeast,64,obese,two or more,yes,49578
+930,southeast,28,obese,none,no,3172
+931,northeast,35,obese,one,yes,39774
+932,northwest,28,obese,none,no,3557
+933,northwest,58,obese,two or more,yes,47496
+934,northwest,48,obese,two or more,former,11034
+935,southwest,19,obese,none,no,1759
+936,northeast,18,healthy weight,none,no,1702
+937,northwest,29,obese,two or more,no,4923
+938,southeast,23,obese,none,no,1837
+939,northwest,41,obese,none,no,6571
+940,southwest,59,overweight,one,former,12334
+941,northeast,59,overweight,one,former,12914
+942,northwest,25,healthy weight,none,yes,15818
+943,southwest,35,obese,one,no,5241
+944,southeast,39,obese,two or more,no,8597
+945,northwest,45,obese,one,yes,39726
+946,southeast,50,obese,one,former,9048
+947,northwest,38,overweight,two or more,no,6458
+948,northwest,45,overweight,one,no,28340
+949,southwest,29,obese,two or more,yes,44585
+950,northwest,48,obese,one,no,28469
+951,southeast,47,overweight,one,yes,21979
+952,northwest,39,obese,two or more,no,7209
+953,northeast,18,obese,none,no,2208
+954,southeast,57,overweight,none,yes,27534
+955,northeast,60,obese,none,former,12741
+956,northwest,20,obese,one,no,2362
+957,southeast,62,overweight,none,yes,27809
+958,southeast,27,healthy weight,none,yes,16578
+959,southwest,19,obese,none,no,1749
+960,southeast,59,obese,one,former,28288
+961,northeast,51,healthy weight,none,no,9361
+962,southeast,63,obese,none,no,13887
+963,northwest,19,overweight,none,no,1632
+964,southwest,35,overweight,two or more,no,6414
+965,southwest,60,obese,none,yes,52591
+966,southwest,19,healthy weight,none,no,1729
+967,southeast,60,obese,none,yes,45009
+968,southwest,62,overweight,none,no,13451
+969,southeast,45,obese,none,yes,62593
+970,northeast,48,overweight,one,no,9447
+971,northwest,44,obese,none,former,6949
+972,northeast,29,overweight,one,no,4041
+973,southeast,32,obese,two or more,no,4686
+974,northwest,64,overweight,none,yes,29331
+975,southwest,56,overweight,none,no,11073
+976,southeast,18,obese,one,no,1728
+977,northwest,40,overweight,one,no,6394
+978,northeast,57,healthy weight,none,no,11535
+979,northeast,34,healthy weight,two or more,former,27376
+980,northwest,49,obese,one,no,9584
+981,southwest,56,obese,two or more,no,12364
+982,northeast,18,overweight,none,no,1709
+983,northeast,18,overweight,none,no,2198
+984,southwest,53,overweight,two or more,no,11253
+985,southeast,29,overweight,one,yes,19108
+986,northeast,24,overweight,none,yes,18648
+987,northeast,64,overweight,none,no,14395
+988,southeast,29,obese,two or more,no,5138
+989,southwest,52,obese,none,no,9626
+990,northeast,37,healthy weight,two or more,no,6986
+991,southwest,50,overweight,none,no,8932
+992,northwest,21,obese,two or more,no,26019
+993,northeast,64,obese,none,former,14411
+994,southwest,19,healthy weight,none,no,1728
+995,southwest,43,obese,two or more,no,7442
+996,southeast,47,overweight,one,no,8548
+997,southwest,20,obese,one,no,1980
+998,southwest,60,obese,none,yes,48173
+999,northeast,52,obese,none,no,9723
+1000,southeast,19,obese,none,yes,32548
+1001,northwest,49,overweight,two or more,no,10264
+1002,northeast,34,obese,none,no,4519
+1003,northeast,49,obese,two or more,former,10371
+1004,northwest,27,overweight,none,yes,18311
+1005,southeast,23,obese,two or more,yes,36021
+1006,northwest,33,overweight,two or more,no,5261
+1007,northwest,39,healthy weight,two or more,no,8966
+1008,northwest,19,overweight,none,yes,17749
+1009,northwest,54,obese,one,no,10825
+1010,northwest,36,obese,one,no,5377
+1011,northeast,27,healthy weight,two or more,yes,15007
+1012,southwest,24,healthy weight,none,no,2458
+1013,southwest,52,obese,none,no,9145
+1014,southwest,30,obese,one,no,3659
+1015,northeast,48,obese,one,no,8964
+1016,southwest,24,obese,two or more,no,4235
+1017,northeast,49,healthy weight,none,no,8689
+1018,northwest,34,overweight,one,no,5385
+1019,southwest,20,obese,two or more,no,4831
+1020,southeast,41,overweight,one,no,6770
+1021,southeast,21,obese,none,no,2027
+1022,northwest,33,healthy weight,none,no,21984
+1023,southeast,32,obese,none,no,3994
+1024,southeast,41,obese,one,yes,40274
+1025,southwest,33,obese,two or more,no,5972
+1026,southwest,29,obese,none,yes,36198
+1027,southwest,40,overweight,one,no,6497
+1028,northeast,57,obese,none,former,11566
+1029,northwest,19,obese,none,yes,36219
+1030,southwest,25,obese,none,yes,33901
+1031,northwest,45,obese,two or more,no,8413
+1032,northwest,29,overweight,none,no,3736
+1033,southeast,36,overweight,none,no,4889
+1034,southwest,20,healthy weight,one,no,1965
+1035,northeast,18,overweight,none,yes,15518
+1036,southwest,36,healthy weight,two or more,yes,18608
+1037,southwest,55,healthy weight,one,no,10792
+1038,southwest,63,obese,two or more,former,15170
+1039,southwest,51,overweight,none,no,8782
+1040,northwest,57,obese,one,no,11945
+1041,northeast,30,overweight,one,no,4237
+1042,northwest,38,healthy weight,two or more,no,6933
+1043,southwest,41,obese,two or more,no,6876
+1044,northeast,59,overweight,none,no,12815
+1045,northwest,23,overweight,none,no,2690
+1046,northeast,38,overweight,two or more,no,7145
+1047,southwest,59,obese,two or more,no,14007
+1048,northwest,19,obese,none,yes,33750
+1049,northeast,44,healthy weight,two or more,no,8891
+1050,northeast,21,healthy weight,none,no,2586
+1051,southeast,52,overweight,two or more,former,25993
+1052,northeast,61,healthy weight,none,no,13130
+1053,northeast,18,obese,none,no,2206
+1054,northeast,47,healthy weight,one,no,8628
+1055,southeast,38,obese,none,no,5398
+1056,southeast,38,overweight,one,no,5484
+1057,northwest,57,obese,none,no,11353
+1058,southwest,23,obese,none,yes,34166
+1059,southeast,30,obese,two or more,yes,40932
+1060,northwest,38,healthy weight,one,no,5856
+1061,southeast,55,obese,one,no,10807
+1062,northeast,56,overweight,none,no,11658
+1063,northeast,62,overweight,none,yes,28101
+1064,southwest,60,overweight,one,no,13225
+1065,southeast,21,obese,none,no,1532
+1066,northeast,18,healthy weight,none,yes,14283
+1067,southeast,18,obese,none,no,1630
+1068,northeast,63,healthy weight,none,no,14452
+1069,northwest,24,healthy weight,none,no,2353
+1070,southeast,41,obese,one,no,6781
+1071,southwest,25,healthy weight,two or more,former,4392
+1072,northwest,53,obese,two or more,yes,46661
+1073,southeast,51,obese,two or more,no,10560
+1074,southwest,40,overweight,two or more,former,6600
+1075,southwest,34,overweight,one,no,5004
+1076,northeast,31,overweight,one,no,4441
+1077,northeast,57,obese,two or more,no,13224
+1078,southeast,44,overweight,two or more,no,8219
+1079,southeast,30,obese,one,no,18963
+1080,southwest,24,overweight,none,no,18955
+1081,southwest,24,obese,none,yes,34473
+1082,northeast,26,overweight,two or more,no,24672
+1083,southeast,19,obese,none,yes,39723
+1084,northeast,39,healthy weight,two or more,yes,21660
+1085,southwest,44,obese,two or more,no,7740
+1086,southeast,48,obese,one,no,8871
+1087,southwest,23,overweight,none,no,13127
+1088,southwest,43,obese,one,no,6849
+1089,southwest,46,obese,two or more,no,8825
+1090,southeast,30,obese,two or more,no,4838
+1091,southeast,41,obese,none,former,6185
+1092,northeast,60,overweight,none,no,13217
+1093,northeast,49,overweight,one,no,9282
+1094,southwest,48,overweight,one,yes,23568
+1095,southwest,45,obese,none,no,7345
+1096,southwest,59,obese,two or more,former,36911
+1097,northeast,47,overweight,one,yes,23401
+1098,southeast,63,obese,none,no,13888
+1099,northwest,41,obese,two or more,no,7266
+1100,northwest,64,healthy weight,one,former,30167
+1101,southwest,63,obese,none,yes,48824
+1102,southwest,19,healthy weight,none,no,1242
+1103,northwest,30,healthy weight,two or more,no,5693
+1104,southeast,46,obese,two or more,yes,46151
+1105,northwest,52,obese,two or more,no,11289
+1106,southeast,57,overweight,one,no,11554
+1107,northeast,58,overweight,none,no,11931
+1108,northwest,52,obese,two or more,former,26467
+1109,northwest,27,healthy weight,none,no,3353
+1110,northeast,29,healthy weight,one,yes,16658
+1111,northwest,44,overweight,none,no,7419
+1112,southeast,44,obese,none,yes,48885
+1113,southeast,20,obese,none,no,1880
+1114,southeast,62,obese,one,no,27001
+1115,northwest,35,healthy weight,one,no,5125
+1116,southwest,41,obese,one,no,6776
+1117,southeast,38,overweight,one,no,5974
+1118,southeast,63,obese,none,no,13405
+1119,southwest,59,obese,one,no,12347
+1120,southeast,43,obese,two or more,no,18806
+1121,southwest,55,obese,none,no,10704
+1122,southeast,22,obese,two or more,yes,35596
+1123,southeast,51,obese,none,no,9284
+1124,northeast,22,healthy weight,two or more,no,4005
+1125,southwest,19,overweight,none,yes,16885
+1126,northeast,29,healthy weight,none,yes,16139
+1127,southwest,57,overweight,none,former,10965
+1128,southeast,38,obese,one,no,5977
+1129,southwest,40,overweight,none,no,5911
+1130,southeast,38,obese,two or more,yes,41949
+1131,southwest,62,obese,none,no,12979
+1132,northeast,40,obese,one,no,6600
+1133,northeast,34,healthy weight,two or more,no,6753
+1134,northeast,38,overweight,one,no,6555
+1135,northeast,28,obese,none,no,3269
+1136,southeast,44,obese,two or more,yes,46201
+1137,northeast,30,overweight,none,no,4138
+1138,northwest,19,overweight,none,yes,17469
+1139,northwest,58,overweight,none,no,12224
+1140,southeast,50,obese,one,former,9059
+1141,northwest,51,obese,none,no,9174
+1142,southeast,36,overweight,one,no,5478
+1143,southwest,37,obese,two or more,yes,46114
+1144,southwest,50,overweight,one,yes,24520
+1145,northeast,41,healthy weight,one,no,6858
+1146,southwest,28,healthy weight,two or more,no,5615
+1147,northeast,45,healthy weight,two or more,no,8604
+1148,northwest,51,obese,two or more,no,11437
+1149,northwest,54,obese,none,no,24476
+1150,southwest,56,overweight,none,no,11071
+1151,northwest,43,obese,two or more,no,8410
+1152,northeast,44,healthy weight,one,yes,19595
+1153,southwest,55,overweight,none,no,10215
+1154,southwest,28,obese,none,no,3172
+1155,northeast,40,overweight,one,no,7077
+1156,southwest,19,healthy weight,none,no,1737
+1157,northwest,42,overweight,two or more,yes,32787
+1158,northwest,63,healthy weight,one,former,14350
+1159,southwest,61,obese,two or more,former,27941
+1160,southeast,26,overweight,none,yes,17043
+1161,southeast,30,obese,one,no,4151
+1162,southeast,44,obese,two or more,no,7731
+1163,southwest,35,obese,one,no,4751
+1164,southwest,42,overweight,one,no,7045
+1165,northwest,52,overweight,none,yes,24394
+1166,southeast,39,obese,two or more,no,6356
+1167,northeast,57,healthy weight,none,former,12029
+1168,southeast,28,obese,two or more,no,4349
+1169,northwest,19,healthy weight,one,no,2709
+1170,northwest,19,overweight,two or more,no,18839
+1171,northwest,30,healthy weight,two or more,yes,17362
+1172,northwest,51,healthy weight,none,no,9644
+1173,southwest,36,overweight,none,former,4884
+1174,northeast,34,obese,one,no,5595
+1175,northeast,41,obese,two or more,no,8538
+1176,northeast,60,overweight,none,no,30260
+1177,northwest,19,overweight,one,no,2711
+1178,southwest,19,obese,none,no,1262
+1179,southeast,20,healthy weight,none,yes,26126
+1180,southwest,43,overweight,none,yes,37830
+1181,southwest,53,obese,two or more,no,11265
+1182,southwest,57,overweight,none,former,11455
+1183,southeast,34,overweight,one,no,5003
+1184,southwest,34,obese,none,yes,35492
+1185,southwest,19,healthy weight,two or more,no,2914
+1186,northwest,53,obese,one,former,10960
+1187,northwest,58,obese,none,no,11744
+1188,southwest,19,healthy weight,one,no,1832
+1189,northeast,58,obese,none,no,11945
+1190,southwest,19,obese,none,yes,34829
+1191,northeast,20,overweight,none,no,1967
+1192,northeast,55,overweight,none,no,10796
+1193,southwest,48,healthy weight,none,no,8269
+1194,southeast,24,obese,none,no,2473
+1195,northeast,47,healthy weight,none,no,8535
+1196,southeast,43,healthy weight,two or more,yes,18768
+1197,northwest,62,obese,none,no,13845
+1198,northwest,60,obese,two or more,yes,46131
+1199,southwest,34,obese,one,no,4536
+1200,northwest,57,obese,none,no,11843
+1201,southeast,46,overweight,one,no,8233
+1202,southwest,34,overweight,two or more,no,11738
+1203,northeast,18,overweight,none,no,2201
+1204,southeast,25,obese,one,no,3238
+1205,southeast,18,obese,none,yes,36308
+1206,northwest,19,healthy weight,one,no,2709
+1207,northwest,55,obese,none,former,10602
+1208,southwest,53,obese,two or more,no,11164
+1209,northwest,19,overweight,none,no,1636
+1210,southeast,58,healthy weight,none,no,11834
+1211,southwest,26,obese,two or more,no,3988
+1212,northwest,45,healthy weight,two or more,yes,21099
+1213,northeast,38,healthy weight,two or more,no,6641
+1214,northwest,46,overweight,none,no,8027
+1215,southwest,30,obese,none,yes,36837
+1216,southeast,38,healthy weight,two or more,no,6653
+1217,southwest,47,obese,one,no,8068
+1218,northeast,36,overweight,two or more,no,6747
+1219,southeast,58,obese,none,no,11381
+1220,southwest,32,obese,two or more,no,5254
+1221,southwest,32,healthy weight,none,yes,17496
+1222,northwest,42,obese,one,former,7444
+1223,northeast,18,overweight,none,no,1708
+1224,northwest,43,obese,two or more,no,8311
+1225,southwest,60,obese,none,no,12638
+1226,southwest,36,obese,none,no,4402
+1227,southwest,24,overweight,none,no,1973
+1228,northwest,59,overweight,none,no,12130
+1229,northwest,47,obese,two or more,no,10115
+1230,northeast,62,obese,none,no,14043
+1231,southwest,42,overweight,none,no,5970
+1232,southwest,61,overweight,none,no,13042
+1233,northwest,44,obese,none,yes,42983
+1234,southeast,62,overweight,none,no,13458
+1235,northwest,49,overweight,none,former,8988
+1236,northwest,49,overweight,two or more,yes,23807
+1237,southwest,34,obese,one,no,5012
+1238,northwest,19,overweight,none,yes,17353
+1239,southeast,24,obese,none,no,1987
+1240,southwest,46,obese,one,yes,41662
+1241,southeast,30,obese,none,yes,36950
+1242,northwest,25,obese,none,no,2534
+1243,northwest,20,healthy weight,none,yes,14712
+1244,northwest,22,obese,one,no,2643
+1245,northeast,27,overweight,none,no,3559
+1246,southeast,48,healthy weight,none,yes,21224
+1247,northwest,25,overweight,two or more,no,4189
+1248,northeast,25,healthy weight,none,no,3206
+1249,northwest,64,obese,two or more,former,16456
+1250,southwest,63,obese,two or more,yes,47305
+1251,southeast,28,obese,none,no,2689
+1252,northeast,20,obese,none,yes,33476
+1253,northwest,50,overweight,two or more,no,11086
+1254,southeast,36,obese,none,yes,37743
+1255,southwest,62,obese,none,no,13463
+1256,southwest,23,obese,one,no,2417
+1257,southeast,28,healthy weight,two or more,yes,17663
+1258,southwest,63,obese,none,no,13391
+1259,northeast,39,overweight,none,yes,20149
+1260,northeast,18,obese,none,no,21345
+1261,northwest,58,overweight,none,no,12223
+1262,southwest,42,overweight,one,no,7051
+1263,southeast,31,obese,two or more,former,4463
+1264,southwest,33,healthy weight,one,no,4766
+1265,northwest,42,overweight,one,no,6941
+1266,southwest,57,obese,one,no,11576
+1267,southeast,42,obese,two or more,no,7162
+1268,northeast,29,healthy weight,two or more,no,5210
+1269,northeast,31,overweight,two or more,no,6799
+1270,southwest,21,healthy weight,one,no,2585
+1271,southwest,28,obese,one,no,3277
+1272,northeast,37,obese,none,yes,37270
+1273,southeast,25,obese,one,former,18218
+1274,northwest,34,obese,one,yes,43944
+1275,northwest,28,healthy weight,two or more,no,4720
+1276,southwest,53,healthy weight,one,no,10065
+1277,northeast,43,obese,two or more,no,19145
+1278,northwest,42,healthy weight,two or more,no,8017
+1279,northeast,48,overweight,one,no,9447
+1280,southeast,18,overweight,two or more,no,2304
+1281,southwest,58,obese,none,no,11363
+1282,southwest,52,obese,two or more,no,10807
+1283,northwest,27,healthy weight,two or more,yes,16420
+1284,southeast,59,overweight,two or more,no,14001
+1285,northwest,27,obese,one,no,3956
+1286,southwest,43,overweight,one,no,7338
+1287,southwest,40,obese,two or more,no,7197
+1288,northeast,39,overweight,one,yes,22462
+1289,northeast,54,overweight,one,no,25517
+1290,southwest,26,obese,one,no,3410
+1291,southeast,57,overweight,two or more,no,12629
+1292,southwest,37,obese,two or more,yes,39837
+1293,northeast,32,healthy weight,none,no,4544
+1294,southwest,25,obese,none,no,2633
+1295,southeast,45,healthy weight,two or more,no,8605
+1296,northeast,28,healthy weight,none,no,3733
+1297,northwest,31,obese,two or more,no,5327
+1298,southeast,50,obese,one,no,9550
+1299,southeast,28,obese,none,yes,34672

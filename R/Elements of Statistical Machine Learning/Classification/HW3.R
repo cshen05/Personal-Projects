@@ -54,7 +54,6 @@ logistic_test_error <- mean(logistic_pred != test_data$mpg01)
 print(paste("Logistic Regression Test Error:", logistic_test_error))
 
 # h): KNN Classification
-# Standardize the predictor variables
 
 # Test errors for different K
 k_values <- c(1, 3, 5, 7, 9, 11, 15)
@@ -65,7 +64,9 @@ test_target <- as.factor(test_data$mpg01)
 
 for (i in 1:length(k_values)) {
   k <- k_values[i]
-  knn_pred <- knn(train_data, test_data, train_target, k = k)
+  knn_pred <- knn(train_data[, c("weight", "horsepower", "displacement")], 
+                  test_data[, c("weight", "horsepower", "displacement")], 
+                  train_target, k = k)
   knn_test_errors[i] <- mean(knn_pred != test_target)
   print(paste("K =", k, "Test Error:", knn_test_errors[i]))
 }
@@ -73,3 +74,4 @@ for (i in 1:length(k_values)) {
 # Best K
 best_k <- k_values[which.min(knn_test_errors)]
 print(paste("Best K:", best_k, "with Test Error:", min(knn_test_errors)))
+

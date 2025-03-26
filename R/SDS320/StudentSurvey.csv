@@ -1,0 +1,380 @@
+ID,gender,age,classification,name_letters,happy,concerts,hair_color,own_shoes,greek,live_campus,roomates,birth_month,commute,car
+1,Male,17,Freshman,4,80,2,black,108,yes,yes,1,11,walk,no
+2,Female,19,Sophomore,8,76,15,black,42,no,no,1,12,drive by myself,no
+3,Female,18,Freshman,6,50,3,brown,6,no,yes,1,11,walk,no
+4,Male,19,Sophomore,4,75,0,black,10,yes,no,1,5,bus,no
+5,Female,19,Sophomore,7,89,1,brown,13,no,no,2,5,bus,no
+6,Female,19,Sophomore,5,90,1,black,12,yes,no,3,12,walk,yes
+7,Female,18,Freshman,5,57,0,black,12,no,yes,1,8,walk,no
+8,Female,18,Freshman,8,60,0,brown,6,no,yes,1,9,bus,no
+9,Female,19,Sophomore,8,75,1,black,15,no,yes,1,6,walk,yes
+10,Female,19,Sophomore,5,100,4,black,25,no,no,3,3,walk,yes
+11,Male,18,Junior,7,2,0,black,5,no,no,1,5,bus,no
+12,Male,23,Other,6,75,1,brown,6,no,no,1,8,walk,yes
+13,Male,20,Junior,4,60,5,black,8,yes,no,1,5,walk,yes
+14,Female,18,Freshman,3,85,0,black,15,no,yes,1,12,walk,no
+15,Female,19,Sophomore,8,90,1,brown,20,no,no,3,1,bus,yes
+16,Female,19,Freshman,7,75,0,brown,10,no,yes,1,10,walk,no
+17,Female,20,Junior,6,90,0,brown,18,yes,no,4,4,bus,yes
+18,Female,18,Freshman,8,89,2,brown,30,no,yes,1,12,walk,no
+19,Male,23,Junior,8,40,0,black,4,no,no,1,6,walk,no
+20,Female,18,Freshman,4,80,0,brown,8,no,yes,1,1,walk,no
+21,Male,18,Freshman,8,75,1,black,3,no,yes,1,10,walk,no
+22,Male,21,Junior,4,98,18,brown,7,no,no,1,8,walk,yes
+23,Female,18,Freshman,8,97,1,blond,13,yes,no,1,4,walk,yes
+24,Female,18,Freshman,4,75,2,brown,16,no,yes,1,5,walk,no
+25,Female,18,Freshman,6,85,0,brown,14,no,yes,1,5,walk,no
+26,Male,18,Freshman,4,75,1,brown,5,no,yes,1,7,walk,no
+27,Female,19,Sophomore,6,90,3,brown,10,no,no,2,1,bicycle,no
+28,Female,19,Sophomore,4,35,0,black,4,no,no,1,7,walk,no
+29,Female,18,Freshman,7,90,2,brown,11,no,yes,1,3,walk,no
+30,Female,18,Freshman,8,95,0,brown,17,no,yes,1,10,walk,no
+31,Female,18,Freshman,6,80,0,brown,20,no,yes,1,9,walk,no
+32,Female,18,Freshman,4,95,8,black,10,no,yes,1,10,walk,yes
+33,Male,19,Sophomore,3,85,2,black,3,no,no,3,4,walk,no
+34,Male,18,Freshman,8,85,1,brown,4,no,yes,1,8,walk,no
+35,Female,20,Junior,6,70,1,brown,30,no,no,3,8,bus,yes
+36,Male,18,Freshman,4,75,0,black,15,no,yes,1,3,drive by myself,no
+37,Female,18,Freshman,7,75,0,black,8,no,yes,1,3,walk,no
+38,Female,19,Sophomore,4,70,5,brown,30,yes,no,1,3,walk,no
+39,Male,18,Freshman,9,80,1,black,6,no,yes,1,3,walk,no
+40,Female,18,Freshman,8,70,1,brown,30,no,yes,3,2,walk,no
+41,Female,21,Senior,6,60,4,brown,6,no,no,3,5,walk,no
+42,Female,18,Freshman,6,95,0,blond,13,no,no,1,4,bus,no
+43,Female,20,Junior,7,90,1,brown,3,no,no,0,12,drive by myself,yes
+44,Female,17,Freshman,5,75,1,blond,10,no,yes,1,10,walk,no
+45,Female,19,Sophomore,7,99,0,brown,25,no,no,3,5,bus,no
+46,Male,19,Sophomore,6,90,3,black,13,no,no,1,12,bus,yes
+47,Female,22,Senior,4,90,1,brown,10,no,no,1,9,walk,no
+48,Female,18,Freshman,7,90,8,black,20,no,yes,1,5,walk,no
+49,Female,18,Freshman,7,80,0,blond,10,no,yes,1,3,walk,yes
+50,Female,18,Freshman,6,75,1,brown,25,no,yes,1,11,walk,no
+51,Female,21,Junior,8,70,2,blond,30,yes,no,2,8,walk,yes
+52,Female,21,Junior,7,80,2,blond,100,yes,no,1,10,walk,yes
+53,Male,19,Sophomore,4,80,0,black,5,no,no,3,8,walk,no
+54,Female,19,Freshman,6,95,0,black,14,no,yes,2,10,walk,yes
+55,Female,19,Freshman,6,85,10,brown,15,no,yes,1,9,walk,yes
+56,Female,18,Freshman,6,92,0,brown,16,no,no,2,2,bus,no
+57,Female,19,Freshman,5,75,1,brown,6,no,yes,1,9,walk,yes
+58,Male,24,Other,6,80,4,brown,40,no,no,2,3,get dropped off,yes
+59,Female,19,Sophomore,4,90,2,blond,14,no,no,2,3,walk,no
+60,Female,19,Sophomore,4,65,0,brown,12,no,no,3,11,bus,no
+61,Female,19,Freshman,5,0,0,black,6,no,yes,1,9,walk,no
+62,Female,18,Freshman,6,80,1,brown,15,no,no,0,9,walk,yes
+63,Female,22,Junior,7,90,1,brown,8,no,no,3,10,bus,no
+64,Female,19,Sophomore,6,95,3,brown,30,no,no,1,11,walk,yes
+65,Female,33,Junior,6,80,0,black,23,no,no,0,6,drive by myself,yes
+66,Female,19,Sophomore,6,80,6,brown,25,no,no,3,8,bus,no
+67,Male,20,Junior,7,90,0,brown,6,no,no,1,6,drive by myself,yes
+68,Female,19,Sophomore,5,89,0,brown,20,no,no,4,1,drive by myself,yes
+69,Female,20,Sophomore,6,90,0,black,25,no,no,0,11,other,yes
+70,Female,17,Freshman,6,100,3,brown,20,no,no,4,3,walk,no
+71,Female,19,Freshman,3,60,8,brown,7,no,yes,1,1,walk,no
+72,Female,18,Freshman,5,90,2,brown,10,no,yes,1,6,walk,no
+73,Female,20,Junior,6,85,2,brown,35,no,no,2,12,walk,no
+74,Female,19,Sophomore,3,90,0,black,10,yes,no,1,8,walk,no
+75,Male,18,Freshman,5,20,0,black,5,no,no,3,12,bus,no
+76,Female,18,Freshman,5,80,2,brown,20,yes,no,3,4,walk,no
+77,Female,18,Freshman,6,75,2,brown,50,yes,no,1,5,walk,no
+78,Female,18,Freshman,5,65,0,brown,10,no,yes,1,11,walk,no
+79,Female,19,Sophomore,5,90,0,brown,10,no,no,0,1,drive by myself,no
+80,Female,20,Junior,9,90,3,brown,30,yes,no,1,10,walk,yes
+81,Female,20,Junior,7,65,0,black,9,no,no,2,3,walk,no
+82,Male,20,Junior,4,100,0,black,4,no,no,5,6,bicycle,no
+83,Female,18,Freshman,5,85,0,black,6,no,yes,1,12,walk,no
+84,Female,19,Sophomore,5,60,1,brown,25,yes,yes,1,7,walk,yes
+85,Female,18,Freshman,5,75,1,black,12,yes,yes,1,5,walk,yes
+86,Female,18,Freshman,6,95,0,brown,10,no,yes,1,10,walk,no
+87,Female,18,Freshman,10,80,4,black,15,no,yes,1,2,walk,no
+88,Female,18,Freshman,5,80,0,black,20,no,yes,1,7,walk,no
+89,Female,20,Junior,5,80,6,brown,50,no,yes,1,1,walk,yes
+90,Female,19,Freshman,6,85,0,brown,12,no,yes,1,9,walk,no
+91,Female,20,Sophomore,5,80,2,brown,22,no,no,1,3,walk,no
+92,Female,18,Sophomore,5,80,0,black,7,no,no,0,8,get dropped off,no
+93,Female,19,Sophomore,4,70,8,red,20,yes,no,5,1,walk,yes
+94,Female,19,Sophomore,5,80,0,brown,17,no,yes,1,4,walk,no
+95,Female,18,Freshman,6,80,5,blond,20,yes,no,1,11,walk,yes
+96,Male,19,Sophomore,5,75,1,brown,12,yes,no,3,12,walk,no
+97,Female,20,Sophomore,5,50,1,red,15,no,no,1,12,walk,yes
+98,Female,21,Senior,5,90,1,black,40,no,no,3,10,bus,no
+99,Female,20,Junior,6,75,0,brown,12,no,no,3,11,bus,no
+100,Female,19,Sophomore,6,50,1,brown,1,yes,yes,1,12,walk,yes
+101,Female,18,Freshman,8,95,5,brown,23,yes,no,2,4,walk,yes
+102,Female,18,Freshman,8,70,1,black,30,no,no,1,10,walk,no
+103,Female,20,Junior,5,60,0,brown,25,no,no,2,4,bus,yes
+104,Female,17,Freshman,4,50,0,black,9,no,yes,1,12,walk,no
+105,Female,18,Freshman,9,90,0,black,12,no,yes,1,3,walk,no
+106,Male,20,Sophomore,7,50,1,brown,5,yes,no,1,8,walk,yes
+107,Female,20,Sophomore,8,90,0,blond,30,yes,no,3,9,walk,yes
+108,Female,19,Sophomore,8,80,7,brown,13,yes,no,7,3,walk,yes
+109,Female,19,Sophomore,6,65,0,black,20,no,no,4,4,walk,no
+110,Female,20,Junior,7,85,15,blond,45,no,no,2,8,bicycle,yes
+111,Female,18,Freshman,4,70,0,black,7,no,yes,1,3,walk,no
+112,Female,18,Freshman,7,90,0,red,15,no,yes,1,5,walk,yes
+113,Female,21,Sophomore,7,80,2,brown,20,no,no,1,6,drive by myself,yes
+114,Female,19,Freshman,5,95,2,red,25,yes,no,1,6,walk,no
+115,Female,18,Freshman,5,95,1,black,5,no,yes,1,12,walk,no
+116,Male,20,Sophomore,6,48,1,blond,50,no,no,1,7,walk,yes
+117,Female,19,Freshman,6,80,2,brown,25,no,yes,3,9,walk,no
+118,Female,18,Freshman,6,80,1,brown,12,no,yes,1,10,walk,no
+119,Female,29,Sophomore,4,80,0,black,15,no,no,0,9,drive by myself,yes
+120,Female,18,Freshman,5,98,2,brown,30,no,no,2,2,walk,yes
+121,Female,18,Freshman,3,87,1,brown,10,no,yes,1,11,walk,no
+122,Female,19,Freshman,9,90,0,brown,25,no,yes,1,9,walk,yes
+123,Female,18,Freshman,8,90,2,brown,12,no,yes,1,4,walk,no
+124,Female,18,Freshman,4,75,1,blond,10,no,yes,1,5,walk,yes
+125,Female,17,Freshman,5,60,10,blond,8,no,no,1,12,walk,yes
+126,Female,18,Freshman,6,75,1,black,8,no,yes,1,6,walk,no
+127,Male,18,Freshman,6,85,0,black,8,no,no,0,7,drive by myself,yes
+128,Male,20,Sophomore,6,70,0,black,8,no,no,0,8,drive by myself,yes
+129,Female,20,Sophomore,7,80,2,brown,20,yes,yes,1,9,walk,yes
+130,Female,20,Sophomore,5,85,0,blond,14,yes,no,3,10,walk,yes
+131,Female,18,Freshman,6,75,0,red,20,no,yes,1,1,walk,no
+132,Female,18,Freshman,6,60,0,black,25,no,yes,1,12,walk,no
+133,Female,23,Other,4,67,2,blond,15,no,no,0,7,bicycle,yes
+134,Female,18,Freshman,9,99,3,blond,15,yes,no,2,11,walk,yes
+135,Female,19,Sophomore,8,85,2,brown,10,no,no,2,2,walk,yes
+136,Female,18,Freshman,7,75,2,brown,25,yes,no,1,11,walk,yes
+137,Female,18,Freshman,5,95,1,black,20,no,yes,1,8,walk,no
+138,Female,19,Sophomore,8,95,3,blond,200,yes,no,1,6,walk,yes
+139,Male,20,Sophomore,8,60,0,brown,7,yes,no,3,3,walk,yes
+140,Female,19,Sophomore,6,97,3,black,15,no,no,2,10,walk,yes
+141,Female,20,Junior,8,60,6,brown,30,no,no,1,10,walk,yes
+142,Female,18,Freshman,6,70,0,brown,20,no,yes,1,2,walk,no
+143,Male,23,Sophomore,5,80,0,black,3,no,no,2,7,walk,yes
+144,Female,18,Freshman,8,80,0,black,9,yes,yes,1,5,walk,no
+145,Female,19,Sophomore,7,70,8,blond,25,yes,no,0,6,bus,yes
+146,Female,19,Sophomore,8,50,4,brown,25,no,yes,1,9,walk,no
+147,Female,18,Freshman,5,75,1,black,20,no,yes,1,8,walk,no
+148,Female,19,Sophomore,6,90,2,blond,20,yes,no,0,12,bus,yes
+149,Male,21,Sophomore,5,90,0,black,7,no,yes,1,9,walk,no
+150,Female,18,Freshman,5,90,0,brown,100,no,no,1,11,walk,no
+151,Female,22,Sophomore,4,95,1,brown,8,no,no,4,9,drive by myself,yes
+152,Female,19,Sophomore,5,80,0,black,10,no,no,3,12,walk,no
+153,Female,18,Sophomore,7,80,0,brown,20,no,no,3,4,bus,yes
+154,Female,18,Freshman,7,87,3,brown,15,no,yes,1,3,walk,no
+155,Female,18,Freshman,5,95,2,blond,30,yes,no,1,7,walk,yes
+156,Male,21,Junior,5,90,0,black,5,no,no,3,8,walk,yes
+157,Female,19,Sophomore,5,70,0,black,10,no,no,3,4,bus,yes
+158,Female,19,Freshman,6,85,0,black,10,no,yes,1,10,walk,no
+159,Female,18,Freshman,7,90,3,blond,20,yes,no,3,8,walk,no
+160,Female,18,Freshman,9,85,2,brown,17,no,yes,1,7,walk,no
+161,Female,18,Freshman,5,85,25,brown,20,yes,no,3,3,walk,no
+162,Female,18,Freshman,9,90,1,blond,4,no,yes,1,12,walk,no
+163,Female,19,Sophomore,8,90,3,blond,8,no,no,0,6,walk,yes
+164,Female,18,Freshman,5,84,3,brown,17,yes,yes,1,1,walk,yes
+165,Male,18,Freshman,4,90,3,black,5,yes,no,1,1,walk,yes
+166,Female,19,Sophomore,6,60,2,brown,6,no,no,3,11,bus,yes
+167,Male,20,Junior,4,90,1,black,15,yes,no,4,1,bus,yes
+168,Female,20,Junior,6,80,0,black,15,no,yes,1,10,walk,no
+169,Female,18,Freshman,6,25,0,brown,7,no,yes,1,12,walk,no
+170,Female,18,Freshman,8,45,0,brown,10,no,yes,1,10,walk,yes
+171,Female,19,Sophomore,6,90,1,brown,17,no,no,0,6,walk,yes
+172,Female,20,Junior,7,80,2,black,6,no,no,1,2,walk,no
+173,Female,20,Junior,7,80,4,brown,20,no,no,3,11,bus,yes
+174,Female,18,Freshman,7,97,0,brown,20,no,no,3,4,walk,yes
+175,Female,18,Freshman,7,89,0,brown,20,no,yes,1,6,walk,yes
+176,Female,18,Freshman,7,90,1,blond,10,no,yes,1,11,walk,yes
+177,Female,19,Sophomore,6,75,3,blond,28,yes,no,1,5,bus,no
+178,Female,18,Freshman,5,95,1,blond,55,no,yes,1,12,walk,no
+179,Female,18,Freshman,7,65,5,brown,30,no,yes,1,12,walk,yes
+180,Female,20,Junior,4,90,10,brown,20,yes,no,3,2,walk,yes
+181,Female,19,Sophomore,6,60,0,blond,10,no,no,3,11,get dropped off,yes
+182,Female,18,Freshman,6,80,0,brown,16,no,no,2,4,bus,no
+183,Female,18,Freshman,3,90,1,brown,12,no,yes,1,8,walk,no
+184,Female,20,Junior,6,47,1,black,12,yes,no,2,3,bus,no
+185,Female,18,Freshman,7,80,1,brown,20,no,yes,1,12,walk,no
+186,Female,19,Freshman,6,99,1,brown,25,no,no,0,9,drive by myself,yes
+187,Male,20,Junior,4,85,2,brown,10,no,yes,0,5,walk,yes
+188,Female,22,Other,7,70,0,black,24,no,no,5,4,bus,yes
+189,Female,19,Sophomore,8,75,3,brown,20,yes,no,3,5,walk,yes
+190,Female,19,Sophomore,5,83,0,black,6,no,yes,1,6,walk,no
+191,Female,19,Sophomore,4,95,0,black,7,no,no,3,1,drive by myself,yes
+192,Female,20,Junior,4,80,0,brown,30,no,no,3,5,bus,yes
+193,Female,20,Sophomore,6,75,3,brown,12,no,no,2,7,walk,no
+194,Female,19,Sophomore,7,70,5,brown,10,no,no,1,1,walk,yes
+195,Female,19,Sophomore,5,90,0,brown,15,no,no,1,1,bus,no
+196,Female,21,Senior,7,80,10,brown,20,no,no,3,11,walk,no
+197,Female,18,Freshman,5,70,0,brown,12,no,yes,1,2,walk,yes
+198,Female,18,Freshman,9,70,0,brown,10,no,yes,1,7,drive by myself,yes
+199,Female,17,Freshman,7,73,1,blond,10,no,yes,1,12,walk,yes
+200,Female,21,Senior,7,80,5,blond,15,no,no,0,7,walk,yes
+201,Female,20,Sophomore,7,85,11,brown,30,no,no,1,6,bicycle,yes
+202,Male,18,Freshman,6,90,2,brown,4,no,yes,3,11,walk,no
+203,Female,18,Freshman,5,75,1,brown,10,yes,no,2,12,walk,yes
+204,Female,20,Junior,6,85,2,brown,60,no,yes,0,6,walk,yes
+205,Female,20,Junior,7,50,1,black,7,no,no,3,9,walk,no
+206,Female,18,Freshman,6,75,8,brown,40,no,no,0,5,walk,yes
+207,Female,20,Junior,3,75,0,brown,10,no,no,0,8,drive by myself,yes
+208,Female,18,Freshman,7,84,5,brown,14,no,yes,1,2,walk,no
+209,Female,18,Freshman,5,40,0,brown,9,no,yes,1,8,walk,no
+210,Female,18,Freshman,5,85,1,black,25,no,yes,1,7,walk,no
+211,Female,18,Freshman,9,85,5,brown,20,no,no,3,3,walk,yes
+212,Male,18,Freshman,3,75,5,black,6,no,yes,1,7,walk,yes
+213,Female,31,Junior,9,99,10,brown,15,no,no,1,6,bus,yes
+214,Female,18,Freshman,7,90,0,blond,30,yes,yes,1,8,drive by myself,yes
+215,Female,19,Sophomore,5,50,1,brown,30,no,no,1,1,bus,yes
+216,Female,18,Freshman,7,58,0,brown,12,no,yes,1,7,walk,no
+217,Male,28,Senior,5,90,0,red,14,no,no,0,11,walk,yes
+218,Female,21,Junior,2,85,2,black,7,no,no,0,3,bus,yes
+219,Female,18,Freshman,7,70,2,blond,10,yes,yes,1,4,walk,no
+220,Male,22,Junior,4,89,0,brown,2,no,no,2,8,walk,no
+221,Female,19,Sophomore,7,80,1,brown,16,yes,no,2,12,walk,yes
+222,Male,18,Freshman,7,80,2,brown,5,no,yes,1,7,walk,yes
+223,Female,19,Freshman,4,70,2,brown,30,no,no,3,9,walk,no
+224,Female,18,Freshman,5,79,0,brown,6,no,no,1,1,bus,yes
+225,Female,20,Freshman,5,60,0,red,16,no,no,0,10,bus,yes
+226,Male,33,Sophomore,7,100,1,blond,46,no,yes,5,10,bicycle,no
+227,Female,18,Freshman,5,90,9,brown,30,yes,no,1,8,walk,yes
+228,Female,19,Sophomore,7,85,0,black,12,no,no,3,12,walk,no
+229,Female,19,Sophomore,9,75,0,brown,22,no,no,1,11,drive by myself,yes
+230,Female,19,Freshman,9,60,1,black,15,no,yes,1,6,walk,yes
+231,Male,23,Senior,6,50,3,black,5,no,no,1,9,bus,yes
+232,Female,25,Junior,8,30,0,black,6,no,yes,0,11,walk,no
+233,Male,18,Freshman,3,80,5,black,7,yes,yes,1,8,walk,no
+234,Female,19,Freshman,8,70,3,brown,15,no,no,1,9,walk,no
+235,Female,20,Junior,5,90,2,brown,20,no,no,1,11,walk,yes
+236,Female,19,Sophomore,8,90,1,black,20,no,yes,1,12,walk,no
+237,Female,18,Freshman,5,80,0,brown,16,no,yes,1,2,bicycle,no
+238,Female,18,Freshman,6,50,0,brown,6,no,yes,1,12,walk,no
+239,Female,20,Junior,6,90,0,black,15,no,no,3,8,bus,no
+240,Female,20,Junior,7,80,8,brown,20,no,no,1,4,bus,yes
+241,Female,21,Senior,4,50,4,brown,30,no,no,1,7,bicycle,no
+242,Female,18,Freshman,6,90,3,blond,30,no,no,3,5,walk,yes
+243,Female,19,Sophomore,8,75,0,black,30,no,no,3,5,bus,yes
+244,Female,19,Sophomore,4,90,5,blond,8,yes,no,7,5,walk,no
+245,Female,18,Freshman,5,92,22,blond,13,no,yes,1,3,walk,yes
+246,Female,20,Junior,6,85,7,brown,20,no,no,4,6,bus,yes
+247,Female,18,Freshman,8,85,0,brown,80,yes,no,1,6,walk,yes
+248,Female,18,Freshman,7,90,7,brown,15,no,yes,1,1,walk,yes
+249,Female,18,Freshman,7,50,0,brown,20,no,no,3,3,walk,yes
+250,Female,18,Freshman,7,70,0,brown,20,no,yes,1,3,walk,yes
+251,Female,20,Sophomore,8,70,0,brown,17,no,no,3,3,bus,no
+252,Female,18,Freshman,6,85,6,brown,10,no,no,3,3,walk,yes
+253,Female,18,Freshman,5,75,1,blond,15,no,no,3,12,walk,yes
+254,Female,18,Freshman,8,80,0,brown,30,no,yes,1,7,walk,no
+255,Female,18,Freshman,6,60,3,brown,20,no,yes,0,8,walk,no
+256,Female,20,Junior,7,95,1,brown,15,no,no,0,11,drive by myself,yes
+257,Male,18,Sophomore,6,80,6,brown,12,no,no,0,5,bicycle,no
+258,Female,18,Freshman,6,80,0,brown,20,no,yes,1,11,walk,no
+259,Male,19,Sophomore,6,80,0,black,6,no,no,4,9,get dropped off,no
+260,Male,22,Junior,4,40,15,brown,4,no,yes,1,9,bicycle,no
+261,Female,18,Freshman,4,95,1,brown,6,no,yes,1,10,walk,no
+262,Female,22,Junior,6,91,7,red,27,no,no,0,11,bus,yes
+263,Female,19,Sophomore,9,70,0,brown,20,no,no,3,1,walk,yes
+264,Female,17,Freshman,5,60,3,black,19,no,no,1,10,walk,no
+265,Female,18,Freshman,5,90,0,black,10,no,yes,1,8,walk,no
+266,Female,19,Sophomore,5,90,0,black,50,no,yes,3,12,walk,no
+267,Female,19,Sophomore,6,80,3,blond,15,no,no,3,1,bus,yes
+268,Male,20,Junior,4,70,2,brown,8,yes,no,3,11,walk,yes
+269,Female,18,Freshman,5,90,0,blond,30,no,no,1,8,walk,yes
+270,Female,19,Sophomore,6,80,0,brown,36,no,no,1,5,drive by myself,yes
+271,Male,18,Freshman,5,85,1,black,7,no,yes,1,2,bicycle,no
+272,Female,20,Freshman,6,85,6,brown,7,no,no,3,1,bus,yes
+273,Female,19,Sophomore,7,85,0,blond,15,no,no,1,10,walk,yes
+274,Male,18,Freshman,6,80,0,black,5,no,yes,1,11,walk,no
+275,Female,20,Sophomore,6,75,1,brown,20,no,no,1,9,drive by myself,yes
+276,Female,19,Sophomore,6,91,0,brown,15,no,no,4,5,walk,no
+277,Female,20,Sophomore,8,99,10,brown,20,no,no,3,5,walk,no
+278,Female,19,Freshman,7,90,9,brown,30,no,yes,1,9,walk,no
+279,Female,19,Sophomore,7,90,2,blond,27,no,no,2,11,walk,no
+280,Female,19,Sophomore,4,65,0,blond,7,no,yes,1,4,walk,yes
+281,Female,18,Freshman,5,90,4,blond,26,no,yes,1,12,walk,yes
+282,Female,20,Junior,7,80,3,brown,25,yes,no,1,11,walk,yes
+283,Female,21,Junior,3,70,4,black,40,no,no,3,10,bus,yes
+284,Female,19,Sophomore,5,80,1,brown,10,yes,no,1,7,walk,no
+285,Female,18,Freshman,4,80,1,brown,15,yes,no,3,3,walk,yes
+286,Female,18,Freshman,5,80,3,brown,30,no,yes,3,4,walk,no
+287,Female,19,Sophomore,4,95,5,blond,10,yes,no,4,7,walk,yes
+288,Female,18,Freshman,4,80,0,black,2,no,no,0,2,drive by myself,yes
+289,Female,19,Sophomore,7,78,0,black,12,no,no,3,5,bus,no
+290,Female,18,Freshman,6,60,0,black,20,no,yes,1,2,walk,no
+291,Female,26,Sophomore,9,75,0,black,30,no,no,0,10,drive by myself,yes
+292,Female,19,Sophomore,6,70,0,black,12,yes,no,0,5,other,no
+293,Female,18,Freshman,7,95,5,brown,40,no,yes,1,5,walk,yes
+294,Female,18,Freshman,6,80,15,blond,30,yes,no,3,7,walk,no
+295,Female,19,Sophomore,6,80,5,blond,30,yes,no,0,3,drive by myself,yes
+296,Female,18,Freshman,7,90,0,blond,26,no,yes,1,3,walk,no
+297,Female,19,Sophomore,4,90,3,black,22,no,no,2,3,drive by myself,yes
+298,Female,19,Sophomore,6,95,0,brown,12,no,no,0,2,walk,no
+299,Female,19,Freshman,3,50,15,blond,20,no,no,3,10,walk,yes
+300,Female,19,Sophomore,6,40,0,brown,25,no,yes,1,6,walk,no
+301,Female,18,Freshman,6,85,2,brown,25,yes,no,3,8,walk,no
+302,Female,19,Sophomore,7,85,2,brown,30,no,no,1,4,walk,yes
+303,Female,18,Freshman,5,90,1,brown,15,yes,yes,1,11,walk,no
+304,Female,19,Sophomore,4,80,2,black,20,no,no,0,2,drive by myself,yes
+305,Female,19,Sophomore,5,90,1,brown,10,no,no,2,6,walk,no
+306,Male,20,Junior,5,70,0,black,7,yes,no,3,11,walk,yes
+307,Female,18,Freshman,5,95,0,blond,20,no,no,3,12,walk,no
+308,Female,19,Sophomore,8,85,10,brown,30,no,no,1,1,bus,yes
+309,Female,19,Junior,3,85,1,brown,12,no,no,3,3,walk,yes
+310,Female,19,Sophomore,5,60,0,black,2,no,yes,1,3,walk,no
+311,Female,19,Freshman,6,90,0,brown,20,yes,no,3,9,walk,yes
+312,Female,19,Sophomore,7,90,5,brown,6,no,no,1,7,drive by myself,yes
+313,Female,19,Sophomore,7,95,3,brown,100,no,no,1,9,bus,yes
+314,Female,20,Sophomore,6,80,0,brown,10,no,yes,2,4,walk,no
+315,Female,19,Sophomore,6,95,4,blond,20,no,no,2,6,walk,no
+316,Male,19,Freshman,7,90,0,black,6,no,yes,1,9,walk,no
+317,Female,18,Freshman,5,88,10,blond,20,yes,yes,1,8,walk,yes
+318,Female,20,Sophomore,8,95,0,brown,30,no,yes,1,9,drive by myself,yes
+319,Female,18,Freshman,6,80,0,brown,20,no,yes,1,12,walk,no
+320,Female,34,Freshman,3,80,0,black,4,no,no,3,8,drive by myself,yes
+321,Male,19,Sophomore,6,85,1,black,8,no,no,0,12,drive by myself,yes
+322,Female,18,Freshman,5,85,2,brown,20,yes,no,1,7,walk,yes
+323,Female,24,Other,6,40,0,black,35,no,no,1,2,drive by myself,yes
+324,Male,24,Junior,5,30,0,red,5,no,no,2,10,bus,yes
+325,Female,18,Freshman,8,95,5,blond,20,yes,no,1,2,walk,yes
+326,Female,19,Sophomore,6,50,0,brown,10,yes,no,1,2,walk,no
+327,Male,18,Freshman,7,85,2,brown,7,no,yes,1,3,walk,no
+328,Female,18,Freshman,8,52,1,black,18,no,yes,1,12,walk,no
+329,Female,20,Sophomore,6,80,0,blond,20,yes,no,2,8,walk,yes
+330,Female,19,Sophomore,6,80,2,brown,30,no,no,1,1,bus,yes
+331,Female,18,Freshman,7,98,3,black,17,no,yes,3,1,walk,no
+332,Female,18,Freshman,5,95,0,blond,20,yes,no,3,4,walk,yes
+333,Female,18,Freshman,7,60,1,blond,13,no,yes,1,4,walk,no
+334,Male,19,Sophomore,7,80,1,black,25,no,yes,1,5,walk,no
+335,Male,18,Freshman,5,75,0,black,16,no,yes,1,5,walk,no
+336,Female,20,Sophomore,6,95,3,blond,43,yes,no,3,1,bus,yes
+337,Female,19,Sophomore,6,80,8,brown,20,yes,no,3,6,walk,yes
+338,Female,19,Sophomore,7,95,1,brown,7,no,no,3,8,walk,no
+339,Female,18,Freshman,6,75,0,brown,35,yes,no,2,10,walk,yes
+340,Female,18,Freshman,5,85,1,brown,20,no,yes,1,11,walk,no
+341,Female,20,Junior,5,95,1,brown,10,no,no,3,12,walk,no
+342,Female,18,Freshman,6,95,8,blond,27,no,yes,1,11,walk,no
+343,Female,19,Freshman,9,50,4,black,30,no,no,0,10,drive by myself,yes
+344,Female,36,Junior,3,90,3,brown,15,no,no,3,11,drive by myself,yes
+345,Female,19,Sophomore,5,85,6,black,9,no,no,3,5,bus,no
+346,Female,18,Freshman,4,95,4,brown,18,no,yes,1,2,walk,no
+347,Female,18,Freshman,9,90,1,blond,15,no,no,3,11,walk,yes
+348,Female,19,Sophomore,7,80,0,brown,18,no,no,2,10,walk,no
+349,Female,18,Freshman,7,50,10,brown,15,no,yes,1,2,bicycle,no
+350,Female,20,Junior,6,80,1,blond,20,yes,no,2,2,walk,yes
+351,Female,19,Freshman,8,90,0,brown,30,no,yes,1,10,drive by myself,yes
+352,Male,20,Junior,6,98,0,blond,6,no,yes,1,2,drive by myself,yes
+353,Female,18,Freshman,5,60,1,black,12,no,yes,1,10,walk,yes
+354,Female,21,Junior,7,95,3,brown,52,no,no,1,1,drive by myself,yes
+355,Female,18,Freshman,7,50,2,brown,22,no,yes,1,5,walk,yes
+356,Female,17,Freshman,6,50,3,black,17,no,yes,1,11,walk,no
+357,Female,20,Sophomore,7,85,1,brown,25,no,no,3,10,bus,no
+358,Male,29,Junior,6,70,0,black,10,no,no,0,1,bicycle,no
+359,Female,19,Junior,5,60,5,black,24,yes,no,3,6,bus,no
+360,Female,19,Sophomore,6,85,0,brown,20,no,no,2,5,bicycle,yes
+361,Female,22,Junior,8,90,7,brown,37,no,no,0,12,bus,yes
+362,Female,18,Freshman,5,80,3,blond,25,no,yes,1,4,walk,no
+363,Female,19,Sophomore,6,80,15,blond,25,yes,no,7,4,walk,yes
+364,Female,19,Sophomore,3,60,2,brown,10,no,no,3,11,walk,no
+365,Female,21,Sophomore,6,88,0,black,7,no,no,1,9,walk,yes
+366,Female,18,Freshman,4,55,10,brown,10,no,yes,1,2,bicycle,no
+367,Female,24,Junior,5,40,1,brown,5,no,no,1,5,drive by myself,yes
+368,Female,18,Freshman,6,70,0,brown,12,no,yes,1,4,walk,no
+369,Female,19,Freshman,8,87,1,brown,10,no,yes,1,9,walk,no
+370,Female,19,Freshman,8,99,2,red,20,no,yes,1,9,walk,no
+371,Female,18,Freshman,7,95,0,black,7,no,yes,1,5,walk,no
+372,Female,18,Freshman,4,80,2,brown,10,no,yes,1,8,walk,no
+373,Female,18,Freshman,9,92,0,brown,12,no,yes,1,11,walk,yes
+374,Female,19,Sophomore,5,20,1,black,14,no,no,3,3,walk,no
+375,Female,18,Freshman,3,90,1,brown,23,no,yes,1,9,walk,no
+376,Female,19,Freshman,6,80,0,brown,10,no,yes,1,7,walk,no
+377,Male,19,Sophomore,7,75,1,brown,6,no,no,1,4,walk,no
+378,Female,18,Freshman,4,20,0,brown,10,no,yes,1,3,walk,no
+379,Female,19,Sophomore,9,50,0,brown,8,yes,no,1,1,drive by myself,yes
