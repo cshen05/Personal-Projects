@@ -6,8 +6,6 @@ library(dplyr)
 library(MLmetrics) #For RMSE calculation
 library(tree) #This library is used for classification and regression trees
 
-setwd("/Users/nh23294/Box/Teaching/SDS_323/Data/")
-
 ################################################################################
 ############## We first try with the "Heart_disease.csv"
 heartdisease = read.csv("Heart_disease.csv", head = TRUE, check.names=FALSE)

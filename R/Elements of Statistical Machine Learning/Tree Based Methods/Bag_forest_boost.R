@@ -8,9 +8,6 @@ library(tree) #This library is used for classification and regression trees
 library(randomForest) #This library is used for bagging and random forests
 library(gbm) #This library is used for boosting
 
-# Set the working directory (you need to choose different directory in your computer)
-setwd("/Users/nh23294/Box/Teaching/SDS_323/Data/")
-
 ################################################################################
 ############## We first try with the "agriculture_worldbank.csv"
 realestate = read.csv("Real_estate.csv", head = TRUE, check.names=FALSE)
@@ -42,11 +39,12 @@ my_bag <- randomForest(price~., data = realestate_train, mtry = ncol_realestate 
 #### We look at the test error
 price_pred <- predict(my_bag, newdata = realestate_test)
 bag_test_error <- RMSE(price_pred, realestate_test$price)
-
+bag_test_error
 ############################# We now determine the best number of trees that gives the best error
 sequence_tree <- seq(100, 1000, by = 100)
 # We create the number of trees in {100, 200, 300, 400, 500, 600, 700, 800, 900, 1000}
 bag_test_error <- rep(0, length(sequence_tree))
+bag_test_error
 # We create a sequence of test errors with 0 values for each number of trees
 for (i in 1:length(sequence_tree))
 {
@@ -65,6 +63,7 @@ summary(single_tree)
 
 price_pred <- predict(single_tree, newdata = realestate_test)
 single_tree_test_error <- RMSE(price_pred, realestate_test$price)
+single_tree_test_error
 
 ################## We look at the importance of predictors
 importance(my_bag)
@@ -76,13 +75,14 @@ varImpPlot(my_bag)
 ################################################################################ Random Forest
 
 #################### We first build random forest where we only split 2 predictors each time
-my_forest <- randomForest(price~., data = realestate_train, mtry = 2, ntree = 500, importance = TRUE) 
+my_forest <- randomForest(price~., data = realestate_train, mtry = 2, ntree = 700, importance = TRUE) 
 #mtry indicates how many predictors we consider each time we split the tree.
 #importance indicates whether we would like to assess the importance of the predictors
 
 #### We look at the test error
 price_pred <- predict(my_forest, newdata = realestate_test)
 forest_test_error <- RMSE(price_pred, realestate_test$price)
+forest_test_error
 
 #################### We now consider the best number of predictors each time we split the trees
 sequence_predictors <- seq(1, ncol_realestate - 1, by = 1)
@@ -91,13 +91,14 @@ forest_test_error <- rep(0, length(sequence_predictors))
 # We create a sequence of test errors with 0 values for each number of trees
 for (i in 1:length(sequence_predictors))
 {
-  my_forest <- randomForest(price~., data = realestate_train, mtry = sequence_predictors[i], ntree = 500, importance = TRUE)
+  my_forest <- randomForest(price~., data = realestate_train, mtry = sequence_predictors[i], ntree = 700, importance = TRUE)
   price_pred <- predict(my_forest, newdata = realestate_test)
   forest_test_error[i] <- RMSE(price_pred, realestate_test$price)
 }
 
 ### Plot the test errors
 forest_test_error_data_frame <- as.data.frame(forest_test_error)
+head(forest_test_error_data_frame)
 ggplot(data = forest_test_error_data_frame, aes(x = seq(1,7, by = 1), y = forest_test_error)) + geom_line() + xlab("The number of predictors") + ylab("Test error")
 
 ######################## We look at the importance of predictors
@@ -118,7 +119,7 @@ summary(my_boost)
 ##### Test error
 price_pred <- predict(my_boost, newdata = realestate_test)
 boost_test_error <- RMSE(price_pred, realestate_test$price)
-
+boost_test_error
 #################### We now consider the best number of trees when the shrinkage is 0.001
 sequence_tree_boosting <- seq(1000, 20000, by = 1000)
 # We create the number of predictors in {1, 2, ..., 7}
@@ -133,5 +134,6 @@ for (i in 1:length(sequence_tree_boosting))
 
 ### Plot the test errors
 boosting_test_error_data_frame <- as.data.frame(boosting_test_error)
+min(boosting_test_error_data_frame)
 ggplot(data = boosting_test_error_data_frame, aes(x = seq(1000,20000, by = 1000), y = boosting_test_error)) + geom_line() + xlab("The number of trees") + ylab("Test error")
 
