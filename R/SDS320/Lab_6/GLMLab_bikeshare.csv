@@ -1,0 +1,204 @@
+date,year,holiday,workingday,weather,temp,feelslike,hum,windspeed,ridership
+1/12/21,y1,no,yes,clear or partly cloudy,0.1,-5.4,60,20,1162
+1/17/21,y1,yes,no,cloudy,0.3,-4.3,54,13,1000
+1/23/21,y1,no,no,clear or partly cloudy,-3.5,-9.5,44,17,986
+1/26/21,y1,no,yes,light rain or snow,2.2,-2.6,86,20,506
+2/2/21,y1,no,yes,cloudy,4.2,0.8,78,18,1526
+2/4/21,y1,no,yes,cloudy,1.9,-0.9,59,9,1708
+2/21/21,y1,yes,no,cloudy,6.3,2.7,61,21,1107
+2/22/21,y1,no,yes,clear or partly cloudy,0.6,-3.7,58,13,1450
+2/25/21,y1,no,yes,cloudy,9.1,7.1,71,23,1461
+3/9/21,y1,no,yes,cloudy,5.9,2.9,78,15,1891
+3/11/21,y1,no,yes,cloudy,6.9,4.1,65,16,1977
+3/16/21,y1,no,yes,cloudy,9.2,8.2,78,14,2192
+3/19/21,y1,no,no,clear or partly cloudy,14.2,14.8,38,25,3117
+3/20/21,y1,no,no,clear or partly cloudy,7.6,5.5,47,14,2471
+3/23/21,y1,no,yes,cloudy,8.3,6.3,84,16,2121
+3/26/21,y1,no,no,clear or partly cloudy,4.5,1,39,14,2496
+3/28/21,y1,no,yes,clear or partly cloudy,4.4,1,30,14,2028
+3/31/21,y1,no,yes,light rain or snow,4.6,1,92,15,1685
+4/6/21,y1,no,yes,clear or partly cloudy,10.4,9.6,47,18,2808
+4/14/21,y1,no,yes,clear or partly cloudy,14,14.5,54,7,3267
+4/15/21,y1,yes,no,clear or partly cloudy,13,13.2,67,15,3126
+4/16/21,y1,no,no,light rain or snow,12.2,12.1,89,23,795
+4/18/21,y1,no,yes,clear or partly cloudy,16.1,17.2,54,11,3429
+4/21/21,y1,no,yes,clear or partly cloudy,13.6,14,41,22,4189
+4/28/21,y1,no,yes,cloudy,21,22.2,70,22,4058
+5/4/21,y1,no,yes,cloudy,11.5,10.7,74,22,2633
+5/12/21,y1,no,yes,clear or partly cloudy,17.1,18.5,75,13,4864
+5/13/21,y1,no,yes,cloudy,16.1,16.6,86,12,4105
+5/20/21,y1,no,yes,clear or partly cloudy,17.2,18.9,72,8,4917
+5/23/21,y1,no,yes,cloudy,21.7,23,81,16,4274
+5/24/21,y1,no,yes,cloudy,23,23.9,74,14,4492
+5/25/21,y1,no,yes,clear or partly cloudy,23.1,24.6,70,10,4978
+5/28/21,y1,no,no,clear or partly cloudy,22.8,24.4,73,15,4758
+5/29/21,y1,no,no,clear or partly cloudy,23.4,24.6,82,14,4788
+5/30/21,y1,yes,no,clear or partly cloudy,26.5,28.3,69,9,4098
+6/4/21,y1,no,no,clear or partly cloudy,21.8,23.2,46,8,5342
+6/7/21,y1,no,yes,clear or partly cloudy,25.3,27.3,60,13,4833
+6/13/21,y1,no,yes,clear or partly cloudy,21.8,23.7,49,20,5020
+6/19/21,y1,no,no,cloudy,24.9,26.6,67,7,4744
+6/20/21,y1,no,yes,cloudy,21.8,23.3,75,10,4010
+6/22/21,y1,no,yes,clear or partly cloudy,26.5,29.8,71,12,4507
+6/26/21,y1,no,no,clear or partly cloudy,24,26.1,51,6,5305
+6/27/21,y1,no,yes,cloudy,24.1,26,66,7,4708
+7/2/21,y1,no,no,clear or partly cloudy,26.7,28,44,8,5119
+7/4/21,y1,yes,no,cloudy,26.2,27.9,64,5,6043
+7/6/21,y1,no,yes,clear or partly cloudy,25.8,29.3,74,10,4629
+7/10/21,y1,no,no,clear or partly cloudy,27.1,29.5,58,12,4881
+7/14/21,y1,no,yes,clear or partly cloudy,24,25.9,48,16,5084
+7/20/21,y1,no,yes,clear or partly cloudy,28.1,33.3,71,8,4332
+7/25/21,y1,no,yes,clear or partly cloudy,26.9,31.6,76,6,3840
+7/26/21,y1,no,yes,clear or partly cloudy,28.3,30,54,13,4590
+8/3/21,y1,no,yes,cloudy,26.4,28.9,66,9,3574
+8/5/21,y1,no,yes,clear or partly cloudy,25.4,27.3,63,12,4866
+8/6/21,y1,no,no,cloudy,25.7,28.6,76,15,4294
+8/7/21,y1,no,no,clear or partly cloudy,26.9,31.2,75,13,3785
+8/9/21,y1,no,yes,clear or partly cloudy,28.4,31.8,57,10,4602
+8/11/21,y1,no,yes,clear or partly cloudy,25.7,27,42,11,4792
+8/23/21,y1,no,yes,clear or partly cloudy,22.1,24,46,10,5895
+8/27/21,y1,no,no,cloudy,24,25.9,85,25,1115
+9/5/21,y1,yes,no,cloudy,23.6,25.3,79,14,3351
+9/6/21,y1,no,yes,light rain or snow,17.4,18,89,23,2710
+9/7/21,y1,no,yes,light rain or snow,20.2,19.9,92,7,1996
+9/8/21,y1,no,yes,light rain or snow,21.8,20.7,94,13,1842
+9/11/21,y1,no,no,clear or partly cloudy,22.7,24.2,71,8,5046
+9/15/21,y1,no,yes,cloudy,19.1,20.5,71,18,3659
+9/18/21,y1,no,no,clear or partly cloudy,15.9,16.4,70,12,4274
+9/23/21,y1,no,yes,cloudy,20.6,18.5,97,5,2395
+10/2/21,y1,no,no,cloudy,8.8,6.8,79,15,2918
+10/5/21,y1,no,yes,clear or partly cloudy,17.3,18.8,65,12,4826
+10/10/21,y1,yes,no,clear or partly cloudy,18.8,19.8,73,3,5117
+10/12/21,y1,no,yes,light rain or snow,17.5,18.2,91,17,2416
+10/13/21,y1,no,yes,cloudy,19.7,20.4,90,9,2913
+10/14/21,y1,no,yes,cloudy,17.9,19,72,15,3644
+10/19/21,y1,no,yes,light rain or snow,17.5,17.9,90,16,2424
+10/20/21,y1,no,yes,clear or partly cloudy,14.4,14.8,64,28,4195
+10/25/21,y1,no,yes,clear or partly cloudy,14.2,14.6,62,11,4687
+10/29/21,y1,no,no,light rain or snow,3.9,-1,88,24,627
+11/9/21,y1,no,yes,clear or partly cloudy,10.8,11,76,4,4109
+11/11/21,y1,yes,no,clear or partly cloudy,7.2,4.2,45,21,3368
+11/14/21,y1,no,yes,clear or partly cloudy,16.9,18.6,59,21,4486
+11/15/21,y1,no,yes,cloudy,16.9,17.5,69,13,4195
+11/16/21,y1,no,yes,light rain or snow,13.5,13.8,93,9,1817
+11/21/21,y1,no,yes,light rain or snow,13,13.4,91,9,2765
+11/22/21,y1,no,yes,light rain or snow,11.6,11.8,96,8,1607
+11/24/21,y1,yes,no,clear or partly cloudy,9.5,8.6,55,11,1495
+11/28/21,y1,no,yes,clear or partly cloudy,15.7,16.3,74,10,3867
+12/1/21,y1,no,yes,clear or partly cloudy,6.7,4.2,52,15,3727
+12/6/21,y1,no,yes,light rain or snow,13.7,14.1,95,16,2594
+12/7/21,y1,no,yes,light rain or snow,11.3,10.4,97,18,705
+12/9/21,y1,no,yes,clear or partly cloudy,5.7,5,70,6,3620
+12/11/21,y1,no,no,clear or partly cloudy,2.4,0.7,49,4,2743
+12/26/21,y1,yes,no,clear or partly cloudy,7.1,4.8,51,16,1317
+12/28/21,y1,no,yes,clear or partly cloudy,6.1,2.5,50,20,2302
+12/29/21,y1,no,yes,clear or partly cloudy,3.7,1.4,57,8,2423
+1/2/22,y2,yes,no,clear or partly cloudy,4.8,0.7,38,22,1951
+1/8/22,y2,no,no,clear or partly cloudy,7.9,6.5,47,13,3425
+1/11/22,y2,no,yes,cloudy,4.9,2.7,85,9,2177
+1/13/22,y2,no,yes,clear or partly cloudy,4.9,0.5,51,25,3214
+1/16/22,y2,yes,no,clear or partly cloudy,0.9,-3.4,52,16,2298
+1/19/22,y2,no,yes,clear or partly cloudy,0.9,-3.5,50,15,3292
+1/25/22,y2,no,yes,clear or partly cloudy,5.8,3.5,64,11,4270
+1/30/22,y2,no,yes,clear or partly cloudy,4.7,1.3,40,14,3624
+2/1/22,y2,no,yes,clear or partly cloudy,14.1,14.8,51,13,4579
+2/2/22,y2,no,yes,cloudy,10.8,10.3,67,13,3761
+2/3/22,y2,no,yes,clear or partly cloudy,6.7,4.4,53,12,4151
+2/5/22,y2,no,no,cloudy,4.5,1.5,69,12,2947
+2/8/22,y2,no,yes,cloudy,4.1,1.6,72,9,2802
+2/11/22,y2,no,no,light rain or snow,2.5,-2.1,73,19,2169
+2/12/22,y2,no,no,clear or partly cloudy,-2,-9.3,46,27,1529
+2/13/22,y2,no,yes,clear or partly cloudy,2.5,-1,41,11,3422
+2/20/22,y2,yes,no,clear or partly cloudy,5.2,2,51,15,3129
+3/2/22,y2,no,yes,cloudy,8.6,7.7,66,10,3194
+3/9/22,y2,no,yes,cloudy,11.3,10.2,41,28,4569
+3/11/22,y2,no,no,clear or partly cloudy,9,7.7,48,15,4911
+3/13/22,y2,no,yes,clear or partly cloudy,18.6,19.8,62,16,5847
+3/15/22,y2,no,yes,clear or partly cloudy,18.2,19.2,58,10,6192
+3/20/22,y2,no,yes,clear or partly cloudy,18.4,19.5,81,8,6093
+3/22/22,y2,no,yes,clear or partly cloudy,18,19.1,83,8,6871
+3/23/22,y2,no,yes,cloudy,20.3,21.6,69,8,8362
+3/25/22,y2,no,no,cloudy,12.6,12.9,88,15,4996
+3/27/22,y2,no,yes,clear or partly cloudy,7.2,4.8,29,13,5102
+4/1/22,y2,no,no,cloudy,12,11.5,68,12,6041
+4/3/22,y2,no,yes,clear or partly cloudy,13.9,14.5,40,7,6772
+4/5/22,y2,no,yes,clear or partly cloudy,12.4,12.5,37,15,6457
+4/6/22,y2,no,yes,clear or partly cloudy,11,9.8,38,20,6460
+4/9/22,y2,no,yes,clear or partly cloudy,15,15.5,32,24,5585
+4/13/22,y2,no,yes,clear or partly cloudy,12.8,12.5,41,10,6398
+4/14/22,y2,no,no,clear or partly cloudy,15.3,16.2,50,13,7460
+4/16/22,y2,yes,no,clear or partly cloudy,23.2,24.6,56,19,6370
+4/18/22,y2,no,yes,cloudy,13.8,14.2,57,11,4367
+4/22/22,y2,no,no,light rain or snow,10.6,9.7,84,23,1027
+4/23/22,y2,no,yes,cloudy,7.1,3.9,77,20,3214
+4/27/22,y2,no,yes,clear or partly cloudy,13.5,13.9,40,23,6233
+5/3/22,y2,no,yes,cloudy,18.3,19.5,77,9,6421
+5/4/22,y2,no,yes,clear or partly cloudy,21.5,23,74,11,6296
+5/6/22,y2,no,no,cloudy,18.4,20.1,74,10,6359
+5/8/22,y2,no,yes,cloudy,19.3,20.8,69,20,5728
+5/9/22,y2,no,yes,cloudy,19,20.5,74,14,4717
+5/11/22,y2,no,yes,clear or partly cloudy,17.1,18.4,36,16,7030
+5/13/22,y2,no,no,clear or partly cloudy,20.8,22.6,58,15,6118
+5/21/22,y2,no,yes,cloudy,20.1,21.3,81,16,4359
+5/22/22,y2,no,yes,cloudy,20.9,22.3,77,8,6073
+5/26/22,y2,no,no,clear or partly cloudy,24.5,26.4,73,13,6536
+5/28/22,y2,yes,no,clear or partly cloudy,25.5,28.8,68,13,6043
+6/1/22,y2,no,yes,cloudy,22.7,24.1,76,16,4127
+6/4/22,y2,no,yes,clear or partly cloudy,20.1,22.2,49,19,6998
+6/5/22,y2,no,yes,cloudy,17.4,18.7,61,14,7001
+6/10/22,y2,no,no,clear or partly cloudy,26.2,27.8,54,9,6598
+6/15/22,y2,no,yes,clear or partly cloudy,22,23.6,59,12,7665
+6/16/22,y2,no,no,clear or partly cloudy,21.7,23.3,50,11,7702
+6/21/22,y2,no,yes,clear or partly cloudy,29.9,33.7,57,8,5905
+6/23/22,y2,no,no,clear or partly cloudy,26.4,27.1,53,12,7458
+6/26/22,y2,no,yes,clear or partly cloudy,21.6,23.3,37,23,7442
+6/30/22,y2,no,no,clear or partly cloudy,28,29.4,60,11,5687
+7/3/22,y2,no,yes,clear or partly cloudy,28.7,30.4,49,8,6660
+7/4/22,y2,yes,no,clear or partly cloudy,29.1,32.3,54,9,7403
+7/5/22,y2,no,yes,clear or partly cloudy,30.9,34.3,46,13,6241
+7/6/22,y2,no,yes,clear or partly cloudy,30.9,33.7,45,10,6207
+7/7/22,y2,no,no,clear or partly cloudy,32.5,37.1,49,11,4840
+7/12/22,y2,no,yes,clear or partly cloudy,25.6,27.2,53,10,7446
+7/13/22,y2,no,yes,cloudy,26.4,28.1,49,5,7499
+7/14/22,y2,no,no,cloudy,25.1,28,70,10,6969
+7/17/22,y2,no,yes,clear or partly cloudy,30.5,33.9,51,8,6786
+7/18/22,y2,no,yes,clear or partly cloudy,29.3,33.2,58,9,5713
+7/21/22,y2,no,no,light rain or snow,20,20.3,87,14,4459
+7/22/22,y2,no,no,cloudy,23.4,25.1,76,6,7410
+7/25/22,y2,no,yes,clear or partly cloudy,26,27.2,45,11,8173
+7/28/22,y2,no,no,clear or partly cloudy,27.5,30,61,11,6685
+8/1/22,y2,no,yes,clear or partly cloudy,25.7,28,68,9,7580
+8/3/22,y2,no,yes,cloudy,28,31.7,64,14,7175
+8/10/22,y2,no,yes,cloudy,25.6,28.1,72,16,5786
+8/16/22,y2,no,yes,clear or partly cloudy,25.8,27.2,52,10,7605
+8/17/22,y2,no,yes,clear or partly cloudy,26,0,57,16,7148
+8/21/22,y2,no,yes,clear or partly cloudy,22.5,23.7,67,5,7006
+9/3/22,y2,yes,no,clear or partly cloudy,25.3,27.7,79,10,6034
+9/5/22,y2,no,yes,clear or partly cloudy,26.6,30.8,74,13,7112
+9/10/22,y2,no,yes,clear or partly cloudy,19.4,21.3,50,17,7525
+9/13/22,y2,no,yes,clear or partly cloudy,20.8,22.3,64,6,7804
+9/16/22,y2,no,no,clear or partly cloudy,19.3,21.2,57,6,7333
+9/18/22,y2,no,yes,cloudy,21.3,21.3,87,24,4073
+9/21/22,y2,no,yes,clear or partly cloudy,20.2,21.8,67,10,8167
+9/25/22,y2,no,yes,clear or partly cloudy,17.9,19.9,57,16,7538
+9/30/22,y2,no,no,clear or partly cloudy,16.8,18.2,58,9,6889
+10/2/22,y2,no,yes,light rain or snow,19.8,19.8,87,7,4639
+10/8/22,y2,yes,no,cloudy,10,9.6,71,13,5478
+10/12/22,y2,no,yes,clear or partly cloudy,12.6,12.6,54,16,7282
+10/14/22,y2,no,no,clear or partly cloudy,16.5,17.5,64,19,6639
+10/19/22,y2,no,yes,cloudy,18.5,19.5,82,9,5424
+10/26/22,y2,no,yes,cloudy,17.7,18.5,81,9,7444
+10/27/22,y2,no,no,cloudy,16.9,18,72,16,7852
+10/29/22,y2,no,yes,light rain or snow,12.7,13,88,24,22
+11/12/22,y2,yes,no,clear or partly cloudy,14.8,15.4,74,12,6269
+11/18/22,y2,no,no,clear or partly cloudy,8.1,6.3,69,15,4669
+11/22/22,y2,yes,no,clear or partly cloudy,8,7.1,58,4,2425
+11/25/22,y2,no,no,clear or partly cloudy,3.6,1,47,10,2424
+11/26/22,y2,no,yes,clear or partly cloudy,6.7,6.4,54,3,5087
+12/8/22,y2,no,no,cloudy,9.9,9.7,91,7,5582
+12/11/22,y2,no,yes,cloudy,8.6,6.3,60,20,5501
+12/14/22,y2,no,yes,clear or partly cloudy,5.2,3.4,64,9,5611
+12/15/22,y2,no,no,clear or partly cloudy,7.2,6.3,65,7,5047
+12/25/22,y2,yes,no,cloudy,5.7,3.4,73,11,1013
+12/26/22,y2,no,yes,light rain or snow,3.4,-1.5,82,21,441
+12/31/22,y2,no,yes,cloudy,2.1,-1.2,58,10,2729
