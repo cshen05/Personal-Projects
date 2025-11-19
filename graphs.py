@@ -338,7 +338,7 @@ def plot_redfish_vs_llm():
     fig.subplots_adjust(top=0.85)
 
     ax.plot(redfish_30,  llm_30,  marker="o", markersize=8, linewidth=3,
-            label="Qwen3-30B", color=PRIMARY_BLUE)
+            label="Qwen3-30B FP8", color=PRIMARY_BLUE)
     ax.plot(redfish_235, llm_235, marker="o", markersize=8, linewidth=3,
             label="Qwen3-235B FP8", color=MAGENTA)
 
@@ -357,8 +357,8 @@ def plot_redfish_vs_llm():
     improvement_pct = 100 * (llm_30[last_idx] - llm_235[last_idx]) / llm_235[last_idx]
     add_callout(
         ax,
-        f"{improvement_pct:.0f}% Higher LLM Throughput\n"
-        "at Max Telemetry Load",
+        "Stable linear scaling for the 30B model\n"
+        "under increasing telemetry ingestion",
         x=0.03,
         y=0.86,
         ha="left",
@@ -368,7 +368,7 @@ def plot_redfish_vs_llm():
     )
     add_callout(
         ax,
-        "FP8 curve flattens\n"
+        "Qwen3-235B curve flattens\n"
         "beyond ~6,600 endpoints/min",
         x=0.66,
         y=0.30,
