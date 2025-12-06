@@ -107,9 +107,9 @@ def plot_llm_throughput_comparison():
     # More headroom for title + subtitles
     fig.subplots_adjust(top=0.85)
 
-    bars30  = ax.bar(x - width/2, q30,  width, label="Qwen3-30B",
+    bars30  = ax.bar(x - width/2, q30,  width, label="Qwen3-30B (BF16)",
                      color=PRIMARY_BLUE)
-    bars235 = ax.bar(x + width/2, q235, width, label="Qwen3-235B FP8",
+    bars235 = ax.bar(x + width/2, q235, width, label="Qwen3-235B (FP8)",
                      color=MAGENTA)
 
     ax.set_xticks(x)
@@ -133,22 +133,35 @@ def plot_llm_throughput_comparison():
         ax.text(bar.get_x() + bar.get_width()/2, val + offset,
                 f"{val:,.0f}", ha="center", va="bottom", fontsize=11)
 
-    # Brand-style callout: central, bold text without arrows
+    # Brand-style callout: central, bold text without cross-model comparison
     last_idx = -1
-    improvement_pct = 100 * (q30[last_idx] - q235[last_idx]) / q235[last_idx]
+    scale_factor_30b = q30[last_idx] / q30[0]
     add_callout(
         ax,
-        f"{improvement_pct:.0f}% Higher Throughput at {racks[last_idx]} Racks",
-        x=0.5,
-        y=0.87,
+        f"Qwen3-30B (BF16) scales {scale_factor_30b:.1f}×\nfrom 1 to {racks[last_idx]} racks",
+        x=0.25,
+        y=0.80,
         ha="center",
         va="top",
         fontsize=15,
         color=PRIMARY_BLUE,
     )
 
+    # Additional callout for Qwen3-235B (FP8): highlight saturation behavior
+    idx_100 = np.where(racks == 100)[0][0]
+    add_callout(
+        ax,
+        f"Qwen3-235B (FP8) reaches\n{q235[idx_100]:,} tokens/sec at 100 racks\nand then saturates",
+        x=0.25,
+        y=0.50,
+        ha="center",
+        va="bottom",
+        fontsize=15,
+        color=MAGENTA,
+    )
+
     fig.suptitle(
-        "LLM Throughput With and Without FP8 Optimization",
+        "LLM Throughput Comparison: Qwen3-30B (BF16) vs Qwen3-235B (FP8)",
         fontsize=22,
         fontweight="bold",
         y=0.98,
@@ -292,7 +305,7 @@ def plot_q30_2048():
     plot_single_model_bar(
         filename="04_q30_2048_2048.png",
         main_title="Throughput for 2048 input tokens and 2048 output tokens",
-        model_label="Qwen/Qwen3-30B-A3B-Thinking-2507",
+        model_label="Qwen/Qwen3-30B-A3B-Thinking-2507-BF16",
         conc_vals=conc_vals,
         tps_vals=tps_vals,
         color=PRIMARY_BLUE,
@@ -312,7 +325,7 @@ def plot_q30_128():
     plot_single_model_bar(
         filename="05_q30_128_128.png",
         main_title="Throughput for 128 input tokens and 128 output tokens",
-        model_label="Qwen/Qwen3-30B-A3B-Thinking-2507",
+        model_label="Qwen/Qwen3-30B-A3B-Thinking-2507-BF16",
         conc_vals=conc_vals,
         tps_vals=tps_vals,
         color=PRIMARY_BLUE,
@@ -338,9 +351,9 @@ def plot_redfish_vs_llm():
     fig.subplots_adjust(top=0.85)
 
     ax.plot(redfish_30,  llm_30,  marker="o", markersize=8, linewidth=3,
-            label="Qwen3-30B FP8", color=PRIMARY_BLUE)
+            label="Qwen3-30B (BF16)", color=PRIMARY_BLUE)
     ax.plot(redfish_235, llm_235, marker="o", markersize=8, linewidth=3,
-            label="Qwen3-235B FP8", color=MAGENTA)
+            label="Qwen3-235B (FP8)", color=MAGENTA)
 
     ax.set_xlabel("Redfish telemetry endpoints processed/min")
     ax.set_ylabel("LLM Throughput (tokens/sec)")
@@ -354,11 +367,18 @@ def plot_redfish_vs_llm():
 
     # Brand-style callouts: bold text in corners
     last_idx = -1
-    improvement_pct = 100 * (llm_30[last_idx] - llm_235[last_idx]) / llm_235[last_idx]
+    # Quantify Qwen3-30B BF16 scaling explicitly for better precision in the storyline
+    start_eps = redfish_30[0]
+    end_eps = redfish_30[last_idx]
+    start_tps = llm_30[0]
+    end_tps = llm_30[last_idx]
+    scale_factor_30b = end_tps / start_tps
+
     add_callout(
         ax,
-        "Stable linear scaling for the 30B model\n"
-        "under increasing telemetry ingestion",
+        f"Qwen3-30B BF16 grows from {start_tps:,.0f} to {end_tps:,.0f} tokens/sec\n"
+        f"as telemetry scales from {start_eps:,.0f} to {end_eps:,.0f} endpoints/min\n"
+        f"({scale_factor_30b:.1f}× throughput increase with no saturation observed)",
         x=0.03,
         y=0.86,
         ha="left",
@@ -368,7 +388,7 @@ def plot_redfish_vs_llm():
     )
     add_callout(
         ax,
-        "Qwen3-235B curve flattens\n"
+        "Qwen3-235B FP8 curve flattens\n"
         "beyond ~6,600 endpoints/min",
         x=0.66,
         y=0.30,
@@ -386,7 +406,7 @@ def plot_redfish_vs_llm():
     )
     fig.text(
         0.5, 0.93,
-        "Comparing Qwen3-30B and Qwen3-235B FP8 Under Increasing Telemetry Load",
+        "Comparing Qwen3-30B BF16 and Qwen3-235B FP8 Under Increasing Telemetry Load",
         ha="center", va="top",
         fontsize=13, fontweight="bold",
     )
