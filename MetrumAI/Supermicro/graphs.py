@@ -427,9 +427,9 @@ def plot_redfish_vs_llm():
 # ============================================================
 
 def plot_redfish_metrics_vs_racks():
-    # SUM of all Redfish metrics processed per minute per rack count
-    racks_r     = np.array([1, 50, 100, 150, 200])
-    redfish_sum = np.array([66, 3300, 6600, 9900, 13198])
+    # Qwen3-30B BF16: SUM of Redfish metrics processed per minute per rack count
+    racks_r     = np.array([1, 50, 100, 200])
+    redfish_sum = np.array([65.79, 3300.00, 11176.47, 18945.69])
 
     idx = np.arange(len(racks_r))
 
@@ -445,7 +445,7 @@ def plot_redfish_metrics_vs_racks():
     bars = ax.bar(idx, redfish_sum, width=0.7, color=PRIMARY_BLUE)
 
     ax.set_xlabel("Number of Racks Monitored")
-    ax.set_ylabel("Sum of Redfish metrics processed/min")
+    ax.set_ylabel("Qwen3-30B BF16: Redfish metrics processed/min")
     ax.set_xticks(idx)
     ax.set_xticklabels(racks_r)
 
@@ -458,29 +458,29 @@ def plot_redfish_metrics_vs_racks():
         ax.text(bar.get_x() + bar.get_width()/2, val + offset,
                 f"{val:,.0f}", ha="center", va="bottom", fontsize=11)
 
-    # Brand-style callout: centered text in axis space
-    per_rack = redfish_sum[-1] / racks_r[-1]
+    # Brand-style callout: left-aligned, similar style to Graph 8
+    last_idx = -1
     add_callout(
         ax,
-        f"≈{per_rack:,.0f} metrics/min per rack\n"
-        "Linear scaling from 1 to 200 racks",
-        x=0.5,
-        y=0.88,
-        ha="center",
+        f"{redfish_sum[last_idx]:,.0f} metrics/min\n"
+        f"at {racks_r[last_idx]} racks (Qwen3-30B BF16)",
+        x=0.03,
+        y=0.86,
+        ha="left",
         va="top",
         fontsize=13,
         color=PRIMARY_BLUE,
     )
 
     fig.suptitle(
-        "SUM of Redfish Metrics Processed/Min vs Number of Racks Monitored",
+        "Qwen3-30B BF16: Redfish Metrics Processed/Min vs Number of Racks",
         fontsize=20,
         fontweight="bold",
         y=0.98,
     )
     fig.text(
         0.5, 0.93,
-        "Simulated Redfish Telemetry Ingestion on Supermicro Liquid-Cooled Racks",
+        "Simulated Redfish Telemetry for Qwen3-30B BF16 on Supermicro Liquid-Cooled Racks",
         ha="center", va="top",
         fontsize=13, fontweight="bold",
     )
@@ -548,7 +548,7 @@ def plot_redfish_endpoints_vs_racks():
     )
 
     fig.suptitle(
-        "Redfish Telemetry Endpoints Processed/Min vs Number of Racks Monitored",
+        "Qwen3-235B FP8: Redfish Metrics Processed/Min vs Number of Racks",
         fontsize=20,
         fontweight="bold",
         y=0.98,
