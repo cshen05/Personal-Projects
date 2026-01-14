@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from matplotlib.patches import Patch, Rectangle
 from matplotlib.legend_handler import HandlerPatch
@@ -105,6 +106,7 @@ nfs = np.array([4, 20, 40])
 events_per_min = np.array([393.00, 805.50, 1314.00])
 tokens_per_sec = np.array([622.82, 3815.74, 5521.86])
 
+
 events_per_sec = events_per_min / 60.0
 
 # Derived metrics
@@ -114,6 +116,118 @@ TOKENS_PER_EVENT = tokens_per_sec / events_per_sec
 
 # Events per minute per individual network function
 EVENTS_PER_NF = events_per_min / nfs
+
+
+# ==========================================
+# Helpers: Derived metrics + optional Excel loader
+# ==========================================
+
+def compute_tokens_per_event(tokens_per_sec_arr, events_per_min_arr):
+    """Compute tokens generated per processed event.
+
+    tokens_per_event = (tokens/sec) / (events/sec) = (tokens/sec) / (events/min / 60)
+    """
+    tokens_per_sec_arr = np.asarray(tokens_per_sec_arr, dtype=float)
+    events_per_min_arr = np.asarray(events_per_min_arr, dtype=float)
+
+    events_per_sec_arr = events_per_min_arr / 60.0
+    # Avoid divide-by-zero
+    eps = 1e-12
+    return tokens_per_sec_arr / np.maximum(events_per_sec_arr, eps)
+
+
+def _first_existing_col(df, candidates):
+    """Return the first column name from candidates that exists in df, else None."""
+    for c in candidates:
+        if c in df.columns:
+            return c
+    return None
+
+
+def load_tokens_per_event_from_excel(
+    excel_path,
+    qwen_sheet="QwenQwen3-30B-A3B-Thinking-2507",
+    raw_sheet="raw_metrics",
+    tokens_col_candidates=(
+        "vllm_throughput_tokens_per_sec",
+        "tokens_per_sec",
+        "tokens/sec",
+        "tokens_per_second",
+    ),
+    events_col_candidates=(
+        "logs_processed_per_minute",
+        "events_per_min",
+        "events_per_minute",
+        "Events / Logs Processed per Minute",
+        "Events/Logs Processed per Minute",
+    ),
+    clusters_col_candidates=(
+        "clusters",
+        "cluster_count",
+        "Number of Network Function Clusters Monitored",
+        "nf_clusters",
+    ),
+):
+    """Load arrays needed for Tokens/Event plot from the benchmarking workbook.
+
+    Notes:
+      - If a clusters column isn't present, we fall back to the existing `clusters` array.
+      - If the sheet row counts differ and no join key exists, we truncate to the shortest length.
+    """
+    qwen = pd.read_excel(excel_path, sheet_name=qwen_sheet)
+    raw = pd.read_excel(excel_path, sheet_name=raw_sheet)
+
+    tok_col = _first_existing_col(qwen, tokens_col_candidates)
+    evt_col = _first_existing_col(raw, events_col_candidates)
+
+    if tok_col is None:
+        raise ValueError(
+            f"Could not find a tokens/sec column in sheet '{qwen_sheet}'. Tried: {tokens_col_candidates}"
+        )
+    if evt_col is None:
+        raise ValueError(
+            f"Could not find an events/min column in sheet '{raw_sheet}'. Tried: {events_col_candidates}"
+        )
+
+    # Optional clusters column(s)
+    qwen_cl_col = _first_existing_col(qwen, clusters_col_candidates)
+    raw_cl_col = _first_existing_col(raw, clusters_col_candidates)
+
+    tokens_per_sec_arr = qwen[tok_col].to_numpy(dtype=float)
+    events_per_min_arr = raw[evt_col].to_numpy(dtype=float)
+
+    # Determine x-axis
+    if qwen_cl_col is not None and raw_cl_col is not None:
+        # Merge on clusters if both have it
+        qsub = qwen[[qwen_cl_col, tok_col]].rename(columns={qwen_cl_col: "clusters", tok_col: "tokens_per_sec"})
+        rsub = raw[[raw_cl_col, evt_col]].rename(columns={raw_cl_col: "clusters", evt_col: "events_per_min"})
+        merged = pd.merge(qsub, rsub, on="clusters", how="inner").sort_values("clusters")
+        clusters_arr = merged["clusters"].to_numpy(dtype=float)
+        tokens_per_sec_arr = merged["tokens_per_sec"].to_numpy(dtype=float)
+        events_per_min_arr = merged["events_per_min"].to_numpy(dtype=float)
+    elif raw_cl_col is not None:
+        clusters_arr = raw[raw_cl_col].to_numpy(dtype=float)
+        # If lengths mismatch, align by truncation
+        n = min(len(clusters_arr), len(tokens_per_sec_arr), len(events_per_min_arr))
+        clusters_arr = clusters_arr[:n]
+        tokens_per_sec_arr = tokens_per_sec_arr[:n]
+        events_per_min_arr = events_per_min_arr[:n]
+    elif qwen_cl_col is not None:
+        clusters_arr = qwen[qwen_cl_col].to_numpy(dtype=float)
+        n = min(len(clusters_arr), len(tokens_per_sec_arr), len(events_per_min_arr))
+        clusters_arr = clusters_arr[:n]
+        tokens_per_sec_arr = tokens_per_sec_arr[:n]
+        events_per_min_arr = events_per_min_arr[:n]
+    else:
+        # Fall back to the existing global clusters array
+        clusters_arr = np.asarray(clusters, dtype=float)
+        n = min(len(clusters_arr), len(tokens_per_sec_arr), len(events_per_min_arr))
+        clusters_arr = clusters_arr[:n]
+        tokens_per_sec_arr = tokens_per_sec_arr[:n]
+        events_per_min_arr = events_per_min_arr[:n]
+
+    tokens_per_event_arr = compute_tokens_per_event(tokens_per_sec_arr, events_per_min_arr)
+    return clusters_arr, tokens_per_event_arr
 
 
 # ==========================================
@@ -259,9 +373,11 @@ def plot_tokens_per_event():
     fig.patch.set_facecolor("white")
     fig.subplots_adjust(top=0.8)
 
+    tokens_per_event = compute_tokens_per_event(tokens_per_sec, events_per_min)
+
     ax.plot(
         clusters,
-        TOKENS_PER_EVENT,
+        tokens_per_event,
         marker="o",
         markersize=8,
         linewidth=3,
@@ -296,7 +412,7 @@ def plot_tokens_per_event():
     fig.text(
         0.5,
         0.94,
-        "Tokens generated per 5G Core incident as monitoring scope increases",
+        "Tokens generated per processed telemetry event",
         ha="center",
         va="top",
         fontsize=12,
@@ -313,6 +429,75 @@ def plot_tokens_per_event():
     )
 
     plt.savefig("fig3_tokens_per_event.png", dpi=300, bbox_inches="tight")
+    plt.close(fig)
+
+
+# ==========================================
+# 3b) LLM Reasoning Tokens per Event (from Excel)
+# ==========================================
+
+def plot_tokens_per_event_from_excel(excel_path="5GCore_Solution_Benchmarking.xlsx"):
+    """Generate the Tokens/Event figure directly from the benchmarking workbook."""
+    x_clusters, tokens_per_event = load_tokens_per_event_from_excel(excel_path)
+
+    fig, ax = plt.subplots()
+    fig.patch.set_facecolor("white")
+    fig.subplots_adjust(top=0.8)
+
+    ax.plot(
+        x_clusters,
+        tokens_per_event,
+        marker="o",
+        markersize=8,
+        linewidth=3,
+        color=PRIMARY_BLUE,
+    )
+
+    ax.set_xlabel("Number of Network Function Clusters Monitored")
+    ax.set_ylabel("Tokens per Event")
+
+    ax.set_axisbelow(True)
+    ax.yaxis.grid(True, linestyle="-", alpha=0.15)
+    ax.xaxis.grid(False)
+
+    add_callout(
+        ax,
+        "Reasoning cost stays in a bounded range\n"
+        "even as the monitored scope grows",
+        x=0.08,
+        y=0.8,
+        ha="left",
+        va="top",
+        fontsize=12,
+        color=PRIMARY_BLUE,
+    )
+
+    fig.suptitle(
+        "LLM Reasoning Tokens per Event",
+        fontsize=20,
+        fontweight="bold",
+        y=0.99,
+    )
+    fig.text(
+        0.5,
+        0.94,
+        "Computed as (LLM tokens/sec) ÷ (events/sec)",
+        ha="center",
+        va="top",
+        fontsize=12,
+        fontweight="bold",
+    )
+    fig.text(
+        0.5,
+        0.89,
+        "(Stable or Lower is Better)",
+        ha="center",
+        va="top",
+        fontsize=10,
+        color="gray",
+    )
+
+    plt.savefig("fig3b_tokens_per_event_from_excel.png", dpi=300, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -541,3 +726,6 @@ if __name__ == "__main__":
     plot_tokens_per_event()
     plot_events_per_nf()
     plot_incident_lifecycle()
+
+    # Optional: generate Tokens/Event directly from the benchmarking workbook
+    # plot_tokens_per_event_from_excel("5GCore_Solution_Benchmarking.xlsx")
