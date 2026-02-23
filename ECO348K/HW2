@@ -1,0 +1,86 @@
+import pandas as pd
+import numpy as np
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+import matplotlib.pyplot as plt
+
+df = pd.read_stata("lee-moretti-butler.dta")
+
+# Scatter
+plt.figure()
+plt.scatter(df["lagdemvoteshare"], df["demvoteshare"], s=8)
+plt.axvline(0.5)
+plt.xlabel("lagdemvoteshare")
+plt.ylabel("demvoteshare")
+plt.show()
+
+# "Eyeball" jump via separate linear fits on each side, evaluated at 0.5
+left  = df[df["lagdemvoteshare"] < 0.5].copy()
+right = df[df["lagdemvoteshare"] > 0.5].copy()
+
+m_left  = sm.OLS(left["demvoteshare"],  sm.add_constant(left["lagdemvoteshare"])).fit()
+m_right = sm.OLS(right["demvoteshare"], sm.add_constant(right["lagdemvoteshare"])).fit()
+
+pred_left  = float(m_left.predict([1, 0.5]))
+pred_right = float(m_right.predict([1, 0.5]))
+jump = pred_right - pred_left
+
+print("pred_left@0.5 =", pred_left)
+print("pred_right@0.5 =", pred_right)
+print("jump =", jump)
+
+means = df.groupby("lagdemocrat")["demvoteshare"].mean()
+raw_diff = float(means.loc[1.0] - means.loc[0.0])
+print(means)
+print("raw_diff =", raw_diff)
+
+hs = [0.20, 0.10, 0.05, 0.01]
+for h in hs:
+    sub = df[(df["lagdemvoteshare"] - 0.5).abs() < h].copy()
+    means = sub.groupby("lagdemocrat")["demvoteshare"].mean()
+    diff = float(means.loc[1.0] - means.loc[0.0])
+    print(f"h={h:.2f}  n={len(sub)}  mean0={means.loc[0.0]:.6f}  mean1={means.loc[1.0]:.6f}  diff={diff:.6f}")
+
+def reg_window(h):
+    sub = df[(df["lagdemvoteshare"] - 0.5).abs() < h].copy()
+    X = sm.add_constant(sub["lagdemocrat"])
+    mod = sm.OLS(sub["demvoteshare"], X).fit(cov_type="HC1")
+    tau = mod.params["lagdemocrat"]
+    se  = mod.bse["lagdemocrat"]
+    ci  = (tau - 1.96*se, tau + 1.96*se)
+    return len(sub), float(tau), float(se), (float(ci[0]), float(ci[1]))
+
+for h in [0.05, 0.01]:
+    n, tau, se, ci = reg_window(h)
+    print(f"h={h:.2f}  n={n}  tau={tau:.6f}  robust_se={se:.6f}  CI95=[{ci[0]:.6f}, {ci[1]:.6f}]")
+
+df2 = df.copy()
+df2["x"]   = df2["lagdemvoteshare"] - 0.5
+df2["x2"]  = df2["x"]**2
+df2["Dx"]  = df2["lagdemocrat"] * df2["x"]
+df2["Dx2"] = df2["lagdemocrat"] * df2["x2"]
+
+m_i   = smf.ols("demvoteshare ~ lagdemocrat + x", data=df2).fit(cov_type="HC1")
+m_ii  = smf.ols("demvoteshare ~ lagdemocrat + x + Dx", data=df2).fit(cov_type="HC1")
+m_iii = smf.ols("demvoteshare ~ lagdemocrat + x + x2 + Dx + Dx2", data=df2).fit(cov_type="HC1")
+m_iv  = smf.ols("demvoteshare ~ lagdemocrat + x + x2 + Dx + Dx2 + year + pcturban + pctblack + pcthighschl",
+                data=df2).fit(cov_type="HC1")
+
+def tau_summary(m):
+    tau = float(m.params["lagdemocrat"])
+    se  = float(m.bse["lagdemocrat"])
+    return tau, se, (tau-1.96*se, tau+1.96*se), int(m.nobs)
+
+for name, m in [("i", m_i), ("ii", m_ii), ("iii", m_iii), ("iv", m_iv)]:
+    tau, se, ci, n = tau_summary(m)
+    print(f"Model {name}: n={n}  tau={tau:.6f}  robust_se={se:.6f}  CI95=[{ci[0]:.6f}, {ci[1]:.6f}]")
+
+# fitted values from model (iii)
+df2["yhat_iii"] = m_iii.predict(df2)
+
+plt.figure()
+plt.scatter(df2["lagdemvoteshare"], df2["yhat_iii"], s=8)
+plt.axvline(0.5)
+plt.xlabel("lagdemvoteshare (running variable)")
+plt.ylabel("Fitted demvoteshare (from quadratic RD model iii)")
+plt.show()
