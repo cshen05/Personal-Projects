@@ -23,6 +23,20 @@ tokens_355x = np.array([2231, 2897, 6823, 7773])
 tokens_300x = np.array([2078, 3954, 4342, 5476])
 
 # ============================================================
+# Remove 6 BBUs / 18 RRHs point
+# ============================================================
+mask = bbus != 6  # drop the 2nd point
+
+bbus = bbus[mask]
+rrhs = rrhs[mask]
+
+events_355x = events_355x[mask]
+events_300x = events_300x[mask]
+
+tokens_355x = tokens_355x[mask]
+tokens_300x = tokens_300x[mask]
+
+# ============================================================
 # Global style
 # ============================================================
 plt.rcParams.update({
