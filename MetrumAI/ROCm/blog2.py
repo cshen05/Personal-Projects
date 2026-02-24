@@ -3,7 +3,6 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 import numpy as np
-import os
 
 # Match reference style exactly: blue = primary (MI355X/MXFP4), red = comparison
 BLUE = '#2563EB'
@@ -26,8 +25,7 @@ plt.rcParams.update({
     'axes.axisbelow': True,
 })
 
-outdir = '/home/claude/charts'
-os.makedirs(outdir, exist_ok=True)
+outdir = '.'
 
 def fmt_val(v):
     """Format value for bar label."""
