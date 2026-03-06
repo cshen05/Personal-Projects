@@ -30,7 +30,7 @@ def thousands(x, pos):
 # Common categorical axis for Figures 6 & 7
 # ============================================================
 
-labels = ["10","30","50","70","90","130","150","170","190","210"]
+labels = ["300","350","400","450","500","550","600","650","700","750","800","850"]
 x = np.arange(len(labels))
 
 # ============================================================
@@ -38,8 +38,8 @@ x = np.arange(len(labels))
 # ============================================================
 
 holdings = np.array([
-    2.13,15.36,49.83,95.71,131.70,
-    193.16,265.37,305.64,368.66,408.00
+    557.91, 654.96, 740.73, 817.28, 890.51, 953.68,
+    1017.79, 1088.12, 1189.66, 1282.24, 1288.75, 1415.39
 ])
 
 fig, ax = plt.subplots(figsize=(9.5,5.2))
@@ -53,15 +53,15 @@ ax.set_ylabel("Holdings / minute")
 ax.set_xticks(x)
 ax.set_xticklabels(labels)
 
-ax.set_ylim(0, 450)
+ax.set_ylim(0, 1550)
 style_axes(ax)
 
 for b in bars:
     h = b.get_height()
     ax.text(
         b.get_x() + b.get_width()/2,
-        h + 8,
-        f"{h:.0f}",
+        h + 20,
+        f"{h:.2f}",
         ha="center",
         va="bottom",
         fontsize=10
@@ -76,8 +76,8 @@ plt.close()
 # ============================================================
 
 compliance = np.array([
-    2.38,5.46,8.90,12.47,16.68,
-    19.36,22.24,24.14,25.10,33.00
+    53.35, 61.01, 71.04, 77.15, 84.18, 89.80,
+    94.92, 97.86, 101.87, 104.87, 107.89, 108.90
 ])
 
 fig, ax = plt.subplots(figsize=(9.5,5.2))
@@ -91,15 +91,15 @@ ax.set_ylabel("Compliance Checks / minute")
 ax.set_xticks(x)
 ax.set_xticklabels(labels)
 
-ax.set_ylim(0, 38)
+ax.set_ylim(0, 120)
 style_axes(ax)
 
 for b in bars:
     h = b.get_height()
     ax.text(
         b.get_x() + b.get_width()/2,
-        h + 0.7,
-        f"{h:.0f}",
+        h + 2,
+        f"{h:.2f}",
         ha="center",
         va="bottom",
         fontsize=10
